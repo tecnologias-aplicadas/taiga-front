@@ -28,6 +28,7 @@ section.comments
             on-delete-comment="vm.onDeleteComment({commentId: commentId})"
             on-restore-deleted-comment="vm.onRestoreDeletedComment({commentId: commentId})"
             on-edit-comment="vm.onEditComment({commentId: commentId, commentData: commentData, callback: callback})"
+            active-users="vm.activeUsers"
         )
 
     tg-comment-wysiwyg(

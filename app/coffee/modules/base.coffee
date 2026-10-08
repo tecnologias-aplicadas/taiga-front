@@ -31,6 +31,7 @@ module.directive("tgMain", ["$rootScope", "$window", TaigaMainDirective])
 
 urls = {
     "home": "/"
+    "dashboard": "/dashboard"
     "projects": "/projects"
     "error": "/error"
     "not-found": "/not-found"
@@ -97,6 +98,7 @@ urls = {
     "project-admin-project-values-tags": "/project/:project/admin/project-values/tags"
     "project-admin-project-values-due-dates": "/project/:project/admin/project-values/due-dates"
     "project-admin-project-values-kanban-power-ups": "/project/:project/admin/project-values/kanban-power-ups"
+    "project-admin-project-values-epic-schedules": "/project/:project/admin/project-values/epic-schedules"
 
     "project-admin-memberships": "/project/:project/admin/memberships"
     "project-admin-roles": "/project/:project/admin/roles"
@@ -118,6 +120,8 @@ urls = {
     "user-settings-contrib": "/user-settings/contrib/:plugin"
 
     "notifications": "/notifications"
+    "story-points-guide": "/story-points-guide"
+    "news-admin": "/news-admin"
 }
 
 init = ($log, $navurls) ->

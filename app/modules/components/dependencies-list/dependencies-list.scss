@@ -1,0 +1,194 @@
+.dependency-list-header {
+    background-color: #f4f5f6;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.3rem;
+
+    .dependency-list-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        font-size: 1rem;
+        color: #1f1f1f;
+
+        .dependency-count {
+            font-weight: 700;
+        }
+
+        .dependency-label {
+            color: #666;
+        }
+    }
+}
+
+.dependency-list-body {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
+
+    .dependency-item {
+        justify-content: space-between;
+        padding: 0.5rem 1rem 0.5rem;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        background: #efeff1;
+        border-left: 4px solid;
+        border-radius: 4px;
+        font-size: 0.95rem;
+        color: #333;
+        margin-bottom: 0.2rem;
+
+        .dependency-info {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.025rem;
+
+            span {
+                margin-right: 0.5rem;
+            }
+
+            .dependency-link a {
+                color: #0098c6;
+                font-weight: 500;
+                text-decoration: none;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+
+            .dependency-user {
+                color: #666;
+                font-size: 0.7rem;
+            }
+        }
+        .dependency-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dependency-action {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            tg-svg {
+                width: 16px;
+                height: 16px;
+            }
+
+            svg {
+                fill: #008aa8;
+                transition: fill 0.2s ease;
+            }
+
+            &:hover svg {
+                fill: #666;
+            }
+        }
+
+        &:hover .dependency-action {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .dependency-edit {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-top: 0.5rem;
+
+            select.dependency-type-edit {
+                flex: 1 1 auto;
+                padding: 0.25rem 0.5rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 0.85rem;
+            }
+
+            button {
+                padding: 0.25rem 0.75rem;
+                border-radius: 4px;
+                border: none;
+                cursor: pointer;
+                font-size: 0.85rem;
+            }
+
+            .btn-edit-save {
+                background-color: #008aa8;
+                color: #fff;
+
+                &:hover {
+                    background-color: #006f87;
+                }
+            }
+
+            .btn-edit-cancel {
+                background-color: #e0e0e0;
+                color: #333;
+
+                &:hover {
+                    background-color: #c8c8c8;
+                }
+            }
+        }
+    }
+}
+
+// Dependência resolvida
+.dependency-item--resolved {
+    opacity: 0.65;
+
+    .dependency-text {
+        text-decoration: line-through;
+        color: #888;
+    }
+
+    .dependency-action--resolve {
+        display: none;
+    }
+}
+
+.dependency-action--resolve svg {
+    fill: #4caf50;
+    stroke: #4caf50;
+    stroke-width: 1;
+    stroke-linejoin: round;
+}
+
+// Estilos para tipos de dependência
+.dependency-item {
+    &.BK,
+    &.BKBY {
+        border-left: 4px solid #e57373;
+    }
+    &.RT {
+        border-left: 4px solid #64b5f6;
+    }
+    &.DPON,
+    &.DPME {
+        border-left: 4px solid #ffb74d;
+    }
+    &.DUBY,
+    &.DUFROM {
+        border-left: 4px solid #ba68c8;
+    }
+    &.LTDWT,
+    &.DWT {
+        border-left: 4px solid #81c784;
+    }
+
+}

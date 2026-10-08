@@ -14,10 +14,13 @@ class DetailHeaderController
         "$tgConfirm",
         "$tgQueueModelTransformation",
         "$tgNavUrls",
-        "$window"
+        "$window",
+        "tgEditingTracker"
     ]
 
-    constructor: (@rootScope, @confirm, @modelTransform, @navUrls, @window) ->
+    EDITING_KEY = "detail-header-subject"
+
+    constructor: (@rootScope, @confirm, @modelTransform, @navUrls, @window, @editingTracker) ->
         @.editMode = false
         @.loadingSubject = false
         @.originalSubject = @.item.subject
@@ -34,6 +37,7 @@ class DetailHeaderController
 
     cancelEdit: () ->
         @.editMode = false
+        @editingTracker.end(EDITING_KEY)
         @.item.subject = @.originalSubject
 
     editSubject: (value) ->
@@ -41,8 +45,10 @@ class DetailHeaderController
         if selection.type != "Range"
             if value
                 @.editMode = true
+                @editingTracker.begin(EDITING_KEY)
             if !value
                 @.editMode = false
+                @editingTracker.end(EDITING_KEY)
 
     onKeyDown: (event) ->
         if event.which == 13
@@ -64,6 +70,7 @@ class DetailHeaderController
             @confirm.notify('error')
 
         @.editMode = false
+        @editingTracker.end(EDITING_KEY)
         @.loadingSubject = true
         item = @.item
         transform = @modelTransform.save (item) ->

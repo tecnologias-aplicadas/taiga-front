@@ -18,11 +18,8 @@ class TrelloImportProjectFormController
         @.projectForm = @.project.toJS()
 
         @.platformName = "Trello"
-        @.projectForm.is_private = false
+        @.projectForm.is_private = true
         @.projectForm.keepExternalReference = false
-
-        if !@.canCreatePublicProjects.valid && @.canCreatePrivateProjects.valid
-            @.projectForm.is_private = true
 
     checkUsersLimit: () ->
         @.limitMembersPrivateProject = @currentUserService.canAddMembersPrivateProject(@.members.size)

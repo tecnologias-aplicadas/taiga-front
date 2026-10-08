@@ -12,6 +12,17 @@ describe "RelatedUserstoryRow", ->
     controller = null
     mocks = {}
 
+    _mockTgProjectService = () ->
+        mocks.tgProjectService = {
+            activeMembers: Immutable.fromJS([
+                {id: 1, full_name_display: "Member 1"},
+                {id: 2, full_name_display: "Member 2"},
+                {id: 3, full_name_display: "Member 3"}
+            ])
+        }
+
+        provide.value "tgProjectService", mocks.tgProjectService
+
     _mockTgConfirm = () ->
         mocks.tgConfirm = {
             askOnDelete: sinon.stub()
@@ -46,6 +57,7 @@ describe "RelatedUserstoryRow", ->
     _mocks = () ->
         module ($provide) ->
             provide = $provide
+            _mockTgProjectService()
             _mockTgConfirm()
             _mockTgAvatarService()
             _mockTranslate()
@@ -63,13 +75,11 @@ describe "RelatedUserstoryRow", ->
 
         RelatedUserstoryRowCtrl = controller "RelatedUserstoryRowCtrl"
 
-    it "set avatar data", (done) ->
+    it "set avatar data from the assigned users", (done) ->
         RelatedUserstoryRowCtrl.userstory = Immutable.fromJS({
-            assigned_to_extra_info: {
-                id: 3
-            }
+            assigned_users: [3]
         })
-        member = RelatedUserstoryRowCtrl.userstory.get("assigned_to_extra_info")
+        member = mocks.tgProjectService.activeMembers.get(2)
         avatar = {
             url: "http://taiga.io"
             bg: "#AAAAAA"
@@ -80,15 +90,70 @@ describe "RelatedUserstoryRow", ->
         expect(RelatedUserstoryRowCtrl.avatar).is.equal(avatar)
         done()
 
-    it "get assigned to full name display for existing user", (done) ->
+    it "get assigned to full name display for an assigned active member", (done) ->
+        RelatedUserstoryRowCtrl.userstory = Immutable.fromJS({
+            assigned_users: [1]
+        })
+
+        expect(RelatedUserstoryRowCtrl.getAssignedToFullNameDisplay()).is.equal("Member 1")
+        done()
+
+    it "pick the assigned user with the lowest id when there are several", (done) ->
+        RelatedUserstoryRowCtrl.userstory = Immutable.fromJS({
+            assigned_users: [3, 1, 2]
+        })
+        member = mocks.tgProjectService.activeMembers.get(0)
+        avatar = {url: "http://taiga.io", fullName: "Member 1"}
+        mocks.tgAvatarService.getAvatar.withArgs(member).returns(avatar)
+
+        RelatedUserstoryRowCtrl.setAvatarData()
+
+        expect(mocks.tgAvatarService.getAvatar).have.been.calledWith(member)
+        expect(RelatedUserstoryRowCtrl.getAssignedToFullNameDisplay()).is.equal("Member 1")
+        done()
+
+    describe "extra assignees marker", () ->
+        _setAvatarFor = (assignedUsers) ->
+            RelatedUserstoryRowCtrl.userstory = Immutable.fromJS({
+                assigned_users: assignedUsers
+            })
+            mocks.tgAvatarService.getAvatar.returns({url: "http://taiga.io"})
+            RelatedUserstoryRowCtrl.setAvatarData()
+            return RelatedUserstoryRowCtrl.extraAssigneesCount
+
+        it "is zero with a single assigned user", () ->
+            expect(_setAvatarFor([1])).to.be.equal(0)
+
+        it "is zero without assigned users", () ->
+            expect(_setAvatarFor([])).to.be.equal(0)
+
+        it "counts one extra with two assigned users", () ->
+            expect(_setAvatarFor([1, 2])).to.be.equal(1)
+
+        it "counts two extra with three assigned users", () ->
+            expect(_setAvatarFor([1, 2, 3])).to.be.equal(2)
+
+        it "does not count assigned users that are not active members", () ->
+            expect(_setAvatarFor([1, 2, 99])).to.be.equal(1)
+
+    it "ignore assigned_to_extra_info when assigned_users is empty", (done) ->
         RelatedUserstoryRowCtrl.userstory = Immutable.fromJS({
             assigned_to: 1
             assigned_to_extra_info: {
-              full_name_display: "Beta tester"
+                id: 1
+                full_name_display: "Member 1"
             }
+            assigned_users: []
         })
+        avatar = {url: "http://taiga.io/unnamed.png"}
+        mocks.tgAvatarService.getAvatar.withArgs(null).returns(avatar)
+        mocks.translate.instant.withArgs("COMMON.ASSIGNED_TO.NOT_ASSIGNED").returns("Unassigned")
 
-        expect(RelatedUserstoryRowCtrl.getAssignedToFullNameDisplay()).is.equal("Beta tester")
+        RelatedUserstoryRowCtrl.setAvatarData()
+
+        expect(mocks.tgAvatarService.getAvatar).have.been.calledWith(null)
+        expect(RelatedUserstoryRowCtrl.avatar).is.equal(avatar)
+        expect(RelatedUserstoryRowCtrl.getAssignedToFullNameDisplay()).is.equal("Unassigned")
         done()
 
     it "get assigned to full name display for unassigned user story", (done) ->
@@ -96,6 +161,61 @@ describe "RelatedUserstoryRow", ->
             assigned_to: null
         })
         mocks.translate.instant.withArgs("COMMON.ASSIGNED_TO.NOT_ASSIGNED").returns("Unassigned")
+        expect(RelatedUserstoryRowCtrl.getAssignedToFullNameDisplay()).is.equal("Unassigned")
+        done()
+
+    it "show the first assigned user when the story was promoted without assigned_to", (done) ->
+        RelatedUserstoryRowCtrl.userstory = Immutable.fromJS({
+            assigned_to: null
+            assigned_to_extra_info: null
+            assigned_users: [2]
+        })
+        member = mocks.tgProjectService.activeMembers.get(1)
+        avatar = {
+            url: "http://taiga.io"
+            bg: "#AAAAAA"
+            fullName: "Member 2"
+        }
+        mocks.tgAvatarService.getAvatar.withArgs(member).returns(avatar)
+
+        RelatedUserstoryRowCtrl.setAvatarData()
+
+        expect(mocks.tgAvatarService.getAvatar).have.been.calledWith(member)
+        expect(RelatedUserstoryRowCtrl.avatar).is.equal(avatar)
+        expect(RelatedUserstoryRowCtrl.getAssignedToFullNameDisplay()).is.equal("Member 2")
+        done()
+
+    it "show the empty state when the assigned user is no longer an active member", (done) ->
+        RelatedUserstoryRowCtrl.userstory = Immutable.fromJS({
+            assigned_to: null
+            assigned_to_extra_info: null
+            assigned_users: [99]
+        })
+        avatar = {url: "http://taiga.io/unnamed.png"}
+        mocks.tgAvatarService.getAvatar.withArgs(null).returns(avatar)
+        mocks.translate.instant.withArgs("COMMON.ASSIGNED_TO.NOT_ASSIGNED").returns("Unassigned")
+
+        RelatedUserstoryRowCtrl.setAvatarData()
+
+        expect(mocks.tgAvatarService.getAvatar).have.been.calledWith(null)
+        expect(RelatedUserstoryRowCtrl.avatar).is.equal(avatar)
+        expect(RelatedUserstoryRowCtrl.getAssignedToFullNameDisplay()).is.equal("Unassigned")
+        done()
+
+    it "show the empty state when assigned_users is empty", (done) ->
+        RelatedUserstoryRowCtrl.userstory = Immutable.fromJS({
+            assigned_to: null
+            assigned_to_extra_info: null
+            assigned_users: []
+        })
+        avatar = {url: "http://taiga.io/unnamed.png"}
+        mocks.tgAvatarService.getAvatar.withArgs(null).returns(avatar)
+        mocks.translate.instant.withArgs("COMMON.ASSIGNED_TO.NOT_ASSIGNED").returns("Unassigned")
+
+        RelatedUserstoryRowCtrl.setAvatarData()
+
+        expect(mocks.tgAvatarService.getAvatar).have.been.calledWith(null)
+        expect(RelatedUserstoryRowCtrl.avatar).is.equal(avatar)
         expect(RelatedUserstoryRowCtrl.getAssignedToFullNameDisplay()).is.equal("Unassigned")
         done()
 

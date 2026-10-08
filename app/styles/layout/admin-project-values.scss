@@ -59,6 +59,21 @@
             text-transform: none;
         }
     }
+    .project-container-status-button {
+        display: flex;
+        flex-direction: row;
+        width: fit-content;
+        gap: 4px;
+
+        .toggle-table {
+            margin: 0;
+            padding: 0;
+
+            tg-svg {
+                margin: 8px;
+            }
+        }
+    }
 }
 
 .admin-swimlanes-manager {

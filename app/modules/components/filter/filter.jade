@@ -60,6 +60,9 @@
 .filters-step-cat
     .filters-applied(ng-if="vm.includedFilters.length || vm.excludedFilters.length")
         .filters-included(ng-if="vm.includedFilters.length")
+            button.remove-filter.e2e-remove-filter(
+                ng-click="vm.unselectAllFilters(vm.includedFilters)"
+            )
             .filters-title(translate="COMMON.FILTERS.ADVANCED_FILTERS.INCLUDED")
             .filters-wrapper
                 .single-applied-filter.ng-animate-disabled(
@@ -78,7 +81,11 @@
                     ng-click="vm.unselectFilter(it)"
                     )
                         tg-svg(svg-icon="icon-close")
-
+                    //#57 - Botão limpar filtro
+            button.clear-filters(
+                ng-click="vm.clearFilters()"
+                translate= "COMMON.FILTERS.ADVANCED_FILTERS.CLEAR"
+            )
         .filters-excluded(ng-if="vm.excludedFilters.length")
             .filters-title(translate="COMMON.FILTERS.ADVANCED_FILTERS.EXCLUDED")
             .filters-wrapper
@@ -98,7 +105,11 @@
                     ng-click="vm.unselectFilter(it)"
                     )
                         tg-svg(svg-icon="icon-close")
-
+                    //#57 - Botão limpar filtro
+            button.clear-filters(
+                ng-click="vm.clearFiltersExclude()"
+                translate= "COMMON.FILTERS.ADVANCED_FILTERS.CLEAR"
+            )
     .filters-advanced
 
         .filters-advanced-form

@@ -13,6 +13,9 @@ class ResourcesService extends taiga.Service
 urls = {
     # Auth
     "auth": "/auth"
+    "auth-corporate": "/auth/corporate"
+    "auth-external": "/auth/external"
+    "auth-config": "/auth/config"
     "auth-register": "/auth/register"
     "invitations": "/invitations"
     "refresh": "/auth/refresh"
@@ -93,6 +96,7 @@ urls = {
     "move-userstories-to-milestone": "/milestones/%s/move_userstories_to_sprint"
     "move-tasks-to-milestone": "/milestones/%s/move_tasks_to_sprint"
     "move-issues-to-milestone": "/milestones/%s/move_issues_to_sprint"
+    "close-milestone-with-result": "/milestones/%s/close_with_result"
 
     # Epics
     "epics": "/epics"
@@ -128,6 +132,11 @@ urls = {
     "task-filters": "/tasks/filters_data"
     "promote-task-to-us": "/tasks/%s/promote_to_user_story"
 
+    # Card Relations
+    "card-relations": "/card-relations"
+    "card-relations-get-all-by-ref": "/card-relations/get_all_by_ref"
+    "card-relations-active": "/card-relations/list_active"
+
     # Issues
     "issues": "/issues"
     "bulk-create-issues": "/issues/bulk_create"
@@ -154,6 +163,12 @@ urls = {
     "history/issue": "/history/issue"
     "history/task": "/history/task"
     "history/wiki": "/history/wiki"
+
+    # History - CommentReactions
+    "comment-reactions-list": "/comments/%s/reactions/list_reactions/"
+    "comment-reactions": "/comments/%s/reactions/"  # base
+    "comment-add-reaction": "/comments/%s/reactions/add_reaction/"
+    "comment-remove-reaction": "/comments/%s/reactions/remove_reaction/"
 
     # Attachments
     "attachments/epic": "/epics/attachments"
@@ -202,6 +217,9 @@ urls = {
 
     # Feedback
     "feedback": "/feedback"
+    # News (carrossel da home pública)
+    "news": "/news"
+    "news-bulk-update-order": "/news/bulk_update_order"
 
     # locales
     "locales": "/locales"
@@ -262,6 +280,7 @@ module.run([
     "$log",
     "$tgResources",
     "$tgProjectsResourcesProvider",
+    "$tgCardRelationsResourcesProvider",
     "$tgCustomAttributesResourcesProvider",
     "$tgCustomAttributesValuesResourcesProvider",
     "$tgMembershipsResourcesProvider",
@@ -286,5 +305,6 @@ module.run([
     "$tgWebhookLogsResourcesProvider",
     "$tgLocalesResourcesProvider",
     "$tgUsersResourcesProvider",
+    "$tgNewsResourcesProvider",
     initResources
 ])

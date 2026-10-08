@@ -72,6 +72,26 @@ class FilterController
         @.activeCustomFilter = null
         @.onRemoveFilter({filter: filter})
 
+    unselectAllFilters: (filter) ->
+        for filter in @.selectedFilters
+            @.unselectFilter(filter)
+        @.selectedFilters = []
+
+    clearFilters: -> #57 - Botão limpar filtro
+        @.activeCustomFilter = null
+        allFilters = @.filters
+        @.filters = []
+        allFilters.forEach (filter) =>
+            @.onRemoveAllFilters({filter: filter})
+
+     clearFiltersExclude: -> #57 - Botão limpar filtro
+        @.activeCustomFilter = null
+        allFilters = @.filters
+        @.filters = []
+        allFilters.forEach (filter) =>
+            @.onRemoveAllFiltersExclude({filter: filter})
+
+
     selectFilter: (filterCategory, filter) ->
         filter = {
             category: filterCategory

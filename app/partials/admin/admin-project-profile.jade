@@ -54,6 +54,8 @@ div.wrapper(
                     title="{{ 'ADMIN.PROJECT_PROFILE.ACTION_USE_DEFAULT_LOGO' | translate }}"
                 ) {{ 'ADMIN.PROJECT_PROFILE.ACTION_USE_DEFAULT_LOGO' | translate }}
 
+                p.logo-hint {{'ADMIN.PROJECT_PROFILE.LOGO_HINT' | translate}}
+
 
             .project-details-form-data
 
@@ -78,6 +80,37 @@ div.wrapper(
                         ng-model="project.description"
                         data-required="true"
                     )
+                fieldset.dates
+                    div
+                        span.title(translate="ADMIN.PROJECT_PROFILE.START_DATE")
+                        input.start-date(
+                            id="project-start-date"
+                            name="start_date"
+                            ng-model="project.start_date_ui"
+                            type="date"
+                            ng-required="true"
+                        )
+                    div
+                        span.title(translate="ADMIN.PROJECT_PROFILE.EXPECTED_END_DATE")
+                        input.expected-end-date(
+                            id="project-expected-end-date"
+                            name="expected_end_date"
+                            ng-model="project.expected_end_date_ui"
+                            type="date"
+                            min="{{project.start_date_ui | date:'yyyy-MM-dd'}}"
+                            ng-required="true"
+                        )
+                    div
+                        span.title(translate="ADMIN.PROJECT_PROFILE.END_DATE")
+                        input.end-date(
+                            id="project-end-date"
+                            name="end_date"
+                            ng-model="project.end_date_ui"
+                            type="date"
+                            min="{{project.start_date_ui | date:'yyyy-MM-dd'}}"
+                            ng-required="false"
+                        )
+
                 fieldset
                     label(for="tags") {{ 'ADMIN.PROJECT_PROFILE.TAGS' | translate }}
 

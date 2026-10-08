@@ -11,6 +11,7 @@ HomeProjectListDirective = (currentUserService) ->
         scope.vm = {}
 
         taiga.defineImmutableProperty(scope.vm, "projects", () -> currentUserService.projects.get("recents"))
+        taiga.defineImmutableProperty(scope.vm, "isAdmin", () -> currentUserService.getUser()?.get("is_superuser") == true)
 
     directive = {
         templateUrl: "home/projects/home-project-list.html"

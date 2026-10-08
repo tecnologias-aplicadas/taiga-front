@@ -44,6 +44,7 @@ describe "dropdownProjectListDirective", () ->
     _mockTgCurrentUserService = () ->
         mocks.currentUserService = {
             projects: projects
+            getUser: sinon.stub()
         }
         provide.value "tgCurrentUserService", mocks.currentUserService
 
@@ -71,3 +72,24 @@ describe "dropdownProjectListDirective", () ->
         elm = createDirective()
         scope.$apply()
         expect(elm.isolateScope().vm.projects.size).to.be.equal(3)
+
+    it "show create project option to administrators", () ->
+        mocks.currentUserService.getUser.returns(Immutable.fromJS({is_superuser: true}))
+        elm = createDirective()
+        scope.$apply()
+        expect(elm.isolateScope().vm.isAdmin).to.be.true
+        expect(elm.find(".create-options").length).to.be.equal(1)
+
+    it "hide create project option from regular users", () ->
+        mocks.currentUserService.getUser.returns(Immutable.fromJS({is_superuser: false}))
+        elm = createDirective()
+        scope.$apply()
+        expect(elm.isolateScope().vm.isAdmin).to.be.false
+        expect(elm.find(".create-options").length).to.be.equal(0)
+
+    it "hide create project option when there is no user", () ->
+        mocks.currentUserService.getUser.returns(null)
+        elm = createDirective()
+        scope.$apply()
+        expect(elm.isolateScope().vm.isAdmin).to.be.false
+        expect(elm.find(".create-options").length).to.be.equal(0)

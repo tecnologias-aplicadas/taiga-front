@@ -44,7 +44,14 @@ section.notifications-list
                     p(tg-compile-html="notification.get('title_html')")
                     .entry-extra-data
                         a.entry-project(
-                            href=""
-                            ng-click="vm.setAsRead(notification, notification.get('projectUrl'))"
+                            ng-href="{{notification.get('projectUrl')}}"
+                            ng-click="$event.preventDefault(); vm.setAsRead(notification, notification.get('projectUrl'))"
                         ) {{::notification.getIn(['data', 'project', 'name'])}}
-                        .entry-date {{::notification.get('created') | momentFromNow}}
+                .entry-right
+                    button.btn-mark-read(
+                        ng-if="!notification.get('read')"
+                        ng-click="vm.markAsRead(notification)"
+                        title="{{ 'EVENTS.MARK_AS_READ' | translate }}"
+                        translate="EVENTS.MARK_AS_READ"
+                    )
+                    .entry-date {{::notification.get('created') | momentFromNow}}

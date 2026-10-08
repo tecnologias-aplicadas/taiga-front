@@ -7,12 +7,21 @@
 
 doctype html
 
+link(rel="preconnect" href="https://fonts.googleapis.com")
+link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Poppins:wght@700&display=swap")
+
 div.wrapper
-    div.auth
-        div.auth-container
+    div.auth.auth--with-footer.page-with-footer
+        div.auth-container.page-with-footer-content
             div.logo-svg
-                include ../../svg/logo-color.svg
+                include ../../svg/logo_taiga_parquetec.svg
             h1.logo Taiga
             h2.tagline(translate="COMMON.TAG_LINE_2")
 
             include ../includes/modules/login-form
+
+        //- Rodapé institucional de ponta a ponta, fluindo abaixo do formulário
+        tg-institutional-footer(compact="true")
+
+script(src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit" async defer)

@@ -79,6 +79,16 @@ class NotificationsController extends mixOf(taiga.Controller, taiga.PageMixin, t
 
             @rootScope.$broadcast "notifications:dismiss"
 
+    markAsRead: (notification) ->
+        @notificationsService.setNotificationAsRead(notification.get("id")).then =>
+            idx = @.notificationsList.findIndex (n) -> n.get("id") is notification.get("id")
+            if idx > -1
+                @.notificationsList = @.notificationsList.setIn([idx, "read"], true)
+                unread = @.notificationsList.filter (n) -> !n.get("read")
+                read = @.notificationsList.filter (n) -> n.get("read")
+                @.notificationsList = unread.concat(read)
+            @rootScope.$broadcast "notifications:dismiss"
+
     setAllAsRead: () ->
         @notificationsService.setNotificationsAsRead().then =>
             @rootScope.$broadcast "notifications:dismiss-all"

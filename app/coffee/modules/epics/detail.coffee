@@ -21,7 +21,7 @@ module = angular.module("taigaEpics")
 ## Epic Detail Controller
 #############################################################################
 
-class EpicDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
+class EpicDetailController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.DetailEventsMixin)
     @.$inject = [
         "$scope",
         "$rootScope",
@@ -41,10 +41,13 @@ class EpicDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
         "tgErrorHandlingService",
         "tgProjectService",
         "tgAttachmentsFullService",
+        "$tgEvents",
+        "tgEditingTracker"
     ]
 
     constructor: (@scope, @rootscope, @repo, @confirm, @rs, @rs2, @params, @q, @location,
-                  @log, @appMetaService, @analytics, @navUrls, @translate, @modelTransform, @errorHandlingService, @projectService, @attachmentsFullService) ->
+                  @log, @appMetaService, @analytics, @navUrls, @translate, @modelTransform, @errorHandlingService, @projectService, @attachmentsFullService,
+                  @events, @editingTracker) ->
         bindMethods(@)
 
         @scope.epicRef = @params.epicref
@@ -53,6 +56,9 @@ class EpicDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
         @scope.$on "attachments:loaded", () =>
             @scope.attachmentsReady = true
 
+        @.project = @projectService.project.toJS()
+        @.canModify =  @.project.my_permissions.includes("modify_epic")
+
         @.initializeEventHandlers()
 
         promise = @.loadInitialData()
@@ -60,6 +66,8 @@ class EpicDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
         # On Success
         promise.then =>
             @._setMeta()
+            @._inicializeDates()
+            @._formatDate()
             @.initializeOnDeleteGoToUrl()
 
         # On Error
@@ -77,6 +85,28 @@ class EpicDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
         })
         @appMetaService.setAll(title, description)
 
+    _inicializeDates: ->
+        # garante que o objeto Date volte à meia-noite (00:00:00.000)
+        toMidnight = (input) ->
+            d = if input? then new Date(input) else new Date()
+            d.setHours 0, 0, 0, 0
+            d
+
+        {epic} = @scope
+
+        @startDate              = toMidnight epic?.start_date
+        @expectedCompletionDate = toMidnight epic?.expected_completion_date
+        @completionDate         = toMidnight epic?.completion_date  if epic?.completion_date?
+
+
+    _formatDate: () ->
+        @.startDate = if @scope.epic.start_date then new Date(@scope.epic.start_date + "T00:00:00") else null
+        @.expectedCompletionDate = if @scope.epic.expected_completion_date then new Date(@scope.epic.expected_completion_date + "T00:00:00") else null
+        @.completionDate = if @scope.epic.completion_date then new Date(@scope.epic.completion_date + "T00:00:00") else null
+        @completionPercentDone = @scope.epic?.completion_percent_done + "%"
+        @completionPercentProgress = @scope.epic?.completion_percent_progress + "%"
+        @.updateDateConstraints()
+
     loadAttachments: ->
         @attachmentsFullService.loadAttachments('epic', @scope.epicId, @scope.projectId)
 
@@ -89,6 +119,40 @@ class EpicDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
 
         @scope.$on "custom-attributes-values:edit", =>
             @rootscope.$broadcast("object:updated")
+
+        # Ouvintes no scope da tela (o raiz faz $broadcast, que chega aqui): morrem
+        # com a tela em vez de sobreviver à troca de rota e recarregar sem epicref
+        @scope.$on "object:updated", =>
+            @loadEpic()
+
+        # quando uma US for adicionada à epic
+        @scope.$on "epic:userstory:created", (event, epicId) =>
+            if epicId == @scope.epicId
+                @.loadEpic()
+
+    initializeSubscription: ->
+        @.subscribeDetailEvents [
+            {
+                # A própria épica (inclusive ligar/desligar história chega como change dela):
+                # recarrega a lista de histórias, a épica e a atividade; exclusão não reconsulta
+                routingKey: "changes.project.#{@scope.projectId}.epics"
+                matches: (message) => message.type != "delete" and @.eventTargets(message, @scope.epicId)
+                reload: =>
+                    @.loadRelatedUserstories()
+                    @rootscope.$broadcast("object:updated")
+                    @scope.$broadcast("custom-attributes-values:reload")
+            },
+            {
+                # Histórias da épica: só a lista; o percentual da épica chega pelo evento dela
+                routingKey: "changes.project.#{@scope.projectId}.userstories"
+                matches: (message) => @.eventTargets(message, @._relatedUserstoryIds())
+                reload: => @.loadRelatedUserstories()
+            }
+        ]
+
+    _relatedUserstoryIds: ->
+        return [] if not @scope.userstories
+        return @scope.userstories.map((us) -> us.get("id")).toArray()
 
     initializeOnDeleteGoToUrl: ->
        ctx = {project: @scope.project.slug}
@@ -112,6 +176,7 @@ class EpicDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
             @scope.epicId = epic.id
             @scope.commentModel = epic
 
+            @_formatDate()
             @.loadAttachments()
 
             @modelTransform.setObject(@scope, 'epic')
@@ -130,14 +195,19 @@ class EpicDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
                 }
                 @scope.nextUrl = @navUrls.resolve("project-epics-detail", ctx)
 
+    loadRelatedUserstories: ->
+        return @rs2.userstories.listInEpic(@scope.epicId).then (data) =>
+            @scope.userstories = data
+            return data
+
     loadUserstories: ->
-          return @rs2.userstories.listInEpic(@scope.epicId).then (data) =>
-              @scope.userstories = data
+        return @.loadRelatedUserstories().then => @.loadEpic()
 
     loadInitialData: ->
         project = @.loadProject()
 
         @.fillUsersAndRoles(project.members, project.roles)
+        @.initializeSubscription()
         @.loadEpic().then(=> @.loadUserstories())
 
     ###
@@ -161,6 +231,111 @@ class EpicDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
             @confirm.notify("error")
 
         return @rs.epics.downvote(@scope.epicId).then(onSuccess, onError)
+
+    updateEpicDate: (epic, dateTypeIndex, date) ->
+        return if date == undefined
+
+        dateTypes = [
+            "start_date",
+            "expected_completion_date",
+            "completion_date",
+        ]
+
+        data = {
+            "#{dateTypes[dateTypeIndex]}": date,
+            version: epic.get('version')
+        }
+
+        return @rs2.epics.patch(epic.get("id"), data)
+
+    _isInvalidDate: (date) ->
+        return !date or isNaN(date.getTime())
+
+    _resetStartDate: ->
+        @.startDate = if @scope.epic?.start_date then new Date(@scope.epic.start_date + "T00:00:00") else null
+
+    _resetExpectedCompletionDate: ->
+        @.expectedCompletionDate = if @scope.epic?.expected_completion_date then new Date(@scope.epic.expected_completion_date + "T00:00:00") else null
+
+    _isStartDateValid: ->
+        return false if @._isInvalidDate(@.startDate)
+        return false if @.startDateMin and @.startDate < @.startDateMin
+        return false if @.calculatedStartDateMax and @.startDate > @.calculatedStartDateMax
+        return true
+
+    _isExpectedCompletionDateValid: ->
+        return false if @._isInvalidDate(@.expectedCompletionDate)
+        return false if @.calculatedMinAllowedDate and @.expectedCompletionDate < @.calculatedMinAllowedDate
+        return true
+
+    _notifyError: (response) ->
+        data = response?.data or {}
+        rawCode = data.code
+        rawCode = rawCode[0] if Array.isArray(rawCode)
+        if rawCode
+            @confirm.notify('error', @translate.instant("ERRORS.#{rawCode.toUpperCase()}"))
+        else
+            @confirm.notify('error')
+
+    updateStartDate: ->
+        return unless @._isStartDateValid()
+
+        @.startDateError = ''
+        @.startDateBorderAlert = ''
+
+        @updateEpicDate(@scope.immutableEpic, 0, @.startDate.toISOString().split('T')[0])
+            .then (updated) =>
+                @.expectedCompletionDateError = ''
+                @.expectedCompletionDateBorderAlert = ''
+                @.expectedCompletioDateBorderAlert = ''
+                @confirm.notify('success')
+                @replaceEpic?(updated)
+                @rootscope.$broadcast("object:updated")
+            .catch (response) =>
+                @._resetStartDate()
+                @updateDateConstraints()
+                @._notifyError(response)
+
+    blurStartDate: ->
+        if @._isStartDateValid()
+            saved = if @scope.epic?.start_date then new Date(@scope.epic.start_date + "T00:00:00") else null
+            @.updateStartDate() if !saved or @.startDate?.getTime() isnt saved.getTime()
+        else
+            @._resetStartDate()
+            @.startDateError = ''
+            @.startDateBorderAlert = ''
+            @confirm.notify('error', @translate.instant('ERRORS.START_DATE_EXCEEDS_END_DATE'))
+
+    updateExpectedCompletionDate: ->
+        return unless @._isExpectedCompletionDateValid()
+
+        @.expectedCompletionDateError = ''
+        @.expectedCompletionDateBorderAlert = ''
+        @.expectedCompletioDateBorderAlert = ''
+
+        @updateEpicDate(@scope.immutableEpic, 1, @.expectedCompletionDate.toISOString().split('T')[0])
+            .then (updated) =>
+                @.startDateError = ''
+                @.startDateBorderAlert = ''
+                @confirm.notify('success')
+                @replaceEpic?(updated)
+                @rootscope.$broadcast("object:updated")
+            .catch (response) =>
+                @._resetExpectedCompletionDate()
+                @updateDateConstraints()
+                @._notifyError(response)
+
+    blurExpectedCompletionDate: ->
+        if @._isExpectedCompletionDateValid()
+            saved = if @scope.epic?.expected_completion_date then new Date(@scope.epic.expected_completion_date + "T00:00:00") else null
+            @.updateExpectedCompletionDate() if !saved or @.expectedCompletionDate?.getTime() isnt saved.getTime()
+        else
+            @._resetExpectedCompletionDate()
+            @.expectedCompletionDateError = ''
+            @.expectedCompletionDateBorderAlert = ''
+            @.expectedCompletioDateBorderAlert = ''
+            @confirm.notify('error', @translate.instant('ERRORS.END_DATE_BEFORE_START_DATE'))
+
 
     ###
     # Note: This methods (onWatch() and onUnwatch()) are related to tg-watch-button.
@@ -197,6 +372,22 @@ class EpicDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
             return epic
 
         return transform.then(onSelectColorSuccess, onSelectColorError)
+
+    updateDateConstraints: ->
+        limitDate = null
+
+        if @.completionDate and @.expectedCompletionDate
+            limitDate = if @.completionDate < @.expectedCompletionDate then @.completionDate else @.expectedCompletionDate
+        else if @.completionDate
+            limitDate = @.completionDate
+        else if @.expectedCompletionDate
+            limitDate = @.expectedCompletionDate
+
+        # startDate pode ser igual à data limite (mesmo dia permitido)
+        @.calculatedStartDateMax = if limitDate then new Date(limitDate) else null
+
+        # expectedCompletionDate pode ser igual à startDate (mesmo dia permitido)
+        @.calculatedMinAllowedDate = if @.startDate then new Date(@.startDate) else null
 
 module.controller("EpicDetailController", EpicDetailController)
 
@@ -283,15 +474,32 @@ EpicStatusButtonDirective = ($rootScope, $repo, $confirm, $loading, $modelTransf
 
             transform = $modelTransform.save (epic) ->
                 epic.status = status
+                return epic
+
+                s  = moment(epic.start_date).startOf('day')
+                c  = moment($scope.ctrl.completionDate).startOf('day')
+
+                if !s.isValid() or s.isSameOrAfter(c)
+                    $scope.ctrl.startDateError       = 'Confira se a data está correta'
+                    $scope.ctrl.startDateBorderAlert = "border:1px solid #e74c3c"
+                else
+                    $scope.ctrl.startDateError       = ''
+                    $scope.ctrl.startDateBorderAlert = ""
 
                 return epic
 
             onSuccess = ->
                 $rootScope.$broadcast("object:updated")
+                $scope.$applyAsync()
                 currentLoading.finish()
 
-            onError = ->
-                $confirm.notify("error")
+            onError = (response) ->
+                rawCode = response?.status?[0] or response?.code or null
+                rawCode = rawCode[0] if Array.isArray(rawCode)
+                if rawCode
+                    $confirm.notify("error", $translate.instant("ERRORS.#{rawCode.toUpperCase()}"))
+                else
+                    $confirm.notify("error")
                 currentLoading.finish()
 
             transform.then(onSuccess, onError)

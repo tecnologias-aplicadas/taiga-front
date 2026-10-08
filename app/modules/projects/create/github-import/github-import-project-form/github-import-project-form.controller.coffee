@@ -18,12 +18,9 @@ class GithubImportProjectFormController
         @.projectForm = @.project.toJS()
 
         @.platformName = "Github"
-        @.projectForm.is_private = false
+        @.projectForm.is_private = true
         @.projectForm.keepExternalReference = false
         @.projectForm.project_type = "kanban"
-
-        if !@.canCreatePublicProjects.valid && @.canCreatePrivateProjects.valid
-            @.projectForm.is_private = true
 
     checkUsersLimit: () ->
         @.limitMembersPrivateProject = @currentUserService.canAddMembersPrivateProject(@.members.size)

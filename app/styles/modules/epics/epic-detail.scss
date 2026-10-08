@@ -1,8 +1,10 @@
 .epic-header-container {
     display: flex;
+
     .color-selector {
         margin-right: .5rem;
     }
+
     tg-detail-header {
         flex: 1;
         width: 100%;
@@ -16,5 +18,74 @@
 
     .epic-selector-text {
         margin-right: .5rem;
+    }
+}
+
+.progress {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.progress-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.95rem;
+}
+
+.progress-row .label {
+    flex: 1;
+    color: #555;
+}
+
+.progress-row .value {
+    font-weight: normal;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.dot.done {
+    background: #6994ea;
+}
+
+.dot.progress {
+    background: #e48a46;
+}
+
+.dates {
+    >div {
+        display: flex;
+        flex-direction: column;
+
+        >div {
+            width: 100%;
+
+            h5 {
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        input {
+            margin-bottom: 0.5rem;
+        }
+    }
+
+    .completion-date {
+        >input {
+            background-color: #e4e4e4;
+        }
+    }
+
+    .date-error {
+        margin-top: -5px !important; /* stylelint-disable-line declaration-no-important */
+        margin-bottom: 5px !important; /* stylelint-disable-line declaration-no-important */
+        font-size: 9px !important; /* stylelint-disable-line declaration-no-important */
+        color: #f00 !important; /* stylelint-disable-line declaration-no-important */
     }
 }

@@ -10,6 +10,7 @@ describe "EpicRow", ->
     epicRowCtrl =  null
     provide = null
     controller = null
+    scope = null
     mocks = {}
 
     _mockTgConfirm = () ->
@@ -23,6 +24,7 @@ describe "EpicRow", ->
             project: {
                 toJS: sinon.stub()
             }
+            hasPermission: sinon.stub()
         }
         provide.value "tgProjectService", mocks.tgProjectService
 
@@ -34,12 +36,19 @@ describe "EpicRow", ->
         }
         provide.value "tgEpicsService", mocks.tgEpicsService
 
+    _mockTranslate = () ->
+        mocks.translate = {
+            instant: sinon.stub().returnsArg(0)
+        }
+        provide.value "$translate", mocks.translate
+
     _mocks = () ->
         module ($provide) ->
             provide = $provide
             _mockTgConfirm()
             _mockTgProjectService()
             _mockTgEpicsService()
+            _mockTranslate()
             return null
 
     beforeEach ->
@@ -47,50 +56,70 @@ describe "EpicRow", ->
 
         _mocks()
 
-        inject ($controller) ->
+        inject ($controller, $rootScope) ->
             controller = $controller
+            scope = $rootScope.$new()
 
-    it "calculate progress bar in open US", () ->
-        ctrl = controller "EpicRowCtrl", null, {
+    it "calculate progress bar with done and progress percent", () ->
+        ctrl = controller "EpicRowCtrl", {$scope: scope}, {
             epic: Immutable.fromJS({
-                status_extra_info: {
-                    is_closed: false
-                }
-                user_stories_counts: {
-                    total: 10,
-                    progress: 5
-                }
+                completion_percent_done: 50
+                completion_percent_progress: 25
             })
         }
 
-        expect(ctrl.percentage).to.be.equal("50%")
+        expect(ctrl.segments.length).to.be.equal(2)
+        expect(ctrl.segments[0].type).to.be.equal("done")
+        expect(ctrl.segments[0].width).to.be.equal("50%")
+        expect(ctrl.segments[0].percentage).to.be.equal("50.00")
+        expect(ctrl.segments[1].type).to.be.equal("progress")
+        expect(ctrl.segments[1].width).to.be.equal("25%")
+        expect(ctrl.segments[1].left).to.be.equal("50%")
 
-    it "calculate progress bar in zero US", () ->
-        ctrl = controller "EpicRowCtrl", null, {
+    it "calculate progress bar in zero percent", () ->
+        ctrl = controller "EpicRowCtrl", {$scope: scope}, {
             epic: Immutable.fromJS({
-                status_extra_info: {
-                    is_closed: false
-                }
-                user_stories_counts: {
-                    total: 10,
-                    progress: 0
-                }
+                completion_percent_done: 0
+                completion_percent_progress: 0
             })
         }
-        expect(ctrl.percentage).to.be.equal("0%")
 
-    it "calculate progress bar in zero US", () ->
-        ctrl = controller "EpicRowCtrl", null, {
+        expect(ctrl.segments.length).to.be.equal(1)
+        expect(ctrl.segments[0].type).to.be.equal("empty")
+        expect(ctrl.segments[0].width).to.be.equal("100%")
+        expect(ctrl.segments[0].percentage).to.be.equal("0.00")
+
+    it "calculate progress bar in completed epic", () ->
+        ctrl = controller "EpicRowCtrl", {$scope: scope}, {
             epic: Immutable.fromJS({
-                status_extra_info: {
-                    is_closed: true
-                }
+                completion_percent_done: 100
             })
         }
-        expect(ctrl.percentage).to.be.equal("100%")
+
+        expect(ctrl.segments.length).to.be.equal(1)
+        expect(ctrl.segments[0].type).to.be.equal("done")
+        expect(ctrl.segments[0].width).to.be.equal("100%")
+        expect(ctrl.segments[0].percentage).to.be.equal("100.00")
+
+    it "recalculate progress bar when the epic percent changes", () ->
+        ctrl = controller "EpicRowCtrl", {$scope: scope}, {
+            epic: Immutable.fromJS({
+                completion_percent_done: 0
+                completion_percent_progress: 0
+            })
+        }
+
+        expect(ctrl.segments[0].type).to.be.equal("empty")
+
+        ctrl.epic = ctrl.epic.set("completion_percent_done", 30)
+        scope.$digest()
+
+        expect(ctrl.segments.length).to.be.equal(1)
+        expect(ctrl.segments[0].type).to.be.equal("done")
+        expect(ctrl.segments[0].width).to.be.equal("30%")
 
     it "Update Epic Status Success", (done) ->
-        ctrl = controller "EpicRowCtrl", null, {
+        ctrl = controller "EpicRowCtrl", {$scope: scope}, {
             epic: Immutable.fromJS({
                 id: 1
                 version: 1
@@ -113,7 +142,7 @@ describe "EpicRow", ->
             done()
 
     it "Update Epic Status Error", (done) ->
-        ctrl = controller "EpicRowCtrl", null, {
+        ctrl = controller "EpicRowCtrl", {$scope: scope}, {
             epic: Immutable.fromJS({
                 id: 1
                 version: 1
@@ -134,7 +163,7 @@ describe "EpicRow", ->
             done()
 
     it "display User Stories", (done) ->
-        ctrl = controller "EpicRowCtrl", null, {
+        ctrl = controller "EpicRowCtrl", {$scope: scope}, {
             epic: Immutable.fromJS({
                 id: 1
             })
@@ -154,8 +183,42 @@ describe "EpicRow", ->
             expect(ctrl.epicStories).is.equal(data)
             done()
 
+    it "recarga da lista por evento do servidor atualiza as histórias expandidas", (done) ->
+        ctrl = controller "EpicRowCtrl", {$scope: scope}, {
+            epic: Immutable.fromJS({
+                id: 1
+            })
+        }
+        ctrl.displayUserStories = true
+        data = Immutable.List([Immutable.Map({id: 9})])
+        mocks.tgEpicsService.listRelatedUserStories
+            .withArgs(ctrl.epic)
+            .promise()
+            .resolve(data)
+
+        ctrl.reloadUserStoryList().then () ->
+            expect(ctrl.epicStories).is.equal(data)
+            expect(ctrl.displayUserStories).to.be.true
+            done()
+
+    it "aviso de lista recarregada só reconsulta histórias da linha expandida", () ->
+        ctrl = controller "EpicRowCtrl", {$scope: scope}, {
+            epic: Immutable.fromJS({
+                id: 1
+            })
+        }
+        ctrl.reloadUserStoryList = sinon.stub()
+
+        ctrl.displayUserStories = false
+        scope.$broadcast("epics:refreshed")
+        expect(ctrl.reloadUserStoryList).not.to.have.been.called
+
+        ctrl.displayUserStories = true
+        scope.$broadcast("epics:refreshed")
+        expect(ctrl.reloadUserStoryList).to.have.been.calledOnce
+
     it "display User Stories error", (done) ->
-        ctrl = controller "EpicRowCtrl", null, {
+        ctrl = controller "EpicRowCtrl", {$scope: scope}, {
             epic: Immutable.fromJS({
                 id: 1
             })
@@ -174,7 +237,7 @@ describe "EpicRow", ->
             done()
 
     it "display User Stories error", ->
-        ctrl = controller "EpicRowCtrl", null, {
+        ctrl = controller "EpicRowCtrl", {$scope: scope}, {
             epic: Immutable.fromJS({
                 id: 1
             })

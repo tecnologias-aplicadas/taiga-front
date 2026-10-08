@@ -1,0 +1,106 @@
+
+//- This source code is licensed under the terms of the
+//- GNU Affero General Public License found in the LICENSE file in
+//- the root directory of this source tree.
+//-
+//- Copyright (c) 2021-present Kaleidos INC
+
+div(ng-if="vm.isAuthenticated()")
+    button.thai-chat-fab(
+        ng-click="vm.toggleChat()"
+        ng-class="{'--open': vm.isOpen}"
+        title="T·IA Chat"
+        aria-label="T·IA Chat"
+    )
+        span.thai-chat-fab-icon-wrap
+            img.thai-chat-fab-icon(
+                src="#{v}/images/tia-icon.png"
+                alt="T·IA Chat"
+                aria-hidden="true"
+            )
+
+    div(ng-if="vm.isOpen")
+        .thai-chat-overlay(
+            ng-click="vm.toggleChat()"
+            ng-class="{'--closing': vm.isClosing}"
+        )
+        aside.thai-chat-panel(
+            ng-class="{'--closing': vm.isClosing}"
+            ng-style="{'width': vm.panelWidth + 'px'}"
+        )
+            .thai-chat-resize-handle(ng-mousedown="vm.startResize($event)")
+
+            header.thai-chat-header
+                .thai-chat-header-title
+                    .thai-chat-header-avatar
+                        img.thai-chat-header-icon(
+                            src="#{v}/images/tia-icon.png"
+                            alt="T·IA"
+                            aria-hidden="true"
+                        )
+                        span.thai-chat-online-dot
+                    span {{ 'THAI_CHAT.TITLE' | translate }}
+
+                .thai-chat-header-actions
+                    button.thai-chat-clear(ng-click="vm.clearChat()" title="{{ 'THAI_CHAT.CLEAR' | translate }}")
+                        | {{ 'THAI_CHAT.CLEAR' | translate }}
+
+                    button.thai-chat-reset-size(
+                        ng-click="vm.resetSize()"
+                        ng-if="vm.panelWidth !== vm.defaultWidth"
+                        title="Tamanho original"
+                    )
+                        svg(viewBox="0 0 20 20" width="15" height="15" xmlns="http://www.w3.org/2000/svg" aria-hidden="true")
+                            path(d="M3 8V3h5M17 8V3h-5M3 12v5h5M17 12v5h-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+
+                    button.thai-chat-close(ng-click="vm.toggleChat()" title="{{ 'THAI_CHAT.CLOSE' | translate }}")
+                        svg(viewBox="0 0 20 20" width="15" height="15" xmlns="http://www.w3.org/2000/svg" aria-hidden="true")
+                            path(d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round")
+
+            .thai-chat-messages
+
+                .thai-chat-empty(ng-if="!vm.messages.length && !vm.loading")
+                    svg(viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true")
+                        path(d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round")
+                    span {{ 'THAI_CHAT.WELCOME' | translate }}
+                    span {{ 'THAI_CHAT.ASK_TODAY' | translate }}
+                    .thai-chat-suggestions(ng-if="vm.suggestions.length")
+                        button.thai-chat-suggestion(
+                            ng-repeat="q in vm.suggestions track by $index"
+                            ng-click="vm.sendSuggestion(q)"
+                        ) {{ q }}
+
+                .thai-chat-message(
+                    ng-repeat="msg in vm.messages track by $index"
+                    ng-class="'--' + msg.role"
+                )
+                    .thai-chat-bubble(
+                        ng-if="msg.role === 'user'"
+                    ) {{ msg.content }}
+                    .thai-chat-bubble.--md(
+                        ng-if="msg.role === 'assistant' && msg.content"
+                        ng-bind-html="msg.html"
+                    )
+
+
+            .thai-chat-typing(ng-if="vm.showTyping")
+                span
+                span
+                span
+
+            footer.thai-chat-footer
+                textarea(
+                    ng-model="vm.input"
+                    ng-keydown="vm.onKeydown($event)"
+                    ng-keyup="vm.autoResize($event)"
+                    placeholder="{{ 'THAI_CHAT.PLACEHOLDER' | translate }}"
+                    ng-disabled="vm.loading"
+                    rows="1"
+                )
+                button.thai-chat-send(
+                    ng-click="vm.send()"
+                    ng-disabled="!vm.input.trim() || vm.loading"
+                    title="{{ 'THAI_CHAT.SEND' | translate }}"
+                )
+                    svg(viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true")
+                        path(d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")

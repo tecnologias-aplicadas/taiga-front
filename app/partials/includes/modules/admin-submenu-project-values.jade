@@ -43,3 +43,7 @@ section.admin-submenu
             li#adminmenu-values-kanban-power-ups(ng-show="project.is_kanban_activated")
                 a(href="", tg-nav="project-admin-project-values-kanban-power-ups:project=project.slug")
                     span.title(translate="ADMIN.SUBMENU_PROJECT_VALUES.KANBAN_OPTIONS")
+
+            li#adminmenu-values-epic-schedules(ng-show="project.is_epics_activated")
+                a(href="", tg-nav="project-admin-project-values-epic-schedules:project=project.slug")
+                    span.title(translate="ADMIN.SUBMENU_PROJECT_VALUES.EPIC_SCHEDULES")

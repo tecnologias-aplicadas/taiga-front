@@ -33,20 +33,37 @@
             title="{{::vm.story.getIn(['project_extra_info', 'name'])}}"
         )
     .sprint(ng-if="vm.options.sprint") {{::vm.story.get('milestone_name')}}
-    .assigned(ng-if="vm.options.assigned && vm.story.get('assigned_to')")
-        img(
-            tg-avatar="vm.story.get('assigned_to_extra_info')"
-            alt="{{::vm.story.getIn(['assigned_to_extra_info', 'full_name_display'])}}"
-        )
-    .assigned(ng-if="vm.options.assigned && !vm.story.get('assigned_to')")
-        img(
+    .assigned(ng-if="vm.options.assigned")
+        .avatar-stack(ng-if="vm.assignedUsersDisplay.length > 0")
+            img.stacked-avatar(
+                ng-repeat="user in vm.assignedUsersDisplay track by $index"
+                ng-src="{{ user.url }}"
+                ng-style="{'background-color': user.bg || ''}"
+                alt="{{ user.fullName }}"
+                title="{{ user.fullName }}"
+            )
+            span.avatar-overflow(
+                ng-if="vm.extraAssigneesCount > 0"
+                title="+{{vm.extraAssigneesCount}} {{ 'EPICS.DASHBOARD.MORE_ASSIGNED' | translate }}"
+            ) +{{vm.extraAssigneesCount}}
+        img.unassigned-avatar(
+            ng-if="vm.assignedUsersDisplay.length === 0"
             src="#{v}/images/unnamed.png"
-            alt="{{EPICS.DASHBOARD.UNASSIGNED | translate}}"
+            alt="{{'EPICS.DASHBOARD.UNASSIGNED' | translate}}"
         )
     .status-holder(ng-if="vm.options.status") {{vm.story.getIn(['status_extra_info', 'name'])}}
     .progress(ng-if="vm.options.progress")
         .progress-bar
-        .progress-status(
-            ng-if="::vm.percentage"
-            ng-style="{'width':vm.percentage}"
+
+        .progress-segment(
+            ng-repeat="segment in vm.segments track by $index"
+            ng-style="{'width': segment.width, 'left': segment.left, 'background-color': segment.color, 'min-width': 'fit-content', 'padding': '3px'}"
+            title="{{segment.name}}: {{segment.percentage}}%"
         )
+            .progress-segment-text
+                span {{segment.percentage}}%
+                
+        .progress-tasks-info(
+            ng-if="vm.tasksInfo"
+            title="{{vm.tasksInfo}}"
+        ) {{ vm.tasksInfo }}

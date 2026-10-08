@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos INC
 ###
 
-Resource = (urlsService, http) ->
+Resource = (urlsService, http, $rootScope) ->
     service = {}
 
     service.listInAllProjects = (params) ->
@@ -62,7 +62,9 @@ Resource = (urlsService, http) ->
             epic: epicId
         }
 
-        return http.post(url, params)
+        return http.post(url, params).then (result) ->
+            $rootScope.$broadcast("epic:userstory:created", epicId)
+            return result
 
     service.reorderRelatedUserstory = (epicId, userstoryId, data, setOrders) ->
         url = urlsService.resolve("epic-related-userstories", epicId) + "/#{userstoryId}"
@@ -79,17 +81,27 @@ Resource = (urlsService, http) ->
             project_id: projectId
         }
 
-        return http.post(url, params)
+        return http.post(url, params).then (result) ->
+            $rootScope.$broadcast("epic:userstory:created", epicId)
+            return result
+
+    service.historyPd = (projectId) ->
+        url = urlsService.resolve("epics") + "/history_pd"
+
+        return http.get(url, {project: projectId})
+            .then (result) -> result.data
 
     service.deleteRelatedUserstory = (epicId, userstoryId) ->
         url = urlsService.resolve("epic-related-userstories", epicId) + "/#{userstoryId}"
 
-        return http.delete(url)
+        return http.delete(url).then (result) ->
+            $rootScope.$broadcast("object:updated")
+            return result
 
     return () ->
         return {"epics": service}
 
-Resource.$inject = ["$tgUrls", "$tgHttp"]
+Resource.$inject = ["$tgUrls", "$tgHttp", "$rootScope"]
 
 module = angular.module("taigaResources2")
 module.factory("tgEpicsResource", Resource)

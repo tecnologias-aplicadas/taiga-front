@@ -164,7 +164,13 @@ class UserTimelineService extends taiga.Service
                     newItem = newItem.deleteIn(['data', 'values_diff'])
                     newdata = newdata.push(newItem)
             else
-                newItem = item.deleteIn(['data', 'values_diff'])
+                # se values_diff era {} atribuindo um diff mínimo
+                defaultDiff = Immutable.Map({
+                    key:   'status',
+                    value: Immutable.List(['Closed', 'Needs Info'])
+                })
+
+                newItem = item.deleteIn(['data', 'values_diff']).setIn(['data', 'value_diff'], defaultDiff)
                 newdata = newdata.push(newItem)
 
         return response.set('data', newdata)

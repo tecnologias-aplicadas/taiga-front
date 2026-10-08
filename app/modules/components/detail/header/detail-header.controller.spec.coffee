@@ -41,6 +41,14 @@ describe "DetailHeaderComponent", ->
 
         provide.value "$window", mocks.window
 
+    _mockEditingTracker = () ->
+        mocks.editingTracker = {
+            begin: sinon.stub()
+            end: sinon.stub()
+        }
+
+        provide.value "tgEditingTracker", mocks.editingTracker
+
     _mocks = () ->
         module ($provide) ->
             provide = $provide
@@ -48,6 +56,7 @@ describe "DetailHeaderComponent", ->
             _mockTgConfirm()
             _mockTgQueueModelTransformation()
             _mockWindow()
+            _mockEditingTracker()
 
             return null
 
@@ -88,6 +97,32 @@ describe "DetailHeaderComponent", ->
         })
         DetailHeaderCtrl.editSubject(true)
         expect(DetailHeaderCtrl.editMode).to.be.true
+
+    it "entrar na edição do assunto marca o campo como em edição", () ->
+        mocks.window.getSelection.returns({type: 'potato'})
+
+        DetailHeaderCtrl.editSubject(true)
+
+        expect(mocks.editingTracker.begin).to.have.been.calledOnce
+        expect(mocks.editingTracker.end).not.to.have.been.called
+
+    it "cancelar a edição do assunto libera o campo", () ->
+        mocks.window.getSelection.returns({type: 'potato'})
+        DetailHeaderCtrl.editSubject(true)
+
+        DetailHeaderCtrl.cancelEdit()
+
+        expect(mocks.editingTracker.end).to.have.been.calledOnce
+        expect(mocks.editingTracker.end.firstCall.args[0]).to.be.equal(mocks.editingTracker.begin.firstCall.args[0])
+
+    it "salvar o assunto libera o campo", () ->
+        mocks.window.getSelection.returns({type: 'potato'})
+        DetailHeaderCtrl.modelTransform = {save: sinon.stub().returns({then: sinon.stub()})}
+        DetailHeaderCtrl.editSubject(true)
+
+        DetailHeaderCtrl.saveSubject()
+
+        expect(mocks.editingTracker.end).to.have.been.calledOnce
 
     it "do not edit subject", () ->
         mocks.window.getSelection.returns({

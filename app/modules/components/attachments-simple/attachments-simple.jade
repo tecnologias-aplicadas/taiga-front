@@ -31,7 +31,7 @@ section.attachments.attachment-simple(tg-attachments-drop="vm.addAttachments(fil
         .single-attachment(tg-repeat="attachment in vm.attachments track by $index")
             .attachment-name
                 tg-svg(svg-icon="icon-attachment")
-                span {{attachment.get('name')}}
+                span(title="{{attachment.get('name')}}") {{attachment.get('name')}}
             .attachment-size
                 span {{attachment.get('size') | sizeFormat}}
 

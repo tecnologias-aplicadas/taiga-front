@@ -192,7 +192,9 @@ paths.libs = [
     paths.modules + "dragula/dist/dragula.js",
     paths.modules + "awesomplete/awesomplete.js",
     paths.modules + "autolinker/dist/Autolinker.js",
+    paths.modules + "chart.js/dist/chart.umd.js",
     paths.modules + "dom-autoscroller/dist/dom-autoscroller.js",
+    paths.modules + "marked/marked.min.js",
     paths.app + "js/angular-sanitize.js",
     paths.app + "js/dragula-drag-multiple.js",
     paths.app + "js/boards.js",
@@ -455,7 +457,7 @@ gulp.task("emoji", function(cb) {
 });
 
 gulp.task("conf", function() {
-    return gulp.src(["conf/conf.example.json"])
+    return gulp.src(["conf/conf.json"])
         .pipe(gulp.dest(paths.dist));
 });
 

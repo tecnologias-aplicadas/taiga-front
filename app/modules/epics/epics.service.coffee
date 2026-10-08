@@ -14,10 +14,11 @@ class EpicsService
         'tgAttachmentsService'
         'tgResources',
         'tgXhrErrorService',
-        '$q'
+        '$q',
+        '$rootScope'
     ]
 
-    constructor: (@projectService, @attachmentsService, @resources, @xhrError, @q) ->
+    constructor: (@projectService, @attachmentsService, @resources, @xhrError, @q, @rootScope) ->
         @.clear()
 
         taiga.defineImmutableProperty @, 'epics', () => return @._epics
@@ -50,6 +51,11 @@ class EpicsService
         @._page++
 
         @.fetchEpics()
+
+    # Recarga silenciosa (eventos do servidor): volta à primeira página e troca a lista inteira
+    refetchEpics: () ->
+        @._page = 1
+        return @.fetchEpics(true)
 
     listRelatedUserStories: (epic) ->
         return @resources.userstories.listInEpic(epic.get('id'))
@@ -139,12 +145,31 @@ class EpicsService
 
             return it
 
+        @rootScope.$broadcast('epic:updated', epic)
+
     updateEpicStatus: (epic, statusId) ->
         data = {
             status: statusId,
             version: epic.get('version')
         }
 
+        return @resources.epics.patch(epic.get('id'), data)
+            .then(@.replaceEpic.bind(this))
+    
+    # realiza update na epica
+    # TODO: confirmar se será necessário alterar o formato da data
+    updateEpicDate: (epic, dateTypeIndex, date) ->
+        dateTypes = [
+            "start_date",
+            "expected_completion_date",
+            "completion_date",
+        ]
+
+        data = {
+            "#{dateTypes[dateTypeIndex]}": date,
+            version: epic.get('version')
+        }
+        
         return @resources.epics.patch(epic.get('id'), data)
             .then(@.replaceEpic.bind(this))
 
@@ -156,5 +181,18 @@ class EpicsService
 
         return @resources.epics.patch(epic.get('id'), data)
             .then(@.replaceEpic.bind(this))
+
+    updateEpicSchedulable: (epic, value) ->
+        data = {
+            schedulable: value,
+            version: epic.get('version')
+        }
+
+        return @resources.epics.patch(epic.get('id'), data)
+            .then(@.replaceEpic.bind(this))
+
+    fetchPdHistory: () ->
+        projectId = @projectService.project.get('id')
+        return @resources.epics.historyPd(projectId)
 
 angular.module('taigaEpics').service('tgEpicsService', EpicsService)

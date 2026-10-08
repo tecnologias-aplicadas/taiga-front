@@ -1,5 +1,19 @@
 .move-to-sprint-button {
     color: $white;
+    display: inline-flex;
+    height: 48px;
+    width: 48px;
+    tg-svg {
+        display: flex;
+        height: 100%;
+        width: 100%;
+        svg {
+            height: 100%;
+            max-height: unset;
+            max-width: unset;
+            width: 100%;
+        }
+    }
     &:not(.disabled) {
         cursor: pointer;
         &:hover {

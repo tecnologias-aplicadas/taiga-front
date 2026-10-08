@@ -119,6 +119,11 @@ div.wrapper(
                 project="project"
                 required-edition-perm="modify_us"
             )
+            tg-dependencies-list(
+                item="item"
+                project="project"
+                shared="shared"
+            )
 
             tg-attachments-full(
                 obj-id="us.id"
@@ -150,6 +155,17 @@ div.wrapper(
                 ng-model="us"
             )
 
+        section.ticket-section.progress
+            div.progress-row
+                span.dot.done
+                span.label(translate="US.DETAILS.DONE")
+                span.value {{ctrl.completionPercentDone}}
+
+            div.progress-row
+                span.dot.progress
+                span.label(translate="US.DETAILS.PROGRESS")
+                span.value {{ctrl.completionPercentProgress}}
+
         section.ticket-section.ticket-estimation(
             tg-us-estimation
             ng-model="us"
@@ -169,6 +185,13 @@ div.wrapper(
             on-unwatch="ctrl.onUnwatch"
             required-perm="modify_us"
         )
+        
+        section.ticket-section.ticket-dependencies
+            tg-ticket-dependencies(
+                item="item"
+                project="project"
+                shared="shared"
+            )
 
         section.ticket-section.ticket-to-tribe(ng-if="tribeEnabled && !us.tribe_gig")
             tg-tribe-button(
@@ -201,6 +224,7 @@ div.wrapper(
             tg-block-button(
                 tg-check-permission="modify_us"
                 ng-model="us"
+                style="pointer-events: none; opacity: 0.4;"
             )
             tg-delete-button(
                 tg-check-permission="delete_us"

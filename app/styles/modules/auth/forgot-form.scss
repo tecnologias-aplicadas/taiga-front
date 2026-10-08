@@ -1,7 +1,61 @@
 // Forgot form
 .forgot-form-container {
     text-align: center;
+
     .forgot-text {
-        color: $color-white;
+        color: $color-black900;
+    }
+
+    .corporate-info-box {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        background: #e8f4fd;
+        border: 1px solid #90caf9;
+        border-radius: 6px;
+        padding: 10px 14px;
+        margin-bottom: 16px;
+        text-align: left;
+        color: #1a4971;
+        font-size: 1.2rem;
+        line-height: 1.5;
+
+        .corporate-info-icon {
+            flex-shrink: 0;
+            font-style: normal;
+            font-size: 1.4rem;
+            line-height: 1.4;
+            color: #1565c0;
+        }
+    }
+
+    // Aviso expandido quando backend retorna corporate_user
+    .corporate-warning-box {
+        background: #fffde7;
+        border: 1px solid #f9a825;
+        border-radius: 6px;
+        padding: 10px 12px;
+        margin-bottom: 16px;
+        text-align: left;
+        color: #5d4037;
+        font-size: 1.1rem;
+        line-height: 1.5;
+
+        .corporate-warning-title {
+            font-weight: bold;
+            font-size: 1.15rem;
+            display: block;
+            margin-bottom: 4px;
+            color: #e65100;
+        }
+
+        .corporate-warning-wrong-type {
+            display: block;
+            margin-top: 6px;
+            font-size: 1rem;
+            border-top: 1px solid #f9a825;
+            padding-top: 6px;
+            color: #5d4037;
+        }
     }
 }

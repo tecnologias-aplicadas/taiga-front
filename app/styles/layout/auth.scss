@@ -44,9 +44,12 @@
         text-align: center;
     }
     .tagline {
-        @include font-size(xlarge);
-        color: $color-black900;
-        line-height: 2rem;
+        color: #9e9abf;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 4px;
+        line-height: 1.5;
         margin-bottom: 1rem;
         text-align: center;
         text-transform: uppercase;
@@ -99,6 +102,40 @@
         &.full {
             width: 100%;
         }
+    }
+}
+
+// Login com rodapé: o layout de coluna e o rodapé vêm de .page-with-footer
+// (layout/page-with-footer.scss); aqui só o que é específico do login
+.auth.auth--with-footer {
+    flex-direction: column; // reforça a coluna de .page-with-footer sobre o row de .auth
+    justify-content: flex-start;
+
+    // Formulário centralizado entre o topo e o rodapé; os 10px de padding garantem
+    // respiro em telas baixas, quando o conteúdo encosta nas bordas
+    .auth-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-width: 400px;
+        padding-bottom: 10px;
+        padding-top: 10px;
+        width: 100%;
+    }
+
+    // Margens do formulário zeradas: o respiro é só o padding do container
+    form {
+        margin-bottom: 0;
+    }
+
+    fieldset.end {
+        margin-bottom: 0;
+    }
+
+    // Logo do topo a 70% (8rem → 5.6rem) para formulário e rodapé caberem sem rolagem
+    .logo-svg svg {
+        height: 5.6rem;
+        width: 5.6rem;
     }
 }
 

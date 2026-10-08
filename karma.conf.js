@@ -31,7 +31,8 @@ module.exports = function(config) {
       'test-utils.js',
       'dist/**/js/app.js',
       'dist/**/js/templates.js',
-      'app/**/*spec.coffee'
+      'app/**/*spec.coffee',
+      {pattern: 'app/locales/taiga/locale-{pt-br,en,es}.json', included: false, served: true, watched: false}
     ],
 
 

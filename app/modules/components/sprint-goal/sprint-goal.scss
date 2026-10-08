@@ -1,0 +1,109 @@
+.sprint-goal-toggle {
+    @include font-size(xsmall);
+    @include font-type(medium);
+    align-items: center;
+    background: none;
+    border: 0;
+    color: $color-link-primary;
+    cursor: pointer;
+    display: inline-flex;
+    margin-left: .5rem;
+    padding: 0;
+    text-transform: uppercase;
+    transition: color .2s ease-in;
+    vertical-align: middle;
+
+    svg {
+        fill: $color-link-primary;
+        height: 1rem;
+        margin-right: .25rem;
+        transition: fill .2s ease-in;
+        width: 1rem;
+    }
+
+    &:hover,
+    &.active {
+        color: $primary;
+
+        svg {
+            fill: $primary;
+        }
+    }
+}
+
+// Red like the destructive small button (buttons-next), scaled to the header
+// where it sits beside the goal toggle.
+.sprint-goal-register-result {
+    @include font-size(xsmall);
+    @include font-type(medium);
+    align-items: center;
+    background: $color-link-red;
+    border: 0;
+    border-radius: 4px;
+    color: $color-white;
+    cursor: pointer;
+    display: inline-flex;
+    margin-left: 1rem;
+    padding: .25rem .75rem;
+    text-transform: uppercase;
+    transition: background .2s ease-in;
+    vertical-align: middle;
+
+    span {
+        color: currentColor;
+    }
+
+    &:hover {
+        background: darken($color-link-red, 10%);
+        color: $color-white;
+    }
+}
+
+.sprint-goal {
+    @include sprint-goal-readonly;
+    margin-top: .5rem;
+    padding: 1rem 1.25rem;
+    width: 100%;
+
+    .sprint-goal-empty {
+        color: $color-black600;
+        margin: 0;
+    }
+}
+
+.sprint-goal-divider {
+    background: $color-gray400;
+    border: 0;
+    height: 1px;
+    margin: 1rem 0;
+}
+
+.sprint-goal-result-title {
+    @include font-size(medium);
+    @include font-type(bold);
+    align-items: center;
+    color: $color-black900;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 0 .5rem;
+}
+
+.sprint-goal-achievement {
+    @include sprint-goal-achievement-pill;
+    margin-left: .5rem;
+}
+
+.sprint-goal-closed {
+    @include font-size(small);
+    align-items: center;
+    color: $color-black600;
+    display: flex;
+    margin: .75rem 0 0;
+
+    svg {
+        fill: $color-black600;
+        height: .875rem;
+        margin-right: .375rem;
+        width: .875rem;
+    }
+}

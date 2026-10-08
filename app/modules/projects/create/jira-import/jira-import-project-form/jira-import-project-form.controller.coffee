@@ -17,16 +17,13 @@ class JiraImportProjectFormController
 
         @.projectForm = @.project.toJS()
 
-        @.projectForm.is_private = false
+        @.projectForm.is_private = true
         @.projectForm.keepExternalReference = false
         if @.projectForm.importer_type == "agile"
             @.projectForm.project_type = null
         else
             @.projectForm.project_type = "scrum"
         @.projectForm.create_subissues = true
-
-        if !@.canCreatePublicProjects.valid && @.canCreatePrivateProjects.valid
-            @.projectForm.is_private = true
 
     checkUsersLimit: () ->
         @.limitMembersPrivateProject = @currentUserService.canAddMembersPrivateProject(@.members.size)

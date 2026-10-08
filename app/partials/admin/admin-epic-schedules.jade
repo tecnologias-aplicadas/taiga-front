@@ -1,0 +1,123 @@
+
+doctype html
+
+div.wrapper(ng-controller="AdminEpicSchedulesController")
+
+    tg-project-menu
+
+    sidebar.menu-secondary.sidebar.settings-nav(tg-admin-navigation="project-values")
+        include ../includes/modules/admin-menu
+
+    sidebar.menu-tertiary.sidebar(tg-admin-navigation="values-epic-schedules")
+        include ../includes/modules/admin-submenu-project-values
+
+    section.main.admin-common.admin-epic-schedules
+
+        h1.admin-title
+            span(translate="ADMIN.EPIC_SCHEDULES.TITLE")
+
+        .epic-schedules-loading(ng-if="loading")
+            span(translate="COMMON.LOADING")
+
+        .epic-schedules-table(ng-if="!loading && epics.length")
+            table
+                thead
+                    tr
+                        th(translate="ADMIN.EPIC_SCHEDULES.COL_EPIC")
+                        th(translate="ADMIN.EPIC_SCHEDULES.COL_ASSIGNED")
+                        th(translate="ADMIN.EPIC_SCHEDULES.COL_SCHEDULABLE")
+                        th(translate="ADMIN.EPIC_SCHEDULES.COL_PERCENTAGE_IMPACT")
+                        th(translate="ADMIN.EPIC_SCHEDULES.COL_STARTED")
+                        th(translate="ADMIN.EPIC_SCHEDULES.COL_END")
+                        th(translate="ADMIN.EPIC_SCHEDULES.COL_STATUS")
+                        th(translate="ADMIN.EPIC_SCHEDULES.COL_COMPLETED_ON")
+
+                tbody
+                    tr(ng-repeat="epic in epics track by epic.id")
+
+                        //- cor + id + nome
+                        td.col-epic
+                            span.epic-color(ng-style="{'background-color': epic.color}")
+                            span.epic-ref \#{{epic.ref}}
+                            span.epic-name {{epic.subject}}
+
+                        //- assigned
+                        td.col-assigned
+                            img.avatar(
+                                ng-if="epic.assigned_to_extra_info"
+                                tg-avatar="epic.assigned_to_extra_info"
+                            )
+                            span.no-assigned(ng-if="!epic.assigned_to_extra_info" translate="COMMON.ASSIGNED_TO.NOT_ASSIGNED")
+
+                        //- schedulable (editável)
+                        td.col-schedulable
+                            select.es-select(
+                                ng-model="epic._schedulable"
+                                ng-change="onSchedulableChange(epic)"
+                                ng-disabled="isSaving(epic.id, 'schedulable')"
+                                ng-class="{'is-yes': epic._schedulable === 'yes', 'is-no': epic._schedulable === 'no', 'is-na': epic._schedulable === 'na'}"
+                            )
+                                option(value="na") N/A
+                                option(value="yes") Sim
+                                option(value="no") Não
+
+                        //- percentage_impact (editável)
+                        td.col-percentage-impact
+                            input.es-input(
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="1"
+                                ng-model="epic.percentage_impact"
+                                ng-blur="onFieldBlur(epic, 'percentage_impact')"
+                                ng-disabled="isSaving(epic.id, 'percentage_impact')"
+                            )
+                            span %
+
+                        //- started (editável)
+                        td.col-date
+                            input.es-input(
+                                type="date"
+                                ng-model="epic.start_date"
+                                ng-blur="onFieldBlur(epic, 'start_date')"
+                                ng-disabled="isSaving(epic.id, 'start_date')"
+                            )
+
+                        //- end expected (editável)
+                        td.col-date
+                            input.es-input(
+                                type="date"
+                                ng-model="epic.expected_completion_date"
+                                ng-blur="onFieldBlur(epic, 'expected_completion_date')"
+                                ng-disabled="isSaving(epic.id, 'expected_completion_date')"
+                            )
+
+                        //- status (editável)
+                        td.col-status
+                            .es-status-holder
+                                button.es-status-btn(
+                                    ng-click="toggleStatus(epic, $event)"
+                                    ng-style="{'color': epic.status_extra_info.color}"
+                                    ng-disabled="isSaving(epic.id, 'status')"
+                                )
+                                    span {{epic.status_extra_info.name}}
+                                    tg-svg(svg-icon="icon-arrow-down")
+                                ul.es-status-list(ng-if="epic._showStatus" ng-click="$event.stopPropagation()")
+                                    li(
+                                        ng-repeat="s in epicStatuses | orderBy:'order'"
+                                        ng-click="onStatusChange(epic, s); epic._showStatus = false"
+                                    )
+                                        span.es-status-dot(ng-style="{'background-color': s.color}")
+                                        span {{s.name}}
+
+                        //- completed on (editável apenas quando status é fechado)
+                        td.col-date
+                            input.es-input(
+                                type="date"
+                                ng-model="epic.completion_date"
+                                ng-blur="onFieldBlur(epic, 'completion_date')"
+                                ng-disabled="isSaving(epic.id, 'completion_date') || !epic.status_extra_info.is_closed"
+                                ng-class="{'locked-field': !epic.status_extra_info.is_closed}"
+                            )
+
+        p.epic-schedules-empty(ng-if="!loading && !epics.length" translate="ADMIN.EPIC_SCHEDULES.EMPTY")

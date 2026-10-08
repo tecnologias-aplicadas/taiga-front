@@ -20,7 +20,25 @@ div.taskboard-table(
                 class="squish-status-{{s.id}}"
                 tg-bo-title="s.name"
             )
-                span(tg-bo-bind="s.name")
+                span(ng-if="s.completion_percent === null || s.completion_percent === undefined")
+                    span(style="opacity: 0.6;") NA
+                    span(style="opacity: 0.4; padding: 0 4px;") |
+                    span(style="") {{ s.name }}
+
+                span(ng-if="s.completion_percent !== null && s.completion_percent !== undefined")
+                    span(style="opacity: 0.6;") {{ s.completion_percent }}%
+                    span(style="opacity: 0.4; padding: 0 4px;") |
+                    span(style="") {{ s.name }}
+
+                //- Contador total de tarefas por coluna (com estilo de bolinha); aparece também com a coluna recolhida
+                div.taskboard-task-counter(
+                    ng-attr-title="{{'TASKBOARD.TABLE.NUMBER_TASKS' | translate}}"
+                )
+                    div.counter-badge
+                        tg-animated-counter(
+                            disabled="ctrl.renderInProgress"
+                            data="{count: ctrl.getTotalTasksByStatus(s.id)}"
+                        )
 
                 button.btn-board(
                     ng-click='foldStatus(s)'
@@ -39,6 +57,7 @@ div.taskboard-table(
                         svg-icon="icon-unfold-column",
                         title="{{'TASKBOARD.TABLE.TITLE_ACTION_UNFOLD' | translate}}"
                     )
+
 
 
     .taskbord-utility-wrapper(data-js="taskboard-table-hscroll")
@@ -129,10 +148,57 @@ div.taskboard-table(
                     div.taskboard-cards-box.taskboard-column(
                         ng-repeat="st in ::taskStatusList track by st.id",
                         class="squish-status-{{st.id}}",
-                        ng-class="{'column-fold':statusesFolded[st.id], 'row-max-two': usTasks.getIn([us.id.toString(), st.id.toString()]).size === 2, 'row-max-three': usTasks.getIn([us.id.toString(), st.id.toString()]).size >= 3}",
+                        ng-class="{'column-fold':statusesFolded[st.id]}",
+                        ng-style="statusesFolded[st.id] && {'background-color': st.color, 'border': 'none'}",
                         tg-bind-scope
                     )
+                        //- coluna recolhida: contador da célula e nome do status; com a linha também recolhida, só o contador
+                        .placeholder-collapsed(ng-if='statusesFolded[st.id]')
+                            .placeholder-collapsed-wrapper
+                                div.ammount.counter-badge(
+                                    ng-attr-title="{{'TASKBOARD.TABLE.NUMBER_TASKS' | translate}}"
+                                )
+                                    tg-animated-counter(
+                                        data="{count: usTasks.getIn([us.id.toString(), st.id.toString()]).size}"
+                                    )
+
+                                div.text-holder(ng-if="!usFolded[us.id]")
+                                    div.name(tg-bo-bind="st.name")
+
+                                .square-color(
+                                    ng-if="!usFolded[us.id]"
+                                    ng-style="{'background-color':st.color}",
+                                )
+
+                        //- linha recolhida, coluna aberta, numa fileira: contador da célula, miniaturas dos
+                        //- responsáveis (sem repetir) e "+X" com as que não cabem na largura da coluna
+                        .taskboard-cell-summary(ng-if="usFolded[us.id] && !statusesFolded[st.id]")
+                            div.counter-badge(
+                                ng-attr-title="{{'TASKBOARD.TABLE.NUMBER_TASKS' | translate}}"
+                            )
+                                tg-animated-counter(
+                                    data="{count: usTasks.getIn([us.id.toString(), st.id.toString()]).size}"
+                                )
+                            span.taskboard-cell-assignee(
+                                ng-repeat="user in ctrl.getVisibleCellAssignees(us.id, st.id).visible track by $index"
+                            )
+                                img(
+                                    ng-if="user"
+                                    tg-avatar="user"
+                                )
+                                img(
+                                    ng-if="!user"
+                                    src="#{v}/images/unnamed.png"
+                                    ng-attr-title="{{'COMMON.ASSIGNED_TO.NOT_ASSIGNED' | translate}}"
+                                    ng-attr-alt="{{'COMMON.ASSIGNED_TO.NOT_ASSIGNED' | translate}}"
+                                )
+                            span.extra-assigned(
+                                ng-if="ctrl.getVisibleCellAssignees(us.id, st.id).hidden"
+                                ng-attr-title="{{ 'COMMON.CARD.EXTRA_ASSIGNED_USERS' | translate:{total: ctrl.getVisibleCellAssignees(us.id, st.id).hidden} }}"
+                            ) +{{ ctrl.getVisibleCellAssignees(us.id, st.id).hidden }}
+
                         tg-card.card.ng-animate-disabled(
+                            ng-if="!statusesFolded[st.id] && !usFolded[us.id]"
                             data-id="{{ taskId }}"
                             tg-repeat="taskId in usTasks.getIn([us.id.toString(), st.id.toString()])"
                             ng-class="{'kanban-task-maximized': ctrl.isMaximized(s.id), 'kanban-task-minimized': ctrl.isMinimized(s.id)}"
@@ -181,9 +247,54 @@ div.taskboard-table(
                         ng-repeat="st in ::taskStatusList track by st.id",
                         class="squish-status-{{st.id}}",
                         ng-class="{'column-fold':statusesFolded[st.id]}",
+                        ng-style="statusesFolded[st.id] && {'background-color': st.color, 'border': 'none'}",
                         tg-bind-scope
                     )
+                        //- mesma regra das linhas com história: us é null e a chave em usTasks é 'null'
+                        .placeholder-collapsed(ng-if='statusesFolded[st.id]')
+                            .placeholder-collapsed-wrapper
+                                div.ammount.counter-badge(
+                                    ng-attr-title="{{'TASKBOARD.TABLE.NUMBER_TASKS' | translate}}"
+                                )
+                                    tg-animated-counter(
+                                        data="{count: usTasks.getIn(['null', st.id.toString()]).size}"
+                                    )
+
+                                div.text-holder(ng-if="!usFolded[null]")
+                                    div.name(tg-bo-bind="st.name")
+
+                                .square-color(
+                                    ng-if="!usFolded[null]"
+                                    ng-style="{'background-color':st.color}",
+                                )
+
+                        .taskboard-cell-summary(ng-if="usFolded[null] && !statusesFolded[st.id]")
+                            div.counter-badge(
+                                ng-attr-title="{{'TASKBOARD.TABLE.NUMBER_TASKS' | translate}}"
+                            )
+                                tg-animated-counter(
+                                    data="{count: usTasks.getIn(['null', st.id.toString()]).size}"
+                                )
+                            span.taskboard-cell-assignee(
+                                ng-repeat="user in ctrl.getVisibleCellAssignees(null, st.id).visible track by $index"
+                            )
+                                img(
+                                    ng-if="user"
+                                    tg-avatar="user"
+                                )
+                                img(
+                                    ng-if="!user"
+                                    src="#{v}/images/unnamed.png"
+                                    ng-attr-title="{{'COMMON.ASSIGNED_TO.NOT_ASSIGNED' | translate}}"
+                                    ng-attr-alt="{{'COMMON.ASSIGNED_TO.NOT_ASSIGNED' | translate}}"
+                                )
+                            span.extra-assigned(
+                                ng-if="ctrl.getVisibleCellAssignees(null, st.id).hidden"
+                                ng-attr-title="{{ 'COMMON.CARD.EXTRA_ASSIGNED_USERS' | translate:{total: ctrl.getVisibleCellAssignees(null, st.id).hidden} }}"
+                            ) +{{ ctrl.getVisibleCellAssignees(null, st.id).hidden }}
+
                         tg-card.card.ng-animate-disabled(
+                            ng-if="!statusesFolded[st.id] && !usFolded[null]"
                             data-id="{{ taskId }}"
                             tg-repeat="taskId in usTasks.getIn(['null', st.id.toString()])"
                             ng-class="{'kanban-task-maximized': ctrl.isMaximized(s.id), 'kanban-task-minimized': ctrl.isMinimized(s.id)}"

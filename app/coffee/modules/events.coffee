@@ -82,7 +82,7 @@ class EventsService
         subscribe = () =>
             @.subscribe null, "live_notifications.#{userId}", (data) =>
                 notification = new Notification(data.title, {
-                    icon: "/#{window._version}/images/favicon.png",
+                    icon: "/#{window._version}/images/logo_taiga_parquetec.png",
                     body: data.body,
                     tag: data.id
                 })

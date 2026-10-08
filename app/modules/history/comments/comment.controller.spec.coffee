@@ -31,12 +31,29 @@ describe "CommentController", ->
 
         provide.value "tgLightboxFactory", mocks.tgLightboxFactory
 
+    _mockTgHttp = () ->
+        mocks.tgHttp = {
+            post: sinon.stub()
+            delete: sinon.stub()
+        }
+
+        provide.value "$tgHttp", mocks.tgHttp
+
+    _mockTgUrls = () ->
+        mocks.tgUrls = {
+            resolve: sinon.stub()
+        }
+
+        provide.value "$tgUrls", mocks.tgUrls
+
     _mocks = () ->
         module ($provide) ->
             provide = $provide
             _mockTgCurrentUserService()
             _mockTgCheckPermissionsService()
             _mockTgLightboxFactory()
+            _mockTgHttp()
+            _mockTgUrls()
             return null
 
     beforeEach ->
@@ -116,3 +133,45 @@ describe "CommentController", ->
 
         canEdit = commentsCtrl.canEditDeleteComment()
         expect(canEdit).to.be.false
+
+    it "add reaction when the user has not reacted yet", (done) ->
+        commentsCtrl = controller "CommentCtrl"
+
+        mocks.tgCurrentUserService.getUser.returns(Immutable.fromJS({id: 7}))
+
+        commentsCtrl.comment = {
+            id: 2
+            reactions: {}
+        }
+
+        mocks.tgUrls.resolve.withArgs("comment-add-reaction", 2).returns("/comments/2/reactions")
+        mocks.tgHttp.post.promise().resolve({})
+
+        commentsCtrl.toggleReaction("thumbsup").then () ->
+            expect(mocks.tgHttp.post).have.been.calledWith("/comments/2/reactions", {emoji: "thumbsup"})
+            expect(mocks.tgHttp.delete).not.have.been.called
+            expect(commentsCtrl.comment.reactions.thumbsup.count).to.be.equal(1)
+            expect(commentsCtrl.comment.reactions.thumbsup.users).to.be.eql([7])
+            done()
+
+    it "remove reaction when the user has already reacted", (done) ->
+        commentsCtrl = controller "CommentCtrl"
+
+        mocks.tgCurrentUserService.getUser.returns(Immutable.fromJS({id: 7}))
+
+        commentsCtrl.comment = {
+            id: 2
+            reactions: {
+                thumbsup: {count: 2, users: [7, 8]}
+            }
+        }
+
+        mocks.tgUrls.resolve.withArgs("comment-remove-reaction", 2).returns("/comments/2/reactions")
+        mocks.tgHttp.delete.promise().resolve({})
+
+        commentsCtrl.toggleReaction("thumbsup").then () ->
+            expect(mocks.tgHttp.delete).have.been.calledWith("/comments/2/reactions", {emoji: "thumbsup"})
+            expect(mocks.tgHttp.post).not.have.been.called
+            expect(commentsCtrl.comment.reactions.thumbsup.count).to.be.equal(1)
+            expect(commentsCtrl.comment.reactions.thumbsup.users).to.be.eql([8])
+            done()

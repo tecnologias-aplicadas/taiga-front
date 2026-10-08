@@ -13,5 +13,6 @@ class ProjectsListingController
 
     constructor: (@currentUserService) ->
         taiga.defineImmutableProperty(@, "projects", () => @currentUserService.projects.get("all"))
+        taiga.defineImmutableProperty(@, "isAdmin", () => @currentUserService.getUser()?.get("is_superuser") == true)
 
 angular.module("taigaProjects").controller("ProjectsListing", ProjectsListingController)

@@ -114,6 +114,25 @@
             justify-content: space-between;
             margin-top: .5rem;
         }
+        .entry-right {
+            align-items: flex-end;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            gap: .8rem;
+            justify-content: flex-start;
+            margin-left: .75rem;
+        }
+        .btn-mark-read {
+            background: none;
+            border: none;
+            color: $color-link-primary;
+            cursor: pointer;
+            font-size: inherit;
+            text-decoration: underline;
+            line-height: .75em;
+            padding: 0;
+        }
         &.new {
             background-color: $white;
 

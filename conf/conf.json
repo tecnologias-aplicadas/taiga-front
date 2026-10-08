@@ -1,0 +1,40 @@
+{
+    "api": "http://localhost:8000/api/v1/",
+    "eventsUrl": null,
+    "baseHref": "/",
+    "eventsMaxMissedHeartbeats": 5,
+    "eventsHeartbeatIntervalTime": 60000,
+    "eventsReconnectTryInterval": 10000,
+    "debug": false,
+    "debugInfo": false,
+    "defaultLanguage": "pt-br",
+    "themes": [
+        "taiga"
+    ],
+    "defaultTheme": "taiga",
+    "defaultLoginEnabled": true,
+    "publicRegisterEnabled": true,
+    "feedbackEnabled": true,
+    "supportUrl": "https://community.taiga.io/",
+    "privacyPolicyUrl": null,
+    "termsOfServiceUrl": null,
+    "maxUploadFileSize": null,
+    "contribPlugins": [],
+    "tagManager": {
+        "accountId": null
+    },
+    "tribeHost": null,
+    "enableAsanaImporter": false,
+    "enableGithubImporter": false,
+    "enableJiraImporter": false,
+    "enableTrelloImporter": false,
+    "gravatar": false,
+    "rtlLanguages": [
+        "ar",
+        "fa",
+        "he"
+    ],
+    "reCaptchaSiteKey": "ambiente dev não precisa de key",
+    "environment": "local",
+    "chatStreamUrl": "https://.../agente/api/chat/stream"
+}

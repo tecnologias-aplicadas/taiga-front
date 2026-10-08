@@ -19,14 +19,11 @@ class CreatetProjectFormController
     constructor: (@currentUserService, @projectsService, @projectUrl, @location, @navUrls, @analytics) ->
         @.errorList = []
         @.projectForm = {
-            is_private: false
+            is_private: true
         }
 
         @.canCreatePublicProjects = @currentUserService.canCreatePublicProjects()
         @.canCreatePrivateProjects = @currentUserService.canCreatePrivateProjects()
-
-        if !@.canCreatePublicProjects.valid && @.canCreatePrivateProjects.valid
-            @.projectForm.is_private = true
 
         if @.type == 'scrum'
             @.projectForm.creation_template = 1

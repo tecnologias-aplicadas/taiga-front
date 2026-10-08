@@ -1,0 +1,35 @@
+.schedule-charts
+    .sc-panel
+        .sc-header(ng-click="vm.pdOpen = !vm.pdOpen")
+            svg.sc-chevron(
+                ng-class="{'open': vm.pdOpen}"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#D8DEE9"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            )
+                polyline(points="6 9 12 15 18 9")
+            span.sc-title
+                | {{'EPICS.TABLE.CHART_TITLE' | translate}}&nbsp;
+                span.sc-title-highlight.pd {{'EPICS.TABLE.CHART_TITLE_HIGHLIGHT' | translate}}
+            .sc-stat.blue
+                strong {{vm.pdStatSched}}%
+                span.sc-frac  ({{vm.pdDoneSched}}/{{vm.totalSched}})
+                span.sc-unit {{'EPICS.TABLE.CHART_SCHEDULED_DONE' | translate}}
+            .sc-divider
+            .sc-stat.purple
+                strong {{vm.pdStatUnsched}}%
+                span.sc-frac  ({{vm.pdDoneUnsched}}/{{vm.totalUnsched}})
+                span.sc-unit {{'EPICS.TABLE.CHART_UNSCHEDULED_DONE' | translate}}
+
+        .sc-body(ng-show="vm.pdOpen")
+            .sc-empty(ng-if="vm.dataLoaded && !vm.totalSched")
+                | {{'EPICS.TABLE.NO_SCHEDULED_EPICS' | translate}}
+            .sc-chart-scroll(ng-if="vm.totalSched > 0")
+                canvas.sc-chart-canvas(data-chart="pd")
+            .sc-closing-notice
+                | {{'EPICS.TABLE.CLOSING_DATE_NOTICE' | translate}}
+
+

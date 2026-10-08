@@ -24,6 +24,26 @@ DutyDirective = (navurls, $translate) ->
                 if scope.vm.duty.get('_name') == "issues"
                     return $translate.instant("COMMON.ISSUE")
 
+        # História lê só a lista múltipla (já ordenada por id pelo servidor);
+        # épica, tarefa e issue seguem no campo único.
+        scope.vm.getAssignedUser = () ->
+            return null if not scope.vm.duty
+
+            if scope.vm.duty.get('_name') == "userstories"
+                assignedUsers = scope.vm.duty.get('assigned_users_extra_info')
+                return null if not assignedUsers or assignedUsers.size == 0
+                return assignedUsers.first()
+
+            return scope.vm.duty.get('assigned_to_extra_info') or null
+
+        # Quantos atribuídos além do exibido; só história tem lista múltipla.
+        scope.vm.getExtraAssigneesCount = () ->
+            return 0 if not scope.vm.duty or scope.vm.duty.get('_name') != "userstories"
+
+            assignedUsers = scope.vm.duty.get('assigned_users_extra_info')
+            return 0 if not assignedUsers or assignedUsers.size < 2
+            return assignedUsers.size - 1
+
         el.on "click", ".button-hide", (event) ->
             event.preventDefault()
             el.remove()

@@ -94,3 +94,110 @@ describe "dutyDirective", () ->
         scope.$apply()
 
         expect(elm.isolateScope().vm.getDutyType()).to.be.equal("User story translated")
+
+    describe "assigned user shown for the duty", () ->
+        _compileDuty = (duty) ->
+            scope.duty = Immutable.fromJS(duty)
+            mockTgProjectsService.projectsById.get
+                .withArgs("1")
+                .returns({slug: "project-slug", "name": "testing js project"})
+            elm = createDirective()
+            scope.$apply()
+            return elm.isolateScope().vm
+
+        it "show the first of the assigned users for a user story", () ->
+            vm = _compileDuty({
+                project: 1
+                ref: 1
+                _name: "userstories"
+                assigned_to_extra_info: {id: 9, full_name_display: "Single field"}
+                assigned_users_extra_info: [
+                    {id: 2, full_name_display: "Member 2"},
+                    {id: 5, full_name_display: "Member 5"}
+                ]
+            })
+
+            expect(vm.getAssignedUser().get('id')).to.be.equal(2)
+            expect(vm.getAssignedUser().get('full_name_display')).to.be.equal("Member 2")
+
+        it "show nobody for a user story without assigned users even if assigned_to_extra_info is present", () ->
+            vm = _compileDuty({
+                project: 1
+                ref: 1
+                _name: "userstories"
+                assigned_to_extra_info: {id: 9, full_name_display: "Single field"}
+                assigned_users_extra_info: []
+            })
+
+            expect(vm.getAssignedUser()).to.be.null
+
+        it "show nobody for a user story when the list is missing", () ->
+            vm = _compileDuty({
+                project: 1
+                ref: 1
+                _name: "userstories"
+                assigned_to_extra_info: {id: 9, full_name_display: "Single field"}
+            })
+
+            expect(vm.getAssignedUser()).to.be.null
+
+        it "keep assigned_to_extra_info for a task", () ->
+            vm = _compileDuty({
+                project: 1
+                ref: 1
+                _name: "tasks"
+                assigned_to_extra_info: {id: 9, full_name_display: "Single field"}
+            })
+
+            expect(vm.getAssignedUser().get('id')).to.be.equal(9)
+
+        it "count no extra assignees with a single assigned user", () ->
+            vm = _compileDuty({
+                project: 1
+                ref: 1
+                _name: "userstories"
+                assigned_users_extra_info: [{id: 2}]
+            })
+
+            expect(vm.getExtraAssigneesCount()).to.be.equal(0)
+
+        it "count one extra assignee with two assigned users", () ->
+            vm = _compileDuty({
+                project: 1
+                ref: 1
+                _name: "userstories"
+                assigned_users_extra_info: [{id: 2}, {id: 5}]
+            })
+
+            expect(vm.getExtraAssigneesCount()).to.be.equal(1)
+
+        it "count two extra assignees with three assigned users", () ->
+            vm = _compileDuty({
+                project: 1
+                ref: 1
+                _name: "userstories"
+                assigned_users_extra_info: [{id: 2}, {id: 5}, {id: 7}]
+            })
+
+            expect(vm.getExtraAssigneesCount()).to.be.equal(2)
+
+        it "count no extra assignees for a task", () ->
+            vm = _compileDuty({
+                project: 1
+                ref: 1
+                _name: "tasks"
+                assigned_to_extra_info: {id: 9}
+                assigned_users_extra_info: [{id: 2}, {id: 5}, {id: 7}]
+            })
+
+            expect(vm.getExtraAssigneesCount()).to.be.equal(0)
+
+        it "show nobody for a task without assigned_to_extra_info", () ->
+            vm = _compileDuty({
+                project: 1
+                ref: 1
+                _name: "tasks"
+                assigned_to_extra_info: null
+            })
+
+            expect(vm.getAssignedUser()).to.be.null

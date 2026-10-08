@@ -1,0 +1,71 @@
+section.dependencies-wrapper
+  .dependency-list-header
+    h3.dependency-list-title
+      span.dependency-count {{vm.dependencies && vm.dependencies.length || 0}}
+      span.dependency-label(translate="COMMON.DEPENDENCIES.TITLE")
+
+  .dependency-list-body
+    .dependency-item(
+      ng-repeat="dependency in vm.dependencies track by dependency.id",
+      ng-class="[dependency.relation_type, {'dependency-item--resolved': dependency.is_resolved}]"
+    )
+      .dependency-info
+        span.dependency-text(ng-class="dependency.relation_type")
+          span.dependency-type(ng-class="dependency.relation_type")
+            | {{dependency.type_text}}
+          span.dependency-link
+            a(href="", ng-click="vm.viewDependency(dependency)")
+              | \#{{dependency.ticket.ref_number}}
+
+        span.dependency-user
+          span(translate="COMMON.DEPENDENCIES.BY")
+          span {{dependency.user || ('COMMON.DEPENDENCIES.UNASSIGNED' | translate)}}
+          span
+            | &nbsp;{{ 'COMMON.DEPENDENCIES.AT' | translate }} {{ vm.getFormattedDate(dependency.date) }}
+
+      .dependency-actions
+        a.dependency-action.dependency-action--resolve(
+          href="",
+          ng-if="(dependency.relation_type === 'BK' || dependency.relation_type === 'BKBY') && !dependency.is_resolved",
+          ng-click="vm.resolveDependency(dependency)",
+          title="{{ 'COMMON.DEPENDENCIES.RESOLVE' | translate }}"
+        )
+          tg-svg(svg-icon="icon-check-empty")
+        a.dependency-action.dependency-action--edit(
+          href="",
+          ng-if="!dependency.is_resolved",
+          ng-click="dependency._editing = !dependency._editing",
+          title="{{ 'COMMON.DEPENDENCIES.EDIT' | translate }}"
+        )
+          tg-svg(svg-icon="icon-edit")
+        a.dependency-action(
+          href="",
+          ng-click="vm.confirmAndRemoveDependency(dependency)",
+          title="{{ 'COMMON.DEPENDENCIES.REMOVE' | translate }}"
+        )
+          tg-svg(svg-icon="icon-trash")
+
+      .dependency-edit(ng-if="dependency._editing")
+        select.dependency-type-edit(
+          ng-model="dependency._newRelationType",
+          ng-init="dependency._newRelationType = dependency.relation_type"
+        )
+          option(value="BKBY" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.BLOCKED_BY")
+          option(value="BK" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.BLOCKS")
+          option(value="RT" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.RELATED_TO")
+          option(value="DUFROM" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.DUPLICATED_FROM")
+          option(value="DUBY" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.DUPLICATED_BY")
+          option(value="DPON" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.DEPENDS_ON")
+          option(value="DPME" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.DEPENDS_ME")
+          option(value="DWT" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.DISCOVERD_WHILE_TESTING")
+          option(value="LTDWT" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.LED_TO_DISCOVERY_DURING_TEST")
+        button.btn-edit-save(
+          type="button",
+          ng-click="vm.updateDependency(dependency)",
+          translate="COMMON.DEPENDENCIES.MODAL.SAVE"
+        )
+        button.btn-edit-cancel(
+          type="button",
+          ng-click="dependency._editing = false",
+          translate="COMMON.DEPENDENCIES.MODAL.CANCEL"
+        )

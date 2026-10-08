@@ -99,3 +99,19 @@
     ng-if="vm.type == 'promoted_to'"
 )
     include history-templates/history-promoted
+
+.diff-wrapper(
+    ng-if="vm.type == 'start_date'"
+)
+    include history-templates/history-start-date
+
+.diff-wrapper(
+    ng-if="vm.type == 'expected_completion_date'"
+)
+    include history-templates/history-expected-completion-date
+
+//#187 Histórico de alteração de relacionamento
+.diff-wrapper(
+    ng-if="vm.type == 'card_relation'"
+)
+    include history-templates/history-card-relation

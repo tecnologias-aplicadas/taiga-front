@@ -43,7 +43,7 @@ class RepositoryService extends taiga.Service
             defered.resolve(model)
 
         promise.error (data, status) ->
-            defered.reject(model)
+            defered.reject(data)
 
         return defered.promise
 

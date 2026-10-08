@@ -1,0 +1,160 @@
+
+//- This source code is licensed under the terms of the
+//- GNU Affero General Public License found in the LICENSE file in
+//- the root directory of this source tree.
+//-
+//- Copyright (c) 2021-present Kaleidos INC
+
+section.admin-status-table
+
+    div.project-values-title
+        h2 {{ sectionName | translate }}
+        div.project-container-status-button
+            button.btn-small.show-add-new(
+                variant="primary"
+                title="{{'ADMIN.US_STATUS.ACTION_ADD_STATUS' | translate}}"
+            )
+                span(translate="ADMIN.US_STATUS.ACTION_ADD_STATUS")
+            button.btn-small.toggle-table(
+                variant="secondary"
+                title="{{ 'COMMON.SHOW' | translate }}"
+            )
+                tg-svg(ng-attr-svg-icon="{{ 'icon-chevron-down' }}")
+
+    div.colors-table.custom-wrapper
+        div.table-header
+            div.row
+                div.color-column(translate="COMMON.FIELDS.COLOR")
+                div.status-name(translate="COMMON.FIELDS.NAME")
+                div.status-slug(translate="COMMON.FIELDS.SLUG")
+                div.status-percentage-column(translate="COMMON.FIELDS.PERCENTAGE") 
+                div.is-closed-column(translate="COMMON.FIELDS.IS_CLOSED")
+                div.options-column
+        div.sortable
+            div(ng-repeat="value in values", tg-bind-scope)
+                form(tg-bind-scope)
+                    div.row.table-main.visualization
+                        tg-svg(svg-icon="icon-draggable")
+                        div.color-column
+                            div.current-color(ng-style="{background: value.color}")
+
+                        div.status-name
+                            span {{ value.name }}
+
+                        div.status-slug
+                            span {{ value.slug }}
+
+                        div.status-percentage-column
+                            span {{ value.completion_percent != null ? (value.completion_percent + '%') : (value.is_closed ? '100%' : '—') }}
+
+                        div.is-closed-column
+                            tg-svg(
+                                ng-show="value.is_closed"
+                                svg-icon="icon-check"
+                            )
+
+                        div.options-column
+                            a.edit-value(href="")
+                                tg-svg(
+                                    title="{{'ADMIN.COMMON.TITLE_ACTION_EDIT_VALUE' | translate}}",
+                                    svg-icon="icon-edit"
+                                )
+                            a.delete-value(href="")
+                                tg-svg(
+                                    title="{{'ADMIN.COMMON.TITLE_ACTION_DELETE_VALUE' | translate}}"
+                                    svg-icon="icon-trash"
+                                )
+
+                    div.row.table-main.edition.hidden
+                        div.color-column
+                            tg-color-selector(
+                                init-color="value.color"
+                                on-select-color="value.color = color"
+                            )
+
+                        div.status-name
+                            input(
+                                name="name"
+                                type="text"
+                                placeholder="{{'ADMIN.STATUS.PLACEHOLDER_WRITE_STATUS_NAME' | translate}}"
+                                ng-model="value.name"
+                                data-required="true"
+                                data-maxlength="255"
+                            )
+
+                        div.status-percentage-column
+                            span(ng-if="value.is_closed") 100%
+
+                            input(
+                                ng-if="!value.is_closed"
+                                name="completion_percent"
+                                type="number"
+                                ng-model="value.completion_percent"
+                                ng-change="validatePercentage(value)"
+                                ng-disabled="value.is_closed"
+                                placeholder="%"
+                                min="0"
+                                max="100"
+                            )
+
+                        div.is-closed-column
+                            select(
+                                name="is_closed"
+                                ng-model="value.is_closed"
+                                ng-change="value.is_closed && (value.completion_percent = 100)"
+                                data-required="true"
+                                ng-options="e.id as e.name | translate for e in [{'id':true, 'name':'COMMON.YES'},{'id':false, 'name': 'COMMON.NO'}]")
+
+                        div.options-column
+                            a.save.e2e-save(href="", title="{{'COMMON.SAVE' | translate}}")
+                                tg-svg(svg-icon="icon-check-empty")
+
+                            a.cancel(href="", title="{{'COMMON.CANCEL' | translate}}")
+                                tg-svg.cancel(svg-icon="icon-close")
+
+        form
+            div.row.table-main.new-value.hidden
+                div.color-column
+                    tg-color-selector(
+                        init-color="newValue.color"
+                        on-select-color="newValue.color = color"
+                    )
+
+                div.status-name
+                    input(
+                        name="name"
+                        type="text"
+                        placeholder="{{'ADMIN.STATUS.PLACEHOLDER_WRITE_STATUS_NAME' | translate}}"
+                        ng-model="newValue.name"
+                        data-required="true"
+                        data-maxlength="255"
+                    )
+                
+                div.status-percentage-column
+                    span(ng-if="newValue.is_closed") 100%
+
+                    input(
+                        ng-if="!newValue.is_closed"
+                        type="number"
+                        ng-model="newValue.completion_percent"
+                        ng-change="validatePercentage(newValue)"
+                        ng-disabled="newValue.is_closed"
+                        placeholder="%"
+                        required
+                    )
+
+                div.is-closed-column
+                    select(
+                        name="is_closed"
+                        ng-model="newValue.is_closed"
+                        ng-change="value.is_closed && (value.completion_percent = 100)"
+                        data-required="true"
+                        ng-options="e.id as e.name | translate for e in [{'id':true, 'name': 'COMMON.YES'},{'id':false, 'name': 'COMMON.NO'}]"
+                    )
+
+                div.options-column
+                    a.add-new.e2e-save(href="", title="{{'COMMON.ADD' | translate}}")
+                        tg-svg(svg-icon="icon-check-empty")
+
+                    a.delete-new(href="", title="{{'COMMON.CANCEL' | translate}}")
+                        tg-svg(svg-icon="icon-close")

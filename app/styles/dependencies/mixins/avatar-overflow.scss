@@ -1,0 +1,19 @@
+// Marcador "+N" ao lado do avatar de uma história com mais de um atribuído:
+// diz que há mais, não quem são. Mesmo desenho no quadro de épicas, na listagem
+// de histórias da épica, na home e nas abas do perfil.
+@mixin avatar-overflow($size: 2rem) {
+    align-items: center;
+    background: $color-gray200;
+    border: 2px solid $color-white;
+    border-radius: 50%;
+    color: $color-black600;
+    display: flex;
+    flex-shrink: 0;
+    font-size: .65rem;
+    font-weight: 600;
+    height: $size;
+    justify-content: center;
+    margin-left: -.5rem;
+    min-width: $size;
+    width: $size;
+}

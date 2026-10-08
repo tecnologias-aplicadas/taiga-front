@@ -1,0 +1,160 @@
+//- This source code is licensed under the terms of the
+//- GNU Affero General Public License found in the LICENSE file in
+//- the root directory of this source tree.
+//-
+//- Copyright (c) 2021-present Kaleidos INC
+
+div.wrapper.page-with-footer
+    div.story-points-guide-page.centered.page-with-footer-content
+        section.section.what-are-section
+            h2.section-title {{ 'STORY_POINTS_GUIDE.WHAT_ARE_TITLE' | translate }}
+            p.section-text {{ 'STORY_POINTS_GUIDE.WHAT_ARE_INTRO' | translate }}
+            ul.criteria-list
+                li
+                    span.bullet
+                    | {{ 'STORY_POINTS_GUIDE.WHAT_ARE_EFFORT' | translate }}
+                li
+                    span.bullet
+                    | {{ 'STORY_POINTS_GUIDE.WHAT_ARE_COMPLEXITY' | translate }}
+                li
+                    span.bullet
+                    | {{ 'STORY_POINTS_GUIDE.WHAT_ARE_RISK' | translate }}
+            p.not-hours {{ 'STORY_POINTS_GUIDE.NOT_HOURS' | translate }}
+            p.section-text {{ 'STORY_POINTS_GUIDE.SERVE_FOR' | translate }}
+
+        section.section.scale-section
+            h2.section-title {{ 'STORY_POINTS_GUIDE.SCALE_TITLE' | translate }}
+            p.section-text {{ 'STORY_POINTS_GUIDE.SCALE_BODY' | translate }}
+            img.fibonacci-spiral(src="#{v}/images/fibonacci_spiral.png" alt="Fibonacci spiral")
+
+            div.fibonacci-sequence
+                span.fib-label {{ 'STORY_POINTS_GUIDE.FIBONACCI_LABEL' | translate }}:
+                div.fib-numbers
+                    span.fib-number.inactive.unused 0
+                    span.fib-number.fib-1 1
+                    span.fib-number.inactive.unused 1
+                    span.fib-number.inactive.unused 2
+                    span.fib-number.fib-3 3
+                    span.fib-number.fib-5 5
+                    span.fib-number.fib-8 8
+                    span.fib-number.fib-13 13
+                    span.fib-number.fib-21 21
+                    span.fib-number.inactive.unused 34
+                    span.fib-number.inactive ...
+
+            table.scale-table
+                thead
+                    tr
+                        th {{ 'STORY_POINTS_GUIDE.COLUMN_POINTS' | translate }}
+                        th {{ 'STORY_POINTS_GUIDE.COLUMN_DESCRIPTION' | translate }}
+                tbody
+                    tr.row-1
+                        td.points-cell 1
+                        td {{ 'STORY_POINTS_GUIDE.ROW_1' | translate }}
+                    tr.row-3
+                        td.points-cell 3
+                        td {{ 'STORY_POINTS_GUIDE.ROW_3' | translate }}
+                    tr.row-5
+                        td.points-cell 5
+                        td {{ 'STORY_POINTS_GUIDE.ROW_5' | translate }}
+                    tr.row-8
+                        td.points-cell 8
+                        td {{ 'STORY_POINTS_GUIDE.ROW_8' | translate }}
+                    tr.row-13
+                        td.points-cell 13
+                        td {{ 'STORY_POINTS_GUIDE.ROW_13' | translate }}
+                    tr.row-21
+                        td.points-cell 21
+                        td {{ 'STORY_POINTS_GUIDE.ROW_21' | translate }}
+
+            div.alert.alert-tip
+                tg-svg(svg-icon="icon-check")
+                span {{ 'STORY_POINTS_GUIDE.ALERT_8' | translate }}
+
+            div.alert.alert-warning
+                tg-svg(svg-icon="icon-alert")
+                span {{ 'STORY_POINTS_GUIDE.ALERT_13' | translate }}
+
+        section.section.examples-section
+            h2.section-title {{ 'STORY_POINTS_GUIDE.EXAMPLES_TITLE' | translate }}
+
+            div.examples-grid
+
+                div.example-card.card-1
+                    div.card-header
+                        span.card-points 1
+                        h3.card-title {{ 'STORY_POINTS_GUIDE.EXAMPLES_1_TITLE' | translate }}
+                    ul.card-list
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_1_1' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_1_2' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_1_3' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_1_4' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_1_5' | translate }}
+
+                div.example-card.card-3
+                    div.card-header
+                        span.card-points 3
+                        h3.card-title {{ 'STORY_POINTS_GUIDE.EXAMPLES_3_TITLE' | translate }}
+                    ul.card-list
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_3_1' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_3_2' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_3_3' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_3_4' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_3_5' | translate }}
+
+                div.example-card.card-5
+                    div.card-header
+                        span.card-points 5
+                        h3.card-title {{ 'STORY_POINTS_GUIDE.EXAMPLES_5_TITLE' | translate }}
+                    ul.card-list
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_5_1' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_5_2' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_5_3' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_5_4' | translate }}
+
+                div.example-card.card-8
+                    div.card-header
+                        span.card-points 8
+                        h3.card-title {{ 'STORY_POINTS_GUIDE.EXAMPLES_8_TITLE' | translate }}
+                    ul.card-list
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_8_1' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_8_2' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_8_3' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_8_4' | translate }}
+
+                div.example-card.card-13
+                    div.card-header
+                        span.card-points 13
+                        h3.card-title {{ 'STORY_POINTS_GUIDE.EXAMPLES_13_TITLE' | translate }}
+                    ul.card-list
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_13_1' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_13_2' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_13_3' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_13_4' | translate }}
+
+                div.example-card.card-21
+                    div.card-header
+                        span.card-points 21
+                        h3.card-title {{ 'STORY_POINTS_GUIDE.EXAMPLES_21_TITLE' | translate }}
+                    ul.card-list
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_21_1' | translate }}
+                        li {{ 'STORY_POINTS_GUIDE.EXAMPLES_21_2' | translate }}
+
+        section.section.best-practices-section
+            h2.section-title {{ 'STORY_POINTS_GUIDE.BEST_PRACTICES_TITLE' | translate }}
+            ul.best-practices-list
+                li
+                    tg-svg(svg-icon="icon-check")
+                    span {{ 'STORY_POINTS_GUIDE.BEST_PRACTICES_1' | translate }}
+                li
+                    tg-svg(svg-icon="icon-check")
+                    span {{ 'STORY_POINTS_GUIDE.BEST_PRACTICES_2' | translate }}
+                li
+                    tg-svg(svg-icon="icon-check")
+                    span {{ 'STORY_POINTS_GUIDE.BEST_PRACTICES_3' | translate }}
+                li
+                    tg-svg(svg-icon="icon-check")
+                    span {{ 'STORY_POINTS_GUIDE.BEST_PRACTICES_4' | translate }}
+
+    //- Rodapé institucional compacto, de ponta a ponta, após o conteúdo
+    tg-institutional-footer(compact="true")

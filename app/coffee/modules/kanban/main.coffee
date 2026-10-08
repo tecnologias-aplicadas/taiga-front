@@ -309,9 +309,12 @@ class KanbanController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
                     model = us.toJS().model
                     @scope.$broadcast("kanban:us:deleted", model)
                     askResponse.finish()
-                promise.then null, ->
+                promise.then null, (data) =>
                     askResponse.finish(false)
-                    @confirm.notify("error")
+                    if data?.code
+                        @confirm.notify("error", @translate.instant("ERRORS.#{data.code.toUpperCase()}"))
+                    else
+                        @confirm.notify("error")
 
     showPlaceHolder: (statusId, swimlaneId) ->
         firstStatus = @scope.usStatusList[0].id == statusId && !@kanbanUserstoriesService.userstoriesRaw.length
@@ -596,8 +599,16 @@ class KanbanController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
     moveUs: (ctx, usList, newStatusId, newSwimlaneId, index, previousCard, nextCard) ->
         @.cleanSelectedUss()
 
+        originalPositions = _.map usList, (us) ->
+            return {id: us.id, oldStatusId: us.oldStatusId, oldSwimlaneId: us.oldSwimlaneId}
+
         usList = _.map usList, (us) =>
             return @kanbanUserstoriesService.getUsModel(us.id)
+
+        # Snapshot order and model state before the optimistic move
+        originalOrder = angular.copy(@kanbanUserstoriesService.order)
+        originalModels = _.map usList, (usModel) ->
+            return {id: usModel.id, status: usModel.status, swimlane: usModel.swimlane}
 
         @rootscope.$broadcast("kanban:userstories:loaded", usList, newStatusId, newSwimlaneId, index)
 
@@ -624,12 +635,40 @@ class KanbanController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
             data.bulkUserstories
         )
 
-        promise.then () =>
+        promise.then (response) =>
+
+            if response?.data
+                _.forEach response.data, (us) =>
+                    model = @kanbanUserstoriesService.getUsModel(us.id)
+
+                    if model
+                        model.completion_percent_progress = us.model.completion_percent_progress
+                        model.completion_percent_done = us.model.completion_percent_done
+
+                        @kanbanUserstoriesService.replaceModel(model)
             @scope.$broadcast("redraw:wip")
 
             @.generateFilters()
             if @.isFilterDataTypeSelected('status')
                 @.filtersReloadContent()
+
+        promise.catch (response) =>
+            # Restore order map and model status/swimlane to pre-move state
+            @kanbanUserstoriesService.order = originalOrder
+            for orig in originalModels
+                usModel = @kanbanUserstoriesService.getUsModel(orig.id)
+                if usModel
+                    usModel.status = orig.status
+                    usModel.swimlane = orig.swimlane
+            @kanbanUserstoriesService.refresh()
+
+            errData = response?.data or {}
+            rawCode = errData.code
+            rawCode = rawCode[0] if Array.isArray(rawCode)
+            if rawCode
+                @confirm.notify('error', @translate.instant("ERRORS.#{rawCode.toUpperCase()}"))
+            else
+                @confirm.notify('error')
 
 module.controller("KanbanController", KanbanController)
 

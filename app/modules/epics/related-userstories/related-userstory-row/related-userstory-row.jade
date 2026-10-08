@@ -53,8 +53,12 @@ tg-svg.icon-drag(
         img(
             style="background-color: {{ vm.avatar.bg }}"
             src="{{ vm.avatar.url }}"
-            alt="{{ vm.avatar.full_name_display }}"
+            alt="{{ vm.avatar.fullName }}"
         )
+        span.avatar-overflow(
+            ng-if="vm.extraAssigneesCount > 0"
+            title="+{{vm.extraAssigneesCount}} {{ 'EPICS.DASHBOARD.MORE_ASSIGNED' | translate }}"
+        ) +{{vm.extraAssigneesCount}}
 
         figcaption {{ vm.getAssignedToFullNameDisplay() }}
 

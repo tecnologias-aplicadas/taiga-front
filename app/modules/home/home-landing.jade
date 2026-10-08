@@ -1,0 +1,126 @@
+
+//- This source code is licensed under the terms of the
+//- GNU Affero General Public License found in the LICENSE file in
+//- the root directory of this source tree.
+//-
+//- Copyright (c) 2021-present Kaleidos INC
+
+div.home-landing
+
+    //- ─────────── NAVBAR ───────────
+    nav.hl-navbar
+        .hl-navbar__inner
+            .hl-navbar__brand
+                .hl-navbar__logo
+                    img(src="#{v}/images/logo.png" alt="Taiga")
+                .hl-navbar__title
+                    span.hl-navbar__name Taiga
+                    span.hl-navbar__subtitle(translate="HOME_LANDING.NAV_SUBTITLE")
+            nav.hl-navbar__links
+                a.hl-navbar__link.hl-navbar__cta(tg-nav="login" translate="HOME_LANDING.NAV_CTA")
+
+    //- ─────────── HERO ───────────
+    section.hl-hero
+        .hl-hero__inner
+            span.hl-hero__tag(translate="HOME_LANDING.HERO_TAG")
+            h1.hl-hero__title
+                span(translate="HOME_LANDING.HERO_TITLE_START")
+                br
+                span.hl-accent(translate="HOME_LANDING.HERO_TITLE_ACCENT")
+                | #{" "}
+                span(translate="HOME_LANDING.HERO_TITLE_END")
+
+            p.hl-hero__subtitle(translate="HOME_LANDING.HERO_SUBTITLE")
+            .hl-stats
+                .hl-stat
+                    span.hl-stat__number 6+
+                    span.hl-stat__label(translate="HOME_LANDING.STAT_MODULES_LABEL")
+                .hl-stat
+                    span.hl-stat__number Web + IoT
+                    span.hl-stat__label(translate="HOME_LANDING.STAT_PROJECTS_LABEL")
+                .hl-stat
+                    span.hl-stat__number(translate="HOME_LANDING.STAT_METHOD_VALUE")
+                    span.hl-stat__label(translate="HOME_LANDING.STAT_METHOD_LABEL")
+                .hl-stat.hl-stat--tia
+                    span.hl-stat__number T·IA
+                    span.hl-stat__label(translate="HOME_LANDING.STAT_TIA_LABEL")
+
+    //- ─────────── NOVIDADES ───────────
+    //- A seção inteira só aparece quando há slide ativo (regra do RF25ADQ)
+    tg-news-carousel
+    //- ─────────── FUNCIONALIDADES ───────────
+    section#funcionalidades.hl-features
+        .hl-features__inner
+            .hl-section-header
+                .hl-badge.hl-badge--light.hl-badge--glow(translate="HOME_LANDING.FEATURES_BADGE")
+                h2.hl-section-title(translate="HOME_LANDING.FEATURES_TITLE")
+                p.hl-section-subtitle(translate="HOME_LANDING.FEATURES_SUBTITLE")
+
+            .hl-cards
+                .hl-card
+                    .hl-card__icon.hl-card__icon--teal
+                        svg(xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+                            rect(x="3" y="3" width="5" height="18" rx="1")
+                            rect(x="10" y="3" width="5" height="11" rx="1")
+                            rect(x="17" y="3" width="4" height="7" rx="1")
+                    .hl-card__content
+                        h3.hl-card__name(translate="HOME_LANDING.CARD_KANBAN_NAME")
+                        span.hl-card__tag.hl-card__tag--teal(translate="HOME_LANDING.CARD_KANBAN_TAG")
+                        p.hl-card__desc(translate="HOME_LANDING.CARD_KANBAN_DESC")
+
+                .hl-card
+                    .hl-card__icon.hl-card__icon--blue
+                        svg(xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+                            path(d="M12 2L2 7l10 5 10-5-10-5z")
+                            path(d="M2 17l10 5 10-5")
+                            path(d="M2 12l10 5 10-5")
+                    .hl-card__content
+                        h3.hl-card__name(translate="HOME_LANDING.CARD_EPICS_NAME")
+                        span.hl-card__tag.hl-card__tag--blue(translate="HOME_LANDING.CARD_EPICS_TAG")
+                        p.hl-card__desc(translate="HOME_LANDING.CARD_EPICS_DESC")
+
+                .hl-card
+                    .hl-card__icon.hl-card__icon--green
+                        svg(xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+                            circle(cx="12" cy="12" r="10")
+                            polyline(points="12 6 12 12 16 14")
+                    .hl-card__content
+                        h3.hl-card__name(translate="HOME_LANDING.CARD_SCRUM_NAME")
+                        span.hl-card__tag.hl-card__tag--green(translate="HOME_LANDING.CARD_SCRUM_TAG")
+                        p.hl-card__desc(translate="HOME_LANDING.CARD_SCRUM_DESC")
+
+                .hl-card
+                    .hl-card__icon.hl-card__icon--orange
+                        svg(xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+                            circle(cx="12" cy="12" r="10")
+                            line(x1="12" y1="8" x2="12" y2="12")
+                            line(x1="12" y1="16" x2="12.01" y2="16")
+                    .hl-card__content
+                        h3.hl-card__name(translate="HOME_LANDING.CARD_ISSUES_NAME")
+                        span.hl-card__tag.hl-card__tag--orange(translate="HOME_LANDING.CARD_ISSUES_TAG")
+                        p.hl-card__desc(translate="HOME_LANDING.CARD_ISSUES_DESC")
+
+                .hl-card
+                    .hl-card__icon.hl-card__icon--cyan
+                        svg(xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+                            path(d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20")
+                            path(d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z")
+                    .hl-card__content
+                        h3.hl-card__name(translate="HOME_LANDING.CARD_WIKI_NAME")
+                        span.hl-card__tag.hl-card__tag--cyan(translate="HOME_LANDING.CARD_WIKI_TAG")
+                        p.hl-card__desc(translate="HOME_LANDING.CARD_WIKI_DESC")
+
+                .hl-card
+                    .hl-card__icon.hl-card__icon--red
+                        svg(xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+                            rect(x="3" y="4" width="18" height="18" rx="2" ry="2")
+                            line(x1="16" y1="2" x2="16" y2="6")
+                            line(x1="8" y1="2" x2="8" y2="6")
+                            line(x1="3" y1="10" x2="21" y2="10")
+                    .hl-card__content
+                        h3.hl-card__name(translate="HOME_LANDING.CARD_AGENDA_NAME")
+                        span.hl-card__tag.hl-card__tag--red(translate="HOME_LANDING.CARD_AGENDA_TAG")
+                        p.hl-card__desc(translate="HOME_LANDING.CARD_AGENDA_DESC")
+
+    //- ─────────── FOOTER ───────────
+    tg-institutional-footer#sobre

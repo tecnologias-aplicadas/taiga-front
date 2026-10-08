@@ -16,6 +16,8 @@ moveToSprintLightboxDirective = (lightboxService) ->
         scope: {}
         bindToController: {
             openItems: "="
+            hasClosedItems: "="
+            registerOnly: "="
             sprint: "="
         },
         templateUrl: "components/move-to-sprint/move-to-sprint-lb/move-to-sprint-lb.html"

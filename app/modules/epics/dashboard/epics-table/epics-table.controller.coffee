@@ -30,6 +30,7 @@ class EpicsTableController
             assigned: true,
             status: true,
             progress: true,
+            schedulable: true,
             closed: true,
             closed_us: true,
         })

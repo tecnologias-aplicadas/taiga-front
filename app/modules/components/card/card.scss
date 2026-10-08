@@ -52,7 +52,7 @@ $iocaine: #b400d1;
         }
         .wrapper-assigned-to-data {
             align-items: center;
-            display: flex;
+            display: block;
             justify-content: space-between;
             margin-top: .5rem;
             position: relative;
@@ -66,14 +66,15 @@ $iocaine: #b400d1;
             }
         }
         &.zoom-1 {
-            display: flex;
+            display: block;
             tg-card-assigned-to {
                 margin-left: auto;
                 margin-right: 1rem;
             }
             .card-title {
+                margin-bottom: .25rem;
                 a {
-                    display: flex;
+                    display: block;
                 }
             }
             .card-assigned-to-action {
@@ -97,16 +98,51 @@ $iocaine: #b400d1;
             }
         }
     }
-    &.type-us {
+    &.type-us,
+    &.type-task {
         .card-data {
-            justify-content: space-between;
+            justify-content: flex-end;
             margin-bottom: $card-section-margin-bottom;
         }
         .card-assigned-to {
             margin-bottom: $card-section-margin-bottom;
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
         }
-        .card-statistics {
+        .card-progress {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e48a46;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border-radius: 9px;
+            padding: 2px 6px;
+            min-width: 28px;
+            height: 22px;
             margin-left: auto;
+            line-height: 1;
+
+            svg {
+                width: 12px;
+                height: 12px;
+                margin-right: 4px;
+                fill: #fff;
+            }
+
+            span {
+                margin-top: 1px;
+            }
+            &.new {
+                background-color: rgb(191, 191, 191);
+            }
+
+            &.done {
+                background-color: rgb(105, 148, 234);
+            }
         }
     }
     &.with-fold-action {
@@ -276,8 +312,11 @@ $iocaine: #b400d1;
 
     .card-user-avatar {
         cursor: pointer;
-        margin-right: -.25rem;
         position: relative;
+
+        & + .card-user-avatar {
+            margin-left: -.5rem;
+        }
     }
 
     .card-not-assigned {
@@ -424,11 +463,11 @@ $iocaine: #b400d1;
 }
 
 .card-data {
-    align-items: center;
-    color: $gray-light;
     display: flex;
-    font-size: 14px;
-    padding: $wrap-padding;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    row-gap: 10px;
     .card-status-tag {
         font-size: .75rem;
         height: .1rem;
@@ -455,9 +494,19 @@ $iocaine: #b400d1;
     }
 }
 
+.card-statistics-init,
+.card-statistics {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    white-space: nowrap;
+}
+
 .card-statistics-init {
     align-items: center;
     display: flex;
+    justify-content: flex-end;
+    padding: 0 10px;
 
     .card-due-date {
         margin-left: .5rem;
@@ -469,7 +518,9 @@ $iocaine: #b400d1;
     align-items: center;
     color: $grey-30;
     display: flex;
+    justify-content: flex-end;
     margin-top: 0; /* override taiga-seed css */
+    padding: 0 10px;
     .statistic {
         align-content: center;
         color: $color-link-tertiary;
@@ -490,6 +541,7 @@ $iocaine: #b400d1;
             color: $color-link-green;
         }
     }
+
 }
 
 .card-unfold {

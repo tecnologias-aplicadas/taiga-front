@@ -61,6 +61,11 @@ class UserSettingsController extends mixOf(taiga.Controller, taiga.PageMixin)
         @scope.availableThemes = @config.get("themes", []).filter (theme) =>
             return compiledThemes.includes(theme)
 
+        userId = @auth.getUser().id
+        @repo.queryOne("users", userId).then (freshUser) =>
+            @auth.setUser(freshUser)
+            @scope.user = freshUser
+
         return @rs.locales.list().then (locales) =>
             @scope.locales = locales
             return locales
@@ -135,9 +140,12 @@ UserProfileDirective = ($confirm, $auth, $repo, $translate) ->
                 else
                     $confirm.notify('success')
 
-            onError = (data) =>
-                form.setErrors(data)
-                $confirm.notify('error', data._error_message)
+            onError = (response) =>
+                if response.data?.code == "fields_not_editable"
+                    $confirm.notify('error', $translate.instant("USER_PROFILE.FIELDS_NOT_EDITABLE_ERROR"))
+                else
+                    form.setErrors(response.data)
+                    $confirm.notify('error', response.data._error_message)
 
             $repo.save($scope.user).then(onSuccess, onError)
 

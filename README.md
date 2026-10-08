@@ -59,7 +59,17 @@ Install requirements:
 
 We recommend using [nvm](https://github.com/creationix/nvm) to manage different node versions
 
+Em `conf/` criar o arquivo `conf.json` a partir do arquivo `conf.example.json`
+Em `dist/` criar o arquivo `conf.json` a partir do arquivo `conf.example.json`
+
 ```
+npx gulp deploy
+npx gulp app-watch
+npx gulp
+sudo apt install gulp
+gulp deploy
+npx gulp
+npm start
 npm start
 ```
 

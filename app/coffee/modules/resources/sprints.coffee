@@ -38,7 +38,8 @@ resourceProvider = ($repo, $model, $storage, $http, $urls) ->
             return {
                 milestones: milestones,
                 closed: parseInt(headers("Taiga-Info-Total-Closed-Milestones"), 10),
-                open: parseInt(headers("Taiga-Info-Total-Opened-Milestones"), 10)
+                open: parseInt(headers("Taiga-Info-Total-Opened-Milestones"), 10),
+                closedWithoutResult: parseInt(headers("Taiga-Info-Total-Closed-Milestones-Without-Result"), 10) or 0
             }
 
     service.moveUserStoriesMilestone = (currentMilestoneId, projectId, milestoneId, data) ->
@@ -55,6 +56,10 @@ resourceProvider = ($repo, $model, $storage, $http, $urls) ->
         url = $urls.resolve("move-issues-to-milestone", currentMilestoneId)
         params = {project_id: projectId, milestone_id: milestoneId, bulk_issues: data}
         return $http.post(url, params)
+
+    service.closeWithResult = (milestoneId, data) ->
+        url = $urls.resolve("close-milestone-with-result", milestoneId)
+        return $http.post(url, data)
 
     return (instance) ->
         instance.sprints = service

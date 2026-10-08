@@ -46,7 +46,7 @@ fi
 
 # Default language
 if [[ -z "${DEFAULT_LANGUAGE}" ]]; then
-    export DEFAULT_LANGUAGE="en"
+    export DEFAULT_LANGUAGE="pt-br"
 fi
 
 # Debug
@@ -60,8 +60,15 @@ export CONTRIB_PLUGINS=$contribs
 
 FILE=/usr/share/nginx/html/conf.json
 if [ ! -f "$FILE" ]; then
-    envsubst < /usr/share/nginx/html/conf.json.template \
-             > /usr/share/nginx/html/conf.json
+  envsubst < /usr/share/nginx/html/conf.json.template \
+             > /usr/share/nginx/html/conf.json  
 fi
 
 sed -i 's;<base href="/">;<base href="'"${TAIGA_SUBPATH}/"'">;g' /usr/share/nginx/html/index.html
+
+# Substituir o CAPTCHA_SITE_KEY no conf.json
+sed -i 's/${CAPCHA_SITE_KEY}/'${CAPCHA_SITE_KEY}'/g' /usr/share/nginx/html/conf.json
+
+sed -i 's/${ENVIRONMENT}/'${ENVIRONMENT}'/g' /usr/share/nginx/html/conf.json
+
+# sed -i 's/${CHAT_STREAM_URL}/'${CHAT_STREAM_URL}'/g' /usr/share/nginx/html/conf.json

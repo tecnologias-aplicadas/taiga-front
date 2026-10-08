@@ -22,7 +22,7 @@ module = angular.module("taigaIssues")
 ## Issue Detail Controller
 #############################################################################
 
-class IssueDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
+class IssueDetailController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.DetailEventsMixin)
     @.$inject = [
         "$scope",
         "$rootScope",
@@ -41,11 +41,14 @@ class IssueDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
         "tgErrorHandlingService",
         "tgProjectService",
         "tgAttachmentsFullService",
+        "$tgEvents",
+        "tgEditingTracker"
     ]
 
     constructor: (@scope, @rootscope, @repo, @confirm, @rs, @params, @q, @location,
                   @log, @appMetaService, @analytics, @navUrls, @translate, @modelTransform,
-                  @errorHandlingService, @projectService, @attachmentsFullService) ->
+                  @errorHandlingService, @projectService, @attachmentsFullService,
+                  @events, @editingTracker) ->
         bindMethods(@)
 
         @scope.issueRef = @params.issueref
@@ -84,6 +87,10 @@ class IssueDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
         @attachmentsFullService.loadAttachments('issue', @scope.issueId, @scope.projectId)
 
     initializeEventHandlers: ->
+        # Ouvinte no scope da tela (o raiz faz $broadcast): morre com a tela
+        @scope.$on "object:updated", =>
+            @.loadIssue()
+
         @scope.$on "attachment:create", =>
             @analytics.trackEvent("attachment", "create", "create attachment on issue", 1)
 
@@ -105,6 +112,18 @@ class IssueDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
                 @.loadSprint()
             else
                 @scope.sprint = null
+
+    initializeSubscription: ->
+        @.subscribeDetailEvents [
+            {
+                # A própria issue: recarrega card e atividade; exclusão não reconsulta
+                routingKey: "changes.project.#{@scope.projectId}.issues"
+                matches: (message) => message.type != "delete" and @.eventTargets(message, @scope.issueId)
+                reload: =>
+                    @rootscope.$broadcast("object:updated")
+                    @scope.$broadcast("custom-attributes-values:reload")
+            }
+        ]
 
     initializeOnDeleteGoToUrl: ->
        ctx = {project: @scope.project.slug}
@@ -163,6 +182,7 @@ class IssueDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
         project = @.loadProject()
 
         @.fillUsersAndRoles(project.members, project.roles)
+        @.initializeSubscription()
 
         return @.loadIssue().then( =>
             if @scope.project.my_permissions.indexOf("view_milestones") != -1
@@ -264,7 +284,7 @@ module.directive("tgIssueStatusDisplay", ["$tgTemplate", "$compile", IssueStatus
 ## Issue status button directive
 #############################################################################
 
-IssueStatusButtonDirective = ($rootScope, $repo, $confirm, $loading, $modelTransform, $template, $compile) ->
+IssueStatusButtonDirective = ($rootScope, $repo, $confirm, $loading, $modelTransform, $template, $compile, $translate) ->
     # Display the status of Issue and you can edit it.
     #
     # Example:
@@ -310,8 +330,13 @@ IssueStatusButtonDirective = ($rootScope, $repo, $confirm, $loading, $modelTrans
                 $rootScope.$broadcast("object:updated")
                 currentLoading.finish()
 
-            onError = ->
-                $confirm.notify("error")
+            onError = (response) ->
+                rawCode = response?.status?[0] or response?.code or null
+                rawCode = rawCode[0] if Array.isArray(rawCode)
+                if rawCode
+                    $confirm.notify("error", $translate.instant("ERRORS.#{rawCode.toUpperCase()}"))
+                else
+                    $confirm.notify("error")
                 currentLoading.finish()
 
             transform.then(onSuccess, onError)
@@ -347,7 +372,7 @@ IssueStatusButtonDirective = ($rootScope, $repo, $confirm, $loading, $modelTrans
         require: "ngModel"
     }
 
-module.directive("tgIssueStatusButton", ["$rootScope", "$tgRepo", "$tgConfirm", "$tgLoading", "$tgQueueModelTransformation", "$tgTemplate", "$compile", IssueStatusButtonDirective])
+module.directive("tgIssueStatusButton", ["$rootScope", "$tgRepo", "$tgConfirm", "$tgLoading", "$tgQueueModelTransformation", "$tgTemplate", "$compile", "$translate", IssueStatusButtonDirective])
 
 #############################################################################
 ## Issue type button directive

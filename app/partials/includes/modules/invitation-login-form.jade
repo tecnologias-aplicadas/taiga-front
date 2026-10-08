@@ -5,48 +5,14 @@
 //-
 //- Copyright (c) 2021-present Kaleidos INC
 
-form.login-form
+.login-form
     p.form-header(translate="LOGIN_COMMON.HEADER")
 
     fieldset
-        input(
-            type="text"
-            autocorrect="off"
-            autocapitalize="none"
-            name="username"
-            ng-model="dataLogin.username"
-            data-required="true"
-            placeholder="{{'LOGIN_COMMON.PLACEHOLDER_AUTH_NAME' | translate}}"
-        )
-
-    fieldset.login-password
-        input(
-            type="password"
-            name="password"
-            tg-capslock
-            ng-model="dataLogin.password"
-            data-required="true"
-            placeholder="{{'LOGIN_COMMON.PLACEHOLDER_AUTH_PASSWORD' | translate}}"
-        )
-        // This should be hidden when focus on pass
-        a.forgot-pass(
+        a.btn-small.full.go-to-login(
             href=""
-            tg-nav="forgot-password"
-            title="{{'LOGIN_COMMON.TITLE_LINK_FORGOT_PASSWORD' | translate}}"
-            translate="LOGIN_COMMON.LINK_FORGOT_PASSWORD"
-        )
-
-    fieldset
-        button.btn-small.full(
-            variant="primary"
-            type="submit"
-            translate="LOGIN_COMMON.ACTION_ENTER"
-        )
-
-    .contrib-plugins-wrapper(ng-if="authPlugins.length")
-        label(translate="LOGIN_COMMON.ALT_LOGIN")
-
-        fieldset(
-            ng-repeat="plugin in authPlugins"
-            ng-include="plugin.template"
+            tg-nav="login"
+            tg-nav-get-params="{\"next\": \"{{invitationProjectUrl}}\"}"
+            title="{{'LOGIN_COMMON.LINK_GO_LOGIN' | translate}}"
+            translate="LOGIN_COMMON.LINK_GO_LOGIN"
         )

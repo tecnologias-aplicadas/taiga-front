@@ -1,0 +1,19 @@
+//- This source code is licensed under the terms of the
+//- GNU Affero General Public License found in the LICENSE file in
+//- the root directory of this source tree.
+//-
+//- Copyright (c) 2021-present Kaleidos INC
+
+.diff-status-wrapper
+    span.key(
+        translate="ACTIVITY.FIELDS.START_DATE"
+    )
+    span.diff(ng-if="vm.diff[0]") {{vm.diff[0] | momentFormat:'DD MMM YYYY'}}
+    span.diff(ng-if="!vm.diff[0]" translate="ACTIVITY.VALUES.NOT_SET")
+
+    tg-svg(
+        svg-icon="icon-arrow-right"
+    )
+
+    span.diff(ng-if="vm.diff[1]") {{vm.diff[1] | momentFormat:'DD MMM YYYY'}}
+    span.diff(ng-if="!vm.diff[1]" translate="ACTIVITY.VALUES.NOT_SET")

@@ -48,6 +48,8 @@ FilterDirective = () ->
             onSelectCustomFilter: "&",
             onRemoveFilter: "&",
             onRemoveCustomFilter: "&",
+            onRemoveAllFilters: "&",
+            onRemoveAllFiltersExclude: "&",
             onSaveCustomFilter: "&",
             customFilters: "<",
             filters: "<"

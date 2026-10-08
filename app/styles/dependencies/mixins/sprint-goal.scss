@@ -1,0 +1,71 @@
+// Sprint goal: shared visual language for the goal read-only highlight,
+// its section labels, the achievement pill and the immutability callout.
+// Used by the taskboard accordion, the close-sprint lightbox and the
+// create/edit sprint lightbox so the three pieces look alike.
+
+// Soft mustard for "partially achieved": the theme yellow toned down with gray.
+$sprint-goal-yellow: mix($color-link-yellow, $color-gray400, 60%);
+
+@mixin sprint-goal-label {
+    @include font-size(xsmall);
+    @include font-type(medium);
+    color: $color-black900;
+    display: block;
+    margin: 0 0 .25rem;
+    text-transform: uppercase;
+}
+
+@mixin sprint-goal-readonly {
+    background: $color-gray100;
+    border-left: 3px solid $color-link-primary;
+    padding: .75rem 1rem;
+}
+
+@mixin sprint-goal-achievement-pill {
+    @include font-size(small);
+    @include font-type(regular);
+    border: 1px solid $color-gray400;
+    border-radius: 1rem;
+    color: $color-black900;
+    display: inline-block;
+    padding: .125rem .75rem;
+
+    &.achieved {
+        background: $color-solid-green;
+        border-color: $color-link-green;
+    }
+
+    &.partially-achieved {
+        background: rgba($sprint-goal-yellow, .35);
+        border-color: $sprint-goal-yellow;
+    }
+
+    &.not-achieved {
+        background: $color-solid-orange;
+        border-color: $color-link-orange;
+    }
+
+    &.not-informed {
+        background: $color-gray200;
+        border-color: $color-gray400;
+        color: $color-black600;
+    }
+}
+
+@mixin sprint-goal-callout($background, $accent) {
+    @include font-size(small);
+    align-items: flex-start;
+    background: $background;
+    border-left: 3px solid $accent;
+    color: $color-black900;
+    display: flex;
+    padding: .75rem 1rem;
+
+    svg {
+        fill: $accent;
+        flex-shrink: 0;
+        height: 1rem;
+        margin: .1rem .5rem 0 0;
+        width: 1rem;
+    }
+}

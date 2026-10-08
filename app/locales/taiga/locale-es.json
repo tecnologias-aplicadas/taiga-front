@@ -49,6 +49,90 @@
         "CONFIRM_CLOSE_EDIT_MODE_TITLE": "¿Seguro que desea cerrar el modo de edición?",
         "CONFIRM_CLOSE_EDIT_MODE_MESSAGE": "Recuerde que si cierra el modo de edición sin guardar todos los cambios se perderán",
         "RELATED_USERSTORIES": "Historias de usuario relacionadas",
+        "DEPENDENCIES": {
+            "ADD": "Añadir dependencia",
+            "DELETE": "Eliminar dependencia",
+            "TITLE": "Dependencias de la Tarjeta",
+            "UNASSIGNED": "no asignado",
+            "BY": "|",
+            "AT": "en",
+            "DATE_FORMAT": "DD/MM/YYYY [a las] HH:mm",
+            "CURRENT_ITEM": "Este elemento",
+            "SOURCE_RELATION_TYPES": {
+                "RELATIONSHIP_RT": "Relacionado con {{target_kind}}",
+                "RELATIONSHIP_BK": "Bloquea {{target_kind}}",
+                "RELATIONSHIP_BKBY": "Bloqueado por {{target_kind}}",
+                "RELATIONSHIP_DPON": "Depende de {{target_kind}}",
+                "RELATIONSHIP_DPME": "Es una dependencia de {{target_kind}}",
+                "RELATIONSHIP_DUBY": "Duplicado por {{target_kind}}",
+                "RELATIONSHIP_DUFROM": "Es un duplicado de {{target_kind}}",
+                "RELATIONSHIP_DWT": "Descubierto al probar {{target_kind}}",
+                "RELATIONSHIP_LTDWT": "Llevó a descubrir {{target_kind}}"
+            },
+            "TARGET_RELATION_TYPES": {
+                "RELATIONSHIP_RT": "Relacionado con {{source_kind}}",
+                "RELATIONSHIP_BK": "Bloqueado por {{source_kind}}",
+                "RELATIONSHIP_BKBY": "Bloquea {{source_kind}}",
+                "RELATIONSHIP_DPON": "Es una dependencia de {{source_kind}}",
+                "RELATIONSHIP_DPME": "Depende de {{source_kind}}",
+                "RELATIONSHIP_DUBY": "Es un duplicado de {{source_kind}}",
+                "RELATIONSHIP_DUFROM": "Duplicado por {{source_kind}}",
+                "RELATIONSHIP_DWT": "Relacionado con {{source_kind}}",
+                "RELATIONSHIP_LTDWT": "Descubierto al probar {{source_kind}}"
+            },
+            "MODAL": {
+                "TITLE": "Crear nueva dependencia",
+                "TYPE_LABEL": "Tipo de dependencia:",
+                "ITEM_TYPE_LABEL": "Tipo de elemento:",
+                "SEARCH_LABEL": "Buscar elemento:",
+                "SEARCH_PLACEHOLDER": "Escriba para buscar un elemento...",
+                "NO_RESULTS": "No se encontraron elementos con estos criterios.",
+                "START_SEARCH": "Escriba para buscar elementos.",
+                "CANCEL": "Cancelar",
+                "SAVE": "Guardar",
+                "RELATION_TYPES": {
+                    "RELATED_TO": "relacionado con",
+                    "BLOCKS": "bloquea",
+                    "BLOCKED_BY": "bloqueado por",
+                    "DEPENDS_ON": "depende de",
+                    "DEPENDS_ME": "es una dependencia de",
+                    "DUPLICATED_BY": "duplicado por",
+                    "DUPLICATED_FROM": "duplicado desde",
+                    "DISCOVERD_WHILE_TESTING": "descubierto al probar",
+                    "LED_TO_DISCOVERY_DURING_TEST": "llevó a descubrir durante pruebas"
+                }
+            },
+            "CARD_TYPES": {
+                "ISSUE": "Incidencia",
+                "TASK": "Tarea",
+                "USERSTORY": "Historia de usuario",
+                "EPIC": "Épica"
+            },
+            "NOTIFICATIONS": {
+                "LOAD_ERROR": "No se pudieron cargar las dependencias",
+                "LOAD_INVALID": "No se pudieron cargar las dependencias. Elemento inválido.",
+                "MOCK_DATA": "Usando datos simulados para visualización",
+                "CREATE_SUCCESS": "Dependencias creadas con éxito",
+                "CREATE_ERROR": "No se pudieron crear todas las dependencias",
+                "CREATE_INVALID_ID": "No se pudo crear la dependencia. Elemento de referencia inválido.",
+                "CREATE_INVALID_TICKET": "No se pudieron crear dependencias: ID del ticket no encontrado",
+                "CREATE_INVALID_IDS": "No se pudieron crear dependencias: IDs inválidos",
+                "REMOVE_SUCCESS": "Dependencia eliminada con éxito",
+                "REMOVE_ERROR": "No se pudo eliminar la dependencia",
+                "REMOVE_INVALID": "No se pudo eliminar la dependencia: IDs no encontrados",
+                "NOT_FOUND": "Dependencia no encontrada",
+                "VIEW_FUTURE": "La funcionalidad de visualización de tickets se implementará pronto",
+                "REMOVE_CONFIRM_TITLE": "Confirmar eliminación",
+                "REMOVE_CONFIRM_MESSAGE": "Dependencia con #{{ticketRef}} - {{ticketSubject}}"
+            },
+            "VIEW": "Ver ticket",
+            "REMOVE": "Eliminar dependencia"
+        },
+        "ENVIRONMENT": {
+            "LOCAL": "Entorno Local",
+            "DEVELOP": "Entorno de Desarrollo",
+            "STAGING": "Entorno de Preproducción"
+        },
         "CARD": {
             "ASSIGN_TO": "Asignado a",
             "EDIT": "Editar tarjeta",
@@ -131,7 +215,7 @@
         "SEE_USER_PROFILE": "Ver el perfil de {{username }}",
         "USER_STORY": "Historia de usuario",
         "TASK": "Tarea",
-        "ISSUE": "Petición",
+        "ISSUE": "Issue",
         "EPIC": "Épica",
         "TAGS": {
             "PLACEHOLDER": "Introducir etiqueta",
@@ -303,7 +387,7 @@
                 "DELETE_TASKS": "Borrar tareas"
             },
             "ISSUES": {
-                "NAME": "Peticiones",
+                "NAME": "Issues",
                 "VIEW_ISSUES": "Ver peticiones",
                 "ADD_ISSUES": "Crear peticiones",
                 "MODIFY_ISSUES": "Editar peticiones",
@@ -340,7 +424,17 @@
         "ACTION_ENTER": "Entrar",
         "ACTION_SIGN_IN": "Iniciar sesión",
         "PLACEHOLDER_AUTH_PASSWORD": "Contraseña (distingue mayúsculas y minúsculas)",
-        "ALT_LOGIN": "O haz login con"
+        "ALT_LOGIN": "O haz login con",
+        "TAB_CORPORATE": "Corporativo",
+        "TAB_EXTERNAL": "Externo",
+        "PLACEHOLDER_CORPORATE_USERNAME": "Usuario (ej: nombre.apellido)",
+        "ERROR_USERNAME_NO_EMAIL": "Use solo el nombre de usuario, no el correo electrónico.",
+        "LDAP_TIMEOUT": "El inicio de sesión está tardando más de lo esperado. Comprueba tu conexión con la VPN.",
+        "INVALID_CREDENTIALS": "Nombre de usuario o contraseña inválidos.",
+        "UNDEFINED_CREDENTIALS": "Usuario desconocido, contacta con {{adminTeam}}.",
+        "INVALID_RECAPTCHA": "Confirma que no eres un robot e inténtalo de nuevo.",
+        "LINK_GO_HOME": "Ir al inicio",
+        "LINK_GO_LOGIN": "Ir al inicio de sesión"
     },
     "LOGIN_FORM": {
         "ERROR_AUTH_INCORRECT": "La Taiga indica que tu nombre de usuario/correo o contraseña son incorrectos.",
@@ -357,6 +451,12 @@
         "PLACEHOLDER_EMAIL": "Tu email",
         "PLACEHOLDER_PASSWORD": "Establece una contraseña (distingue mayúsculas y minúsculas)",
         "ACTION_SIGN_UP": "Registrarme",
+        "USERNAME_ALREADY_IN_USE": "Este nombre de usuario ya está en uso. Elige otro.",
+        "EMAIL_ALREADY_IN_USE": "Este correo electrónico ya está en uso.",
+        "USER_CREATION_FAILED": "No se pudo crear tu cuenta. Inténtalo de nuevo.",
+        "PUBLIC_REGISTER_DISABLED": "Esta instancia de Taiga no acepta el registro público.",
+        "TERMS_NOT_ACCEPTED": "Para crear tu cuenta, acepta los términos de servicio y la política de privacidad.",
+        "INVALID_REGISTRATION_TYPE": "No se pudo procesar este registro.",
         "TITLE_LINK_LOGIN": "Iniciar sesión",
         "LINK_LOGIN": "¿Ya te has registrado? Inicia sesión"
     },
@@ -399,6 +499,10 @@
     },
     "INVITATION_LOGIN_FORM": {
         "NOT_FOUND": "La Taiga no logra encontrar tu invitación.",
+        "EMAIL_MISMATCH": "Usa el mismo correo electrónico al que se envió la invitación.",
+        "NOT_VALID": "Esta invitación no es válida. Pide una nueva a quien administra el proyecto.",
+        "ALREADY_MEMBER": "Ya eres miembro de este proyecto.",
+        "USER_NOT_FOUND": "No encontramos tu cuenta. Inicia sesión de nuevo.",
         "SUCCESS": "¡Acabas de unirte al proyecto! Bienvenido a {{project_name}}"
     },
     "HOME": {
@@ -422,9 +526,14 @@
         "EPIC": "Épica",
         "PAGE_TITLE": "Épicas - {{projectName}}",
         "PAGE_DESCRIPTION": "El listado de épicas del proyecto {{projectName}}: {{projectDescription}}",
+        "DONE": "Completado",
+        "PROGRESS": "En progreso",
+        "NOT_STARTED": "No iniciado",
+        "TASKS_INFO": "{{completed}}/{{total}} tareas",
         "DASHBOARD": {
             "ADD": "+ AÑADIR ÉPICA",
-            "UNASSIGNED": "No asignado"
+            "UNASSIGNED": "No asignado",
+            "MORE_ASSIGNED": "responsables más"
         },
         "EMPTY": {
             "TITLE": "Parece que todavía no hay épicas.",
@@ -433,6 +542,9 @@
         },
         "TABLE": {
             "VOTES": "Votos",
+            "START_DATE": "Inicio",
+            "EXPECTED_COMPLETION_DATE": "Fin (previsión)",
+            "COMPLETION_DATE": "Terminado en",
             "NAME": "Nombre",
             "PROJECT": "Proyecto",
             "SPRINT": "Sprint",
@@ -446,11 +558,21 @@
         "CREATE": {
             "TITLE": "Nueva Épica",
             "PLACEHOLDER_DESCRIPTION": "Por favor añade un texto descriptivo para ayudar a otros usuarios a entender mejor esta historia.",
+            "START_DATE": "Inicio",
+            "EXPECTED_COMPLETION_DATE": "Fin (previsión)",
+            "COMPLETION_DATE": "Terminado en",
             "TEAM_REQUIREMENT": "Requerido por el equipo",
             "CLIENT_REQUIREMENT": "Requerido por el Cliente",
             "BLOCKED": "Bloqueada",
             "BLOCKED_NOTE_PLACEHOLDER": "¿Por qué está esta épica bloqueada?",
             "CREATE_EPIC": "Crear épica"
+        },
+        "DETAILS": {
+            "DONE": "Terminado",
+            "PROGRESS": "En curso",
+            "START_DATE": "Inicio",
+            "EXPECTED_COMPLETION_DATE": "Fin (previsión)",
+            "COMPLETION_DATE": "Terminado en"
         }
     },
     "PROJECTS": {
@@ -528,7 +650,7 @@
             "NUMBER_US_POINTS_HELP": "0 para un numero indeterminado",
             "KANBAN": "Kanban",
             "KANBAN_DESCRIPTION": "Organiza tus proyectos de una manera flexible con este panel.",
-            "ISSUES": "Peticiones",
+            "ISSUES": "Issues",
             "ISSUES_DESCRIPTION": "Haz seguimiento de los bugs, preguntas y peticiones de mejoras relacionadas con tu proyecto. ¡No te pierdas nada!",
             "WIKI": "Wiki",
             "WIKI_DESCRIPTION": "Añade, modifica o borra contenido en colaboración con otros miembros. Este es el lugar adecuado para la documentación de tu proyecto.",
@@ -571,7 +693,10 @@
             "CHANGE_OWNER": "Cambiar dueño",
             "CHANGE_OWNER_SUCCESS_TITLE": "Ok, su solicitud ha sido enviado!",
             "CHANGE_OWNER_SUCCESS_DESC": "Le notificaremos por correo si la solicitud para ser dueño del proyecto fue aceptada o rechazada",
-            "REQUEST_OWNERSHIP_LIMIT": "Ha alcanzado su límite de {{maxProjects}} proyectos privados"
+            "REQUEST_OWNERSHIP_LIMIT": "Ha alcanzado su límite de {{maxProjects}} proyectos privados",
+            "START_DATE": "Fecha de inicio del proyecto",
+            "EXPECTED_END_DATE": "Fecha estimada de finalización del proyecto",
+            "END_DATE": "Fecha de finalización del proyecto"
         },
         "REPORTS": {
             "TITLE": "Informes",
@@ -914,13 +1039,24 @@
             "THIS_PROJECT_IS_BLOCKED": "Este proyecto esta temporalmente bloqueado",
             "TO_UNBLOCK_CONTACT_THE_ADMIN_STAFF": "Para desbloquear sus proyectos, contacte al administrador."
         },
+        "STATUS": {
+            "ACTIVE": "Activo",
+            "FINISHED": "Finalizado"
+        },
+        "DATES": {
+            "START": "Inicio",
+            "EXPECTED": "Fin (previsión)",
+            "END": "Fin",
+            "ELAPSED": "transcurrido",
+            "REMAINING": "restante"
+        },
         "SECTION": {
             "SEARCH": "Buscar",
             "TIMELINE": "Timeline",
             "EPICS": "Épicas",
             "BACKLOG": "Backlog",
             "KANBAN": "Kanban",
-            "ISSUES": "Peticiones",
+            "ISSUES": "Issues",
             "WIKI": "Wiki",
             "TEAM": "Equipo",
             "MEETUP": "Meetup",
@@ -1191,6 +1327,8 @@
             "PLACEHOLDER_SPRINT_NAME": "nombre del sprint",
             "PLACEHOLDER_SPRINT_START": "Comienzo estimado",
             "PLACEHOLDER_SPRINT_END": "Final Estimado",
+            "PLACEHOLDER_SPRINT_GOAL": "Objetivo del sprint: lo que el equipo pretende lograr (admite Markdown)",
+            "GOAL_LABEL": "Objetivo del sprint",
             "ACTION_DELETE_SPRINT": "¿Quiéres borrar este sprint?",
             "TITLE_ACTION_DELETE_SPRINT": "borrar sprint",
             "LAST_SPRINT_NAME": "el último sprint es <strong> {{lastSprint}} ;-) </strong>"
@@ -1406,6 +1544,38 @@
             "MILESTONE": "sprint",
             "COLOR": "color",
             "PROMOTED_TO": "promovida a"
+        },
+        "RELATIONSHIP_RT": "Relacionó la {{source_kind}} {{source}} con la {{target_kind}} {{target}}",
+        "RELATIONSHIP_BK": "Añadió un bloqueo entre la {{source_kind}} {{source}} y la {{target_kind}} {{target}}",
+        "RELATIONSHIP_BKBY": "Indicó que la {{source_kind}} {{source}} está bloqueada por la {{target_kind}} {{target}}",
+        "RELATIONSHIP_DPON": "Indicó que la {{source_kind}} {{source}} depende de la {{target_kind}} {{target}}",
+        "RELATIONSHIP_DPME": "Indicó que la {{target_kind}} {{target}} depende de la {{source_kind}} {{source}}",
+        "RELATIONSHIP_DUBY": "Indicó que la {{source_kind}} {{source}} está duplicada por la {{target_kind}} {{target}}",
+        "RELATIONSHIP_DUFROM": "Indicó que la {{source_kind}} {{source}} es un duplicado de la {{target_kind}} {{target}}",
+        "RELATIONSHIP_DWT": "Descubrió la {{target_kind}} {{target}} mientras probaba la {{source_kind}} {{source}}",
+        "RELATIONSHIP_LTDWT": "La {{source_kind}} {{source}} llevó al descubrimiento de {{target_kind}} {{target}} durante las pruebas",
+        "RELATIONSHIP_CHANGED": "Cambió la relación entre la {{source_kind}} {{source}} y la {{target_kind}} {{target}} de {{from}} a {{to}}",
+        "RELATIONSHIP_RESOLVED": "Resolvío la relación {{relation}} entre la {{source_kind}} {{source}} y la {{target_kind}} {{target}}",
+        "RELATION": {
+            "RT": "\"Relacionado con\"",
+            "BK": "\"Bloquea\"",
+            "BKBY": "\"Bloqueado por\"",
+            "DPON": "\"Depende de\"",
+            "DPME": "\"Depende de mí\"",
+            "DUBY": "\"Duplicado por\"",
+            "DUFROM": "\"Duplicado de\"",
+            "DWT": "\"Descubierto durante pruebas\"",
+            "LTDWT": "\"Llevó a descubrir durante pruebas\""
+        },
+        "RELATIONSHIP_UPDATED_PREFIX": "Cambió la relación entre la {{source_kind}} {{source}} y la {{target_kind}} {{target}} de",
+        "RELATIONSHIP_UPDATED_MIDDLE": "a",
+        "RELATIONSHIP_REMOVED_PREFIX": "Resolvío la relación",
+        "RELATIONSHIP_REMOVED_SUFFIX": "entre la {{source_kind}} {{source}} y la {{target_kind}} {{target}}",
+        "CARD_TYPES": {
+            "userstory": "Historia de usuario",
+            "task": "Tarea",
+            "issue": "Issue",
+            "epic": "Épica"
         }
     },
     "BACKLOG": {
@@ -1492,7 +1662,8 @@
             "TITLE_ACTION_NEW_SPRINT": "Añade un sprint",
             "TEXT_ACTION_NEW_SPRINT": "Es posible que desees crear un nuevo sprint para tu proyecto",
             "ACTION_SHOW_CLOSED_SPRINTS": "Mostrar sprints cerrados",
-            "ACTION_HIDE_CLOSED_SPRINTS": "Ocultar sprints cerrados"
+            "ACTION_HIDE_CLOSED_SPRINTS": "Ocultar sprints cerrados",
+            "CLOSED_SPRINTS_WITHOUT_RESULT": "Hay sprints cerrados sin resultado registrado."
         }
     },
     "ERROR": {
@@ -1507,6 +1678,7 @@
         "PAGE_TITLE": "{{sprintName}} - Sprint - {{projectName}}",
         "PAGE_DESCRIPTION": "Sprint {{sprintName}} (desde el {{startDate}} al {{endDate}}) de {{projectName}}. Completado el {{completedPercentage}}% ({{completedPoints}} de {{totalPoints}} puntos). {{openTasks}} de {{totalTasks}} tareas abiertas.",
         "SECTION_NAME": "Panel de Tareas",
+        "ERROR_MOVE_TO_ANOTHER_US": "No está permitido mover la tarea a otra historia.",
         "TITLE_ACTION_ADD": "Añade una tarea",
         "TITLE_ACTION_ADD_BULK": "Añadir tareas en bloque",
         "TITLE_ACTION_ADD_ISSUE": "Agregar nueva petición",
@@ -1517,6 +1689,21 @@
         "TASK_NOT_FOUND_TITLE": "No se han encontrado resultados",
         "TASK_NOT_FOUND_TEXT": "Inténtalo con términos de búsqueda más generales o deshabilita algunos filtros. ",
         "TITLE_DATE_RANGE": "{{startDate}} <span>a</span> {{endDate}}",
+        "SPRINT_GOAL": {
+            "TITLE": "Objetivo del sprint",
+            "SHOW": "Mostrar objetivo del sprint",
+            "HIDE": "Ocultar objetivo del sprint",
+            "EMPTY": "Este sprint no tiene objetivo definido.",
+            "RESULT_TITLE": "Resultado obtenido",
+            "NOT_INFORMED": "No informado",
+            "CLOSED_INFO": "Sprint cerrado el {{date}} por {{author}}",
+            "ACHIEVEMENT": {
+                "ACHIEVED": "Alcanzado",
+                "PARTIALLY_ACHIEVED": "Parcialmente alcanzado",
+                "NOT_ACHIEVED": "No alcanzado",
+                "NOT_INFORMED": "No informado"
+            }
+        },
         "TABLE": {
             "COLUMN": "Historia de usuario",
             "TITLE_ACTION_FOLD": "Plegar columna",
@@ -1525,7 +1712,8 @@
             "TITLE_ACTION_UNFOLD_ROW": "Desplegar Fila",
             "FIELD_POINTS": "puntos",
             "ROW_STORYLESS_TASKS_TITLE": "Tareas sin historia",
-            "ROW_ISSUES_TITLE": "Peticiones de sprint"
+            "ROW_ISSUES_TITLE": "Peticiones de sprint",
+            "NUMBER_TASKS": "Número de tareas"
         },
         "CHARTS": {
             "XAXIS_LABEL": "Días",
@@ -1541,6 +1729,7 @@
             "TITLE_MOVE_UNFINISHED": "Mover los items no completados a otro sprint abierto",
             "MOVE_TO_OPEN_SPRINT": "Mover al Sprint en curso",
             "NO_OPEN_SPRINTS": "No hay más sprints abiertos. Por favor, crea uno primero.",
+            "NO_CLOSED_ITEMS": "No hay actividades finalizadas en este sprint. Finaliza al menos una para poder cerrarlo.",
             "SELECT_DESTINATION_PLACEHOLDER": "Selecciona destino",
             "UNFINISHED_USER_STORIES_COUNT": "{total, plural, =1{<strong>#</strong> historia de usuario no terminada} other{<strong>#</strong> historias de usuario no terminadas}}",
             "UNFINISHED_STORYLESS_TASKS_COUNT": "{total, plural, =1{<strong>#</strong> tarea sin historia de usuario no terminada} other{# tareas sin historia de usuario no terminadas}}",
@@ -1548,7 +1737,13 @@
             "WARNING_ISSUES_NOT_MOVED_TITLE": "Acabas de mover todas las historias de usuario y tareas, y el sprint se cerrará",
             "WARNING_ISSUES_NOT_MOVED": "Las peticiones permanecerán en el sprint y no son eliminadas",
             "WARNING_SPRINT_STILL_OPEN_TITLE": "{total, plural, =1{Acabas de mover el ítem # !} other{Acabas de mover los ítems #!}}",
-            "WARNING_SPRINT_STILL_OPEN": "El sprint {{sprintName}} <strong>permanecerá abierto</strong> mientras contenga ítems no terminados."
+            "WARNING_SPRINT_STILL_OPEN": "El sprint {{sprintName}} <strong>permanecerá abierto</strong> mientras contenga ítems no terminados.",
+            "CLOSE_SPRINT": "Cerrar sprint",
+            "REGISTER_RESULT": "Registrar resultado",
+            "REGISTER_RESULT_TITLE": "Registrar resultado del sprint",
+            "ACHIEVEMENT_QUESTION": "¿Se alcanzó el objetivo?",
+            "RESULT_PLACEHOLDER": "Describe el resultado obtenido en este sprint (Markdown soportado)",
+            "IMMUTABLE_WARNING": "El alcance y el resultado no podrán editarse después de cerrar el sprint."
         }
     },
     "TASK": {
@@ -1570,7 +1765,7 @@
     },
     "NOTIFICATION": {
         "OK": "¡Todo Ok!",
-        "WARNING": "Oops, something went wrong...",
+        "WARNING": "Oops, algo salió mal...",
         "WARNING_TEXT": "¡Tus cambios no han sido guardados!",
         "SAVED": "¡La Taiga ha guardado todos tus cambios!",
         "CLOSE": "Cerrar notificación",
@@ -1634,7 +1829,7 @@
                 "TYPE": "Tipo",
                 "SEVERITY": "Gravedad",
                 "PRIORITY": "Prioridad",
-                "ISSUE": "Petición",
+                "ISSUE": "Issue",
                 "VOTES": "Votos",
                 "STATUS": "Estado",
                 "ATTACHMENTS": "Adjuntos",
@@ -1845,7 +2040,7 @@
         "NEW_USER": "{{username}} se ha unido a Taiga",
         "ITEM_TYPES": {
             "USERSTORY": "Historia de usuario",
-            "ISSUE": "Petición",
+            "ISSUE": "Issue",
             "TASK": "Tarea"
         }
     },
@@ -1973,5 +2168,187 @@
         "ZOOM-2": "Predeterminado",
         "ZOOM-3": "Detallado",
         "ZOOM-4": "Expandido"
+    },
+    "THAI_CHAT": {
+        "TITLE": "T·IA Chat",
+        "WELCOME": "¡Hola! Soy T·IA, la asistente de proyectos aquí en Taiga.",
+        "ASK_TODAY": "¿Qué tareas tengo asignadas para hoy?",
+        "PLACEHOLDER": "Pregunta algo... (Enter para enviar, Shift+Enter para nueva línea)",
+        "SEND": "Enviar",
+        "CLOSE": "Cerrar",
+        "ERROR": "**¡Ups! 😅**\n\n**Ve adelantando esa documentación... ✏️**\n\n**T·IA** está resolviendo un imprevisto técnico por aquí, ya ya vuelvo.",
+        "UNAVAILABLE": "**¡Ups! 😅**\n\n**T·IA** no está disponible en este entorno por ahora. Inténtalo de nuevo más tarde.",
+        "SUGGESTIONS": {
+            "PROJECTS_0": "¿Qué proyectos están previstos para finalizar en los próximos 3 meses?",
+            "PROJECTS_1": "¿Hay algún proyecto atrasado?",
+            "PROJECT_0": "Enumere las tareas que están pausadas",
+            "PROJECT_1": "Enumere las tareas sin responsables",
+            "PROJECT_2": "Enumere las tareas completadas sin comentarios de finalización",
+            "PROJECT_3": "¿Qué tareas están atrasadas en este proyecto?",
+            "PROFILE_0": "¿Qué tareas asignadas a mí están por iniciar?",
+            "PROFILE_1": "¿Qué tareas asignadas a mí están en progreso?",
+            "PROFILE_2": "¿Cuál fue mi última actividad registrada?"
+        },
+        "CLEAR": "Limpiar chat"
+    },
+    "ERRORS": {
+        "IS_CLOSED_HAS_EPICS": "No es posible desmarcar \"está cerrado\": hay épicas usando este estado.",
+        "COMPLETION_DATE_REQUIRES_CLOSED_STATUS": "La fecha de conclusión solo puede establecerse cuando el estado de la épica está cerrado.",
+        "PERCENTAGE_IMPACT_MUST_BE_INTEGER": "El impacto porcentual debe ser un número entero entre 0 y 100.",
+        "SCHEDULABLE_IMPACT_EXCEEDS_100": "La suma del impacto de las épicas planificadas no puede superar el 100%."
+    },
+    "HOME_LANDING": {
+        "NAV_SUBTITLE": "Centro de Tecnologías Aplicadas",
+        "NAV_CTA": "Acceder al sistema",
+        "HERO_TAG": "Gestión de Proyectos — TA.DT",
+        "HERO_TITLE_START": "Cómo gestionamos proyectos con",
+        "HERO_TITLE_ACCENT": "agilidad",
+        "HERO_TITLE_END": "en el día a día",
+        "HERO_SUBTITLE": "Utilizamos Taiga como base para estructurar y acompañar las actividades del equipo, con apoyo de prácticas ágiles y una visión centralizada de los proyectos.",
+        "STAT_MODULES_LABEL": "Módulos",
+        "STAT_PROJECTS_LABEL": "Proyectos",
+        "STAT_METHOD_VALUE": "Ágil",
+        "STAT_METHOD_LABEL": "Metodología",
+        "STAT_TIA_LABEL": "Nuestra Agente Inteligente",
+        "NEWS_BADGE": "Novedades",
+        "NEWS_TITLE": "Entérate de las últimas novedades",
+        "NEWS_CAROUSEL_SR": "Carrusel de novedades de la plataforma.",
+        "NEWS_PREV": "Anterior",
+        "NEWS_NEXT": "Siguiente",
+        "FEATURES_BADGE": "Funcionalidades",
+        "FEATURES_TITLE": "Visión general de las funcionalidades para la gestión ágil de proyectos",
+        "FEATURES_SUBTITLE": "Conozca los módulos disponibles en la plataforma y cómo apoyan al equipo a lo largo del desarrollo.",
+        "CARD_KANBAN_NAME": "Kanban",
+        "CARD_KANBAN_TAG": "Tablero de Historias",
+        "CARD_KANBAN_DESC": "Visualice el trabajo en columnas por estado (p. ej. Backlog, Por Hacer, En Curso, Hecho). Arrastre tarjetas para actualizar el avance y mantenga un flujo continuo con transparencia del equipo.",
+        "CARD_EPICS_NAME": "Épicas",
+        "CARD_EPICS_TAG": "Grandes Iniciativas",
+        "CARD_EPICS_DESC": "Estructure iniciativas mayores (épicas) y relacione historias y tareas vinculadas. Tenga visión del progreso por etapa, prioridad y plazos, facilitando el seguimiento del cronograma.",
+        "CARD_SCRUM_NAME": "Scrum",
+        "CARD_SCRUM_TAG": "Sprints y Métricas",
+        "CARD_SCRUM_DESC": "Gestione backlog, sprints y métricas de seguimiento (p. ej. burndown). Ayuda a priorizar lo que genera valor, organizar ceremonias y dar previsibilidad a la ejecución.",
+        "CARD_ISSUES_NAME": "Issues",
+        "CARD_ISSUES_TAG": "Gestión de Incidencias",
+        "CARD_ISSUES_DESC": "Centralice incidencias y demandas (errores, mejoras, soporte) clasificadas por severidad, prioridad, estado y responsable. Facilita el triaje, la trazabilidad y la respuesta rápida.",
+        "CARD_WIKI_NAME": "Wiki",
+        "CARD_WIKI_TAG": "Documentación Viva",
+        "CARD_WIKI_DESC": "Cree y mantenga documentación viva del proyecto: reglas, decisiones, guías y estándares. Las páginas ayudan a reducir ruido, acelerar la incorporación y registrar el historial.",
+        "CARD_AGENDA_NAME": "Agenda Online",
+        "CARD_AGENDA_TAG": "Acceso Rápido",
+        "CARD_AGENDA_DESC": "Botón de acceso rápido a las agendas online del equipo (reuniones, reviews, planning, alineaciones). Ayuda a estandarizar rutinas y reducir el tiempo de búsqueda de enlaces.",
+        "FOOTER_COPY": "2025 Centro de Tecnologías Aplicadas · Itaipu Parquetec"
+    },
+    "NEWS_ADMIN": {
+        "PAGE_TITLE": "Novedades de la home - Taiga",
+        "PAGE_SUBTITLE": "Slides del carrusel de la home pública. Un slide nuevo nace inactivo: actívelo cuando quiera publicarlo.",
+        "ICON_TITLE": "Gestionar novedades de la home",
+        "NEW_SLIDE": "Nuevo slide",
+        "FIELD_IMAGE": "Imagen",
+        "IMAGE_HINT": "Obligatoria, hasta 2 MB.",
+        "FIELD_TITLE": "Título",
+        "FIELD_DESCRIPTION": "Descripción",
+        "FIELD_ORDER": "Orden",
+        "CREATE": "Crear slide",
+        "SLIDES": "Slides",
+        "LOADING": "Cargando...",
+        "LOAD_ERROR": "No se pudieron cargar los slides.",
+        "EMPTY": "Ningún slide registrado.",
+        "COLUMN_IMAGE": "Imagen",
+        "COLUMN_TITLE": "Título",
+        "COLUMN_DESCRIPTION": "Descripción",
+        "COLUMN_STATE": "Estado",
+        "COLUMN_ORDER": "Orden",
+        "COLUMN_ACTIONS": "Acciones",
+        "ACTIVE": "Activo",
+        "INACTIVE": "Inactivo",
+        "MOVE_UP": "Subir",
+        "MOVE_DOWN": "Bajar",
+        "EDIT_TITLE": "Editar slide",
+        "EDIT": "Editar",
+        "ACTIVATE": "Activar",
+        "DEACTIVATE": "Desactivar",
+        "DELETE": "Eliminar",
+        "DELETE_TITLE": "Eliminar slide",
+        "CHOOSE_IMAGE": "Elegir imagen",
+        "NO_IMAGE_SELECTED": "Ninguna imagen seleccionada",
+        "CHANGE_IMAGE": "Cambiar imagen",
+        "SAVE": "Guardar",
+        "CANCEL": "Cancelar",
+        "ERRORS": {
+            "GENERIC": "No se pudo completar la operación.",
+            "FORBIDDEN": "Solo el superusuario puede cambiar el carrusel.",
+            "IMAGE_REQUIRED": "Elija una imagen.",
+            "INVALID_IMAGE": "El archivo no es una imagen válida.",
+            "IMAGE_TOO_LARGE": "La imagen supera los 2 MB.",
+            "TITLE_REQUIRED": "Indique el título.",
+            "TITLE_TOO_LONG": "El título supera los 255 caracteres.",
+            "DESCRIPTION_TOO_LONG": "La descripción supera los 500 caracteres.",
+            "ORDER_NEGATIVE": "El orden no puede ser negativo.",
+            "ORDER_INVALID": "El orden debe ser un número entero.",
+            "SLIDE_NOT_FOUND": "Uno de los slides ya no existe. La lista fue recargada.",
+            "EMPTY_BULK": "No hay slides para reordenar."
+        }
+    },
+    "STORY_POINTS_GUIDE": {
+        "ICON_TITLE": "Guía de Story Points",
+        "COLUMN_POINTS": "Story Points",
+        "COLUMN_DESCRIPTION": "Descripción",
+        "ROW_1": "Muy pequeña. Simple, directa, sin riesgo, poca complejidad",
+        "ROW_3": "Pequeña a mediana. Requiere validación simple",
+        "ROW_5": "Mediana. Puede tener alguna incertidumbre",
+        "ROW_8": "Grande. Tiene riesgo o dependencia conocida",
+        "ROW_13": "Muy grande. Debe estar bien justificada",
+        "ROW_21": "Demasiado grande. Casi siempre necesita dividirse",
+        "SEE_MORE": "haga clic aquí para más información",
+        "PAGE_TITLE": "Guía de Story Points",
+        "INTRO_SUBTITLE": "Story Points – Referencia rápida Fibonacci",
+        "WHAT_ARE_TITLE": "¿Qué son los Story Points?",
+        "WHAT_ARE_INTRO": "Los Story Points representan el tamaño relativo de una Historia de Usuario, considerando:",
+        "WHAT_ARE_EFFORT": "Esfuerzo de implementación",
+        "WHAT_ARE_COMPLEXITY": "Complejidad técnica",
+        "WHAT_ARE_RISK": "Riesgo e incertidumbre",
+        "NOT_HOURS": "Los Story Points no representan horas.",
+        "SERVE_FOR": "Sirven para comparar historias entre sí y apoyar la distribución del trabajo.",
+        "SCALE_TITLE": "Escala de Story Points Fibonacci",
+        "SCALE_BODY": "Usamos la secuencia de Fibonacci para reflejar el aumento de incertidumbre conforme crece el tamaño.",
+        "FIBONACCI_LABEL": "Secuencia de Fibonacci",
+        "ALERT_8": "Lo ideal es trabajar con historias de hasta 8 puntos",
+        "ALERT_13": "Por encima de 13 puntos, la historia debe dividirse antes de entrar al sprint",
+        "EXAMPLES_TITLE": "Ejemplos por Story Point",
+        "EXAMPLES_1_TITLE": "1 punto",
+        "EXAMPLES_1_1": "Ajustar texto de un botón",
+        "EXAMPLES_1_2": "Ajustar texto de etiqueta en pantalla existente",
+        "EXAMPLES_1_3": "Corregir validación simple en el front end",
+        "EXAMPLES_1_4": "Ajuste simple de regla ya conocida",
+        "EXAMPLES_1_5": "Corregir tooltip o mensaje de validación simple",
+        "EXAMPLES_3_TITLE": "3 puntos",
+        "EXAMPLES_3_1": "Agregar nuevo campo en pantalla existente",
+        "EXAMPLES_3_2": "Crear endpoint simple sin regla compleja",
+        "EXAMPLES_3_3": "Pequeño cambio involucrando front y back end",
+        "EXAMPLES_3_4": "Agregar nuevo campo opcional en pantalla existente, guardando en back end y mostrando en listado",
+        "EXAMPLES_3_5": "Ajustar regla de ordenación de listado, incluyendo nuevo criterio configurable",
+        "EXAMPLES_5_TITLE": "5 puntos",
+        "EXAMPLES_5_1": "Crear funcionalidad completa simple",
+        "EXAMPLES_5_2": "Integración con regla de negocio clara",
+        "EXAMPLES_5_3": "Creación de CRUDs con inicio, medio y fin, sin dependencia",
+        "EXAMPLES_5_4": "Exportación tipo CSV, PDF simple",
+        "EXAMPLES_8_TITLE": "8 puntos",
+        "EXAMPLES_8_1": "Funcionalidad con dependencia externa",
+        "EXAMPLES_8_2": "Reglas de negocio más complejas",
+        "EXAMPLES_8_3": "Implementación de snapshot",
+        "EXAMPLES_8_4": "Exportación tipo CSV, PDF estilizados",
+        "EXAMPLES_13_TITLE": "13 puntos",
+        "EXAMPLES_13_1": "Funcionalidad grande con riesgo técnico",
+        "EXAMPLES_13_2": "Involucra múltiples componentes del sistema",
+        "EXAMPLES_13_3": "Implementar nuevo flujo completo de registro, con múltiples pantallas, validaciones complejas y reglas de negocio encadenadas",
+        "EXAMPLES_13_4": "Crear integración con nuevo sistema externo, con autenticación, mapeo de datos, manejo de errores y ajustes en back y front",
+        "EXAMPLES_21_TITLE": "21 puntos",
+        "EXAMPLES_21_1": "Implementación extensa con varias reglas",
+        "EXAMPLES_21_2": "Fuerte candidata a dividirse en historias más pequeñas, probablemente una épica",
+        "BEST_PRACTICES_TITLE": "Buenas prácticas",
+        "BEST_PRACTICES_1": "Prefiera dividir historias grandes",
+        "BEST_PRACTICES_2": "Si hay mucha duda, use spike antes de puntuar",
+        "BEST_PRACTICES_3": "Los Story Points sirven para dimensionamiento, no para cobrar horas",
+        "BEST_PRACTICES_4": "Mantenga consistencia entre las historias"
     }
 }

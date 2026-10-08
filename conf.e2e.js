@@ -123,7 +123,7 @@ var config = {
         browser.executeScript('window.localStorage.e2e = true');
 
         browser.driver.manage().window().maximize();
-
+ 
         browser.get(browser.params.glob.host + 'login');
 
         var username = $('input[name="username"]');

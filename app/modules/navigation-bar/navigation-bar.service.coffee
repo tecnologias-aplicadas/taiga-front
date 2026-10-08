@@ -7,7 +7,6 @@
 ###
 
 class NavigationBarService extends taiga.Service
-
     constructor: ->
         @.disableHeader()
 
@@ -19,5 +18,7 @@ class NavigationBarService extends taiga.Service
 
     isEnabledHeader: ->
         return @.enabledHeader
+    environment: ->
+        return  "local"
 
 angular.module("taigaNavigationBar").service("tgNavigationBarService", NavigationBarService)

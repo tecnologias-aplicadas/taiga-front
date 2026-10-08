@@ -37,6 +37,13 @@ class UserChangePasswordController extends mixOf(taiga.Controller, taiga.PageMix
                   @auth, @translate) ->
         @scope.sectionName = @translate.instant("CHANGE_PASSWORD.SECTION_NAME")
         @scope.user = @auth.getUser()
+        @scope.isCorporate = false
+
+        userId = @auth.getUser().id
+        @repo.queryOne("users", userId).then (freshUser) =>
+            @auth.setUser(freshUser)
+            @scope.user = freshUser
+            @scope.isCorporate = freshUser.is_corporate or false
 
 module.controller("UserChangePasswordController", UserChangePasswordController)
 
@@ -46,7 +53,7 @@ module.controller("UserChangePasswordController", UserChangePasswordController)
 #############################################################################
 
 UserChangePasswordDirective = ($rs, $confirm, $loading, $translate) ->
-    link = ($scope, $el, $attrs, ctrl) ->
+    link = ($scope, $el, $attrs) ->
         form = new checksley.Form($el.find("form"))
 
         submit = debounce 2000, (event) =>
@@ -70,7 +77,10 @@ UserChangePasswordDirective = ($rs, $confirm, $loading, $translate) ->
 
             promise.then null, (response) =>
                 currentLoading.finish()
-                $confirm.notify('error', response.data._error_message)
+                if response.data?.code == "corporate_cant_change_pass"
+                    $confirm.notify('error', $translate.instant("CHANGE_PASSWORD.CORPORATE_CANT_CHANGE"))
+                else
+                    $confirm.notify('error', response.data._error_message)
 
         submitButton = $el.find(".submit-button")
 

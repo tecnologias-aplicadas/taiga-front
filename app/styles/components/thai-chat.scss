@@ -1,0 +1,810 @@
+// T·IA Chat — Animated border menu button + chat panel
+
+// CSS custom property animável (Houdini @property)
+@property --thai-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+// Deslizamento da linha do cabeçalho
+@keyframes thai-header-line {
+    0% {
+        background-position: 0% 0%;
+    }
+
+    50% {
+        background-position: 100% 0%;
+    }
+
+    100% {
+        background-position: 0% 0%;
+    }
+}
+
+// Rotação do ângulo do gradiente cônico
+@keyframes thai-border-spin {
+    to {
+        --thai-angle: 360deg;
+    }
+}
+
+// Pulso de brilho suave
+@keyframes thai-sparkle {
+    0%,
+    100% {
+        filter: brightness(1) saturate(1);
+    }
+
+    50% {
+        filter: brightness(1.35) saturate(1.5);
+    }
+}
+
+// Slide do painel de chat vindo pela direita
+@keyframes thai-panel-slide-in {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+// Slide do painel saindo pela direita
+@keyframes thai-panel-slide-out {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+// Fade do overlay ao fechar
+@keyframes thai-overlay-fade-out {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+
+// ─── Botão no menu lateral ───────────────────────────────────────────────────
+
+.thai-chat-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    margin: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    user-select: none;
+    transition: background 0.2s ease;
+
+    // Borda animada com gradiente cônico
+    --thai-angle: 0deg;
+    animation:
+        thai-border-spin  3s linear     infinite,
+        thai-sparkle      2.4s ease-in-out infinite;
+
+    border: 2px solid transparent;
+    background:
+        linear-gradient(#3b4252, #3b4252) padding-box,
+        conic-gradient(
+            from var(--thai-angle),
+            #25a28c,
+            #83eede,
+            #c6c6d4,
+            #a7cb23,
+            #e8ffa0,
+            #c6c6d4,
+            #83eede,
+            #25a28c
+        ) border-box;
+
+    &:hover {
+        background:
+            linear-gradient(#434c5e, #434c5e) padding-box,
+            conic-gradient(
+                from var(--thai-angle),
+                #25a28c,
+                #83eede,
+                #c6c6d4,
+                #a7cb23,
+                #e8ffa0,
+                #c6c6d4,
+                #83eede,
+                #25a28c
+            ) border-box;
+    }
+
+    .thai-chat-icon {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        fill: none;
+    }
+
+    .thai-chat-label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+
+// ─── Painel lateral de chat ──────────────────────────────────────────────────
+
+.thai-chat-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 506px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    background: #f5f5f5;
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+    animation: thai-panel-slide-in 0.45s ease-out;
+
+    &.--closing {
+        animation: thai-panel-slide-out 0.4s ease-in forwards;
+    }
+
+    @media (max-width: 600px) {
+        width: 100vw;
+    }
+}
+
+.thai-chat-resize-handle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    cursor: ew-resize;
+    z-index: 1;
+    user-select: none;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 2px;
+        transform: translateY(-50%);
+        width: 2px;
+        height: 32px;
+        border-radius: 1px;
+        background: rgba(255, 255, 255, 0.15);
+        transition: background 0.2s;
+    }
+
+    &:hover::after {
+        background: #83eede;
+    }
+}
+
+.thai-chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    flex-shrink: 0;
+    position: relative;
+    background: #3b4252;
+
+    // Linha inferior giratória isolada no pseudo-elemento
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+
+        animation: thai-header-line 3s ease-in-out infinite;
+        background: linear-gradient(90deg, #d0ffd8, #c6c6c6, #01f91e, #c6c6c6, #d0ffd8);
+        background-size: 200% 100%;
+    }
+
+    .thai-chat-header-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #83eede;
+        font-size: 14px;
+        font-weight: 600;
+
+        .thai-chat-header-avatar {
+            position: relative;
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+
+        .thai-chat-header-icon {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .thai-chat-online-dot {
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: #01f91e;
+            border: 2px solid #3b4252;
+            box-shadow: 0 0 6px rgba(162, 244, 172, 0.8);
+        }
+
+        svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+        }
+    }
+
+    .thai-chat-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .thai-chat-clear {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #8d8ea5;
+        font-size: 11px;
+        padding: 4px 6px;
+        line-height: 1;
+        border-radius: 4px;
+        transition: color 0.15s, background 0.15s;
+        white-space: nowrap;
+
+        &:hover {
+            color: #83eede;
+            background: #4c566a;
+        }
+    }
+
+    .thai-chat-reset-size {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #8d8ea5;
+        padding: 4px;
+        line-height: 1;
+        border-radius: 4px;
+        transition: color 0.15s, background 0.15s;
+
+        &:hover {
+            color: #83eede;
+            background: #4c566a;
+        }
+    }
+
+    .thai-chat-close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #8d8ea5;
+        padding: 4px;
+        line-height: 1;
+        border-radius: 4px;
+        transition: color 0.15s, background 0.15s;
+
+        &:hover {
+            color: #83eede;
+            background: #4c566a;
+        }
+    }
+}
+
+.thai-chat-messages {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #f5f5f5;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 2px;
+    }
+}
+
+.thai-chat-message {
+    display: flex;
+    flex-direction: column;
+
+    &.--user {
+        align-self: flex-end;
+        max-width: 85%;
+
+        .thai-chat-bubble {
+            background: #25a28c;
+            color: #fff;
+            border-radius: 12px 12px 2px 12px;
+        }
+    }
+
+    &.--assistant {
+        align-self: stretch;
+
+        .thai-chat-bubble {
+            background: #fff;
+            color: #262626;
+            border-radius: 12px 12px 12px 2px;
+            border: 1px solid #e0e0e0;
+        }
+    }
+
+}
+
+.thai-chat-bubble {
+    padding: 9px 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    word-break: break-word;
+    white-space: pre-wrap;
+
+    &.--md {
+        white-space: normal;
+
+        p {
+            margin: 0 0 6px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        ul,
+        ol {
+            margin: 4px 0 6px;
+            padding-left: 18px;
+        }
+
+        li {
+            margin-bottom: 2px;
+        }
+
+        code {
+            font-family: monospace;
+            font-size: 12px;
+            background: rgba(0, 0, 0, 0.06);
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        pre {
+            background: #1e1e2e;
+            color: #cdd6f4;
+            border-radius: 6px;
+            padding: 10px 12px;
+            overflow-x: auto;
+            margin: 6px 0;
+
+            code {
+                background: none;
+                padding: 0;
+                color: inherit;
+                font-size: 12px;
+            }
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        em {
+            font-style: italic;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-weight: 600;
+            margin: 6px 0 4px;
+            line-height: 1.3;
+        }
+
+        h1 {
+            font-size: 15px;
+        }
+
+        h2 {
+            font-size: 14px;
+        }
+
+        h3 {
+            font-size: 13px;
+        }
+
+        a {
+            color: #25a28c;
+            text-decoration: underline;
+        }
+
+        blockquote {
+            border-left: 3px solid #25a28c;
+            margin: 4px 0;
+            padding: 2px 10px;
+            color: #666;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #e0e0e0;
+            margin: 8px 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 8px 0;
+            font-size: 12px;
+            overflow-x: auto;
+            display: block;
+        }
+
+        th,
+        td {
+            border: 1px solid #d0d0d0;
+            padding: 6px 10px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #e8f8f4;
+            color: #1d8a77;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) td {
+            background: #f9f9f9;
+        }
+    }
+}
+
+@keyframes thai-typing-bounce {
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+
+    30% {
+        transform: translateY(-5px);
+        opacity: 1;
+    }
+}
+
+.thai-chat-typing {
+    flex-shrink: 0;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    span {
+        display: block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #25a28c;
+        animation: thai-typing-bounce 1.2s ease-in-out infinite;
+
+        &:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        &:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+    }
+}
+
+.thai-chat-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 13px;
+    text-align: center;
+    gap: 8px;
+    padding: 0 12px;
+
+    span:first-of-type {
+        color: #555;
+        font-size: 12px;
+    }
+
+    svg {
+        width: 40px;
+        height: 40px;
+        opacity: 0.4;
+        fill: none;
+        stroke: #25a28c;
+    }
+}
+
+.thai-chat-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.thai-chat-suggestion {
+    background: transparent;
+    border: 1px solid #d9d9d9;
+    border-radius: 12px;
+    color: #25a28c;
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+    text-align: left;
+    line-height: 1.4;
+    transition: background 0.15s, border-color 0.15s;
+
+    &:hover {
+        background: #e8f8f4;
+        border-color: #25a28c;
+        color: #1d8a77;
+    }
+}
+
+.thai-chat-footer {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid #4c566a;
+    flex-shrink: 0;
+    background: #3b4252;
+
+    textarea {
+        flex: 1;
+        background: #f5f5f5;
+        border: 1px solid #d9d9d9;
+        border-radius: 8px;
+        color: #262626;
+        font-size: 13px;
+        padding: 8px 12px;
+        resize: none;
+        min-height: 38px;
+        max-height: 155px;
+        line-height: 1.5;
+        overflow-y: hidden;
+        transition: border-color 0.15s;
+
+        &::placeholder {
+            color: #aaa;
+            font-size: 12px;
+        }
+
+        &:focus {
+            outline: none;
+            border-color: #25a28c;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    .thai-chat-send {
+        border-radius: 8px;
+        color: #fff;
+        cursor: pointer;
+        padding: 8px 10px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        // Borda giratória com fundo sólido
+        --thai-angle: 0deg;
+        animation:
+            thai-border-spin  3s linear     infinite,
+            thai-sparkle      2.4s ease-in-out infinite;
+
+        border: 2px solid transparent;
+        background:
+            linear-gradient(#25a28c, #25a28c) padding-box,
+            conic-gradient(
+                from var(--thai-angle),
+                #a2f4ac,
+                #c6c6d4,
+                #a295ae,
+                #fff,
+                #a2f4ac,
+                #a295ae,
+                #c6c6d4,
+                #a2f4ac
+            ) border-box;
+
+        &:hover:not(:disabled) {
+            background:
+                linear-gradient(#1d8a77, #1d8a77) padding-box,
+                conic-gradient(
+                    from var(--thai-angle),
+                    #a2f4ac,
+                    #c6c6d4,
+                    #a295ae,
+                    #fff,
+                    #a2f4ac,
+                    #a295ae,
+                    #c6c6d4,
+                    #a2f4ac
+                ) border-box;
+        }
+
+        &:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+        }
+    }
+}
+
+// Overlay escuro atrás do painel
+.thai-chat-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    background: rgba(0, 0, 0, 0.4);
+
+    &.--closing {
+        animation: thai-overlay-fade-out 0.24s ease-in forwards;
+    }
+}
+
+
+// ─── FAB — Floating Action Button ────────────────────────────────────────────
+
+// Animação de rotação específica do FAB (mais lenta, mais suave)
+@keyframes thai-fab-spin {
+    to {
+        --thai-angle: 360deg;
+    }
+}
+
+// Pulso de opacidade/escala exclusivo do FAB
+@keyframes thai-fab-pulse {
+    0%,
+    100% {
+        opacity: 0.75;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.06);
+    }
+}
+
+
+// Pulso de escala quando aberto
+@keyframes thai-fab-pop {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.thai-chat-fab {
+    // Posição fixa global
+    position: fixed;
+    bottom: 40px;
+    right: 50px;
+    z-index: 9997;
+    isolation: isolate;
+
+    // Forma circular
+    width: 50px;
+    height: 50px;
+    border-radius: 16px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+
+
+    // // Fundo branco entre ícone e borda giratória
+    // &::after {
+    //     content: '';
+    //     position: absolute;
+    //     inset: 0;
+    //     border-radius: 5px;
+    //     background: #fff;
+    //     z-index: 0;
+    // }
+
+    // Reset de estilos de botão
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    outline: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    will-change: transform, filter;
+    transition: transform 0.2s ease;
+
+    &:hover .thai-chat-fab-icon-wrap {
+        filter:
+            drop-shadow(0 0 8px rgba(162, 244, 172, 0.7))
+            drop-shadow(0 0 20px rgba(162, 244, 172, 0.3));
+    }
+
+    &.--open {
+        transform: scale(0.95);
+        animation:
+            thai-fab-spin   10s linear      infinite,
+            thai-fab-pulse  2.5s ease-in-out infinite;
+    }
+}
+
+.thai-chat-fab-icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: thai-fab-pulse 2.5s ease-in-out infinite;
+    transition: filter 0.3s ease;
+}
+
+.thai-chat-fab-icon {
+    display: block;
+    max-width: 60px;
+    max-height: 60px;
+    width: auto;
+    height: auto;
+    filter: brightness(1.1);
+    animation: thai-fab-pop 0.25s ease-out;
+}

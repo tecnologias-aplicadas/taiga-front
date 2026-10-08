@@ -15,6 +15,7 @@ class ProjectMenuController
     constructor: (@projectService, @lightboxFactory) ->
         @.project = null
         @.menu = Immutable.Map()
+        @.thaiChatOpen = false
 
     show: () ->
         @.project = @projectService.project
@@ -43,6 +44,12 @@ class ProjectMenuController
         @lightboxFactory.create("tg-search-box", {
             "class": "lightbox lightbox-search"
         })
+
+    openThaiChat: () ->
+        @.thaiChatOpen = true
+
+    closeThaiChat: () ->
+        @.thaiChatOpen = false
 
     _setVideoConference: () ->
         videoconferenceUrl = @._videoConferenceUrl()

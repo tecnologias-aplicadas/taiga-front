@@ -10,8 +10,10 @@
 
 taiga = @.taiga
 
-Wysiwyg = ($translate, $confirm, $storage, wysiwygService, animationFrame, tgLoader, analytics, $location, $attachmentsFullService) ->
+Wysiwyg = ($translate, $confirm, $storage, wysiwygService, animationFrame, tgLoader, analytics, $location, $attachmentsFullService, editingTracker) ->
     link = ($scope, $el, $attrs) ->
+        # Chave deste editor no rastreador de edição: a tela adia recargas enquanto ele estiver aberto
+        editingKey = "wysiwyg-#{$scope.$id}"
         isEditOnly = !!$attrs.$attr.editonly
         notPersist = !!$attrs.$attr.notPersist
 
@@ -66,26 +68,35 @@ Wysiwyg = ($translate, $confirm, $storage, wysiwygService, animationFrame, tgLoa
                         if !$scope.editMode
                             window.open(e.currentTarget.getAttribute('href'), '_blank');
 
-        unwatchContent = $scope.$watch 'content', (content) ->
-            if !_.isUndefined(content)
-                $scope.outdated = isOutdated()
+        # O watch fica ativo depois de criar o editor: o conteúdo pode mudar no servidor
+        # (recarga do card pelo canal de eventos) e a tela precisa mostrar o texto novo
+        $scope.$watch 'content', (content) ->
+            return if _.isUndefined(content)
 
-                if ($scope.markdown.length || content.length) && $scope.markdown == content
-                    return
+            $scope.outdated = isOutdated()
 
-                content = getCurrentContent()
+            if ($scope.markdown.length || content.length) && $scope.markdown == content
+                return
+
+            if textEditor
+                # Não sobrescreve texto em edição nem rascunho local
+                return if $scope.editMode || isDraft()
 
                 $scope.markdown = content
+                setHtmlEditor(content)
+                return
 
-                if tgLoader.open()
-                    unwatchLoader = tgLoader.onEnd () ->
-                        $scope.$evalAsync () ->
-                            create(content)
-                            unwatchLoader()
-                else
-                    create(content)
+            content = getCurrentContent()
 
-                unwatchContent()
+            $scope.markdown = content
+
+            if tgLoader.open()
+                unwatchLoader = tgLoader.onEnd () ->
+                    $scope.$evalAsync () ->
+                        create(content)
+                        unwatchLoader()
+            else
+                create(content)
 
         create = (text) =>
             if textEditor
@@ -138,8 +149,10 @@ Wysiwyg = ($translate, $confirm, $storage, wysiwygService, animationFrame, tgLoa
             $scope.editMode = editMode
 
             if editMode
+                editingTracker.begin(editingKey)
                 textEditor.mode = $scope.mode
             else
+                editingTracker.end(editingKey)
                 textEditor.mode = 'html'
 
         $scope.save = (e) ->
@@ -160,6 +173,8 @@ Wysiwyg = ($translate, $confirm, $storage, wysiwygService, animationFrame, tgLoa
 
         $scope.cancel = (e) ->
             e.preventDefault() if e
+
+            editingTracker.end(editingKey)
 
             if !isEditOnly
                 $scope.setEditMode(false)
@@ -185,6 +200,7 @@ Wysiwyg = ($translate, $confirm, $storage, wysiwygService, animationFrame, tgLoa
 
         saveEnd = () ->
             $scope.saving  = false
+            editingTracker.end(editingKey)
 
             if !isEditOnly
                 $scope.setEditMode(false)
@@ -258,9 +274,19 @@ Wysiwyg = ($translate, $confirm, $storage, wysiwygService, animationFrame, tgLoa
 
             localSave($scope.markdown)
 
+            # Editor sempre aberto (comentário novo, edição de comentário): em edição só quando o texto difere do salvo
+            if isEditOnly
+                if $scope.markdown != ($scope.content || '')
+                    editingTracker.begin(editingKey)
+                else
+                    editingTracker.end(editingKey)
+
             $scope.onChange({markdown: $scope.markdown})
 
         throttleChange = _.throttle(change, 200)
+
+        $scope.$on "$destroy", ->
+            editingTracker.end(editingKey)
 
     return {
         templateUrl: "common/components/wysiwyg-toolbar.html",
@@ -290,5 +316,6 @@ angular.module("taigaComponents").directive("tgWysiwyg", [
     "$tgAnalytics",
     "$location",
     "tgAttachmentsFullService",
+    "tgEditingTracker",
     Wysiwyg
 ])

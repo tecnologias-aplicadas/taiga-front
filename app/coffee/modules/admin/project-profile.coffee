@@ -70,11 +70,29 @@ class ProjectProfileController extends mixOf(taiga.Controller, taiga.PageMixin)
             @appMetaService.setAll(title, description)
 
     loadProject: ->
+        dates = ['start_date', 'end_date', 'expected_end_date']
+        prettyDate = @translate.instant("COMMON.PICKERDATE.FORMAT")
+        
         project = @projectService.project.toJS()
         project = @model.make_model("projects", project)
 
+        # Foram criados os campos .._date_ui para evitar conflitos entre o Angular, o datepicker e o backend.
+        # O datepicker exibe e edita datas no formato DD/MM/YYYY, enquanto o backend espera o formato YYYY-MM-DD.
+        # Embora a conversão correta para o backend seja feita no submit do formulário (e somente nesse momento),
+        # o Angular detecta "magicamente" diferenças entre os dados do backend e os valores exibidos no datepicker.
+        # Isso faz com que, ao interagir com outros elementos do componente project, o Angular interprete a diferença de formato como uma alteração nos dados.
+        # Mesmo sem mudanças reais, por consequência as datas são enviadas em outros submits do project, e ainda sem formatação, resultando em erro de validação no backend.
+        # Para resolver isso, os campos .._date_ui são usados exclusivamente no datepicker,
+        # mantendo os campos originais intactos até o momento do submit que interagem com os mesmos, quando a conversão final é feita.
+
+        # utilizar o format "YYYY-MM-DD" para o moment, evita que o mesmo tenha que interpretar a data a partir de outros parametros, como idioma, localização, navegador, etc.
+        project.start_date_ui = moment(project.start_date, "YYYY-MM-DD").toDate()
+        project.end_date_ui = if project.end_date then moment(project.end_date, "YYYY-MM-DD").toDate() else null
+        project.expected_end_date_ui = moment(project.expected_end_date, "YYYY-MM-DD").toDate()
+
         if not project.i_am_admin
             @errorHandlingService.permissionDenied()
+
 
         @scope.projectId = project.id
         @scope.project = project
@@ -126,7 +144,7 @@ module.controller("ProjectProfileController", ProjectProfileController)
 ## Project Profile Directive
 #############################################################################
 
-ProjectProfileDirective = ($repo, $confirm, $loading, $navurls, $location, projectService, currentUserService, $analytics) ->
+ProjectProfileDirective = ($repo, $confirm, $loading, $navurls, $location, $translate, projectService, currentUserService, $analytics) ->
     link = ($scope, $el, $attrs) ->
         $ctrl = $el.controller()
 
@@ -141,6 +159,18 @@ ProjectProfileDirective = ($repo, $confirm, $loading, $navurls, $location, proje
                 .start()
 
             privacyChanged = $scope.project.isAttributeModified("is_private")
+
+            if $scope.project.start_date_ui?
+                $scope.project.start_date = moment($scope.project.start_date_ui).format("YYYY-MM-DD")
+
+            if $scope.project.expected_end_date_ui?
+                $scope.project.expected_end_date = moment($scope.project.expected_end_date_ui).format("YYYY-MM-DD")
+
+            if $scope.project.end_date_ui?
+                $scope.project.end_date = moment($scope.project.end_date_ui).format("YYYY-MM-DD")
+            else
+                $scope.project.end_date = null
+
             promise = $repo.save($scope.project)
             promise.then ->
                 currentLoading.finish()
@@ -159,6 +189,7 @@ ProjectProfileDirective = ($repo, $confirm, $loading, $navurls, $location, proje
                         1
                     )
                 $confirm.notify("success")
+
                 newUrl = $navurls.resolve("project-admin-project-profile-details", {
                     project: $scope.project.slug
                 })
@@ -172,17 +203,20 @@ ProjectProfileDirective = ($repo, $confirm, $loading, $navurls, $location, proje
             promise.then null, (data) ->
                 currentLoading.finish()
                 form.setErrors(data)
-                if data._error_message
-                    $confirm.notify("error", data._error_message)
+                if data.__all__
+                    $confirm.notify("error", data.__all__)
+                    projectService.fetchProject().then () =>
+                        $ctrl.loadInitialData()
 
+                
         submitButton = $el.find(".submit-button")
 
         $el.on "submit", "form", submit
-
+        
     return {link:link}
 
 module.directive("tgProjectProfile", ["$tgRepo", "$tgConfirm", "$tgLoading", "$tgNavUrls", "$tgLocation",
-                                      "tgProjectService", "tgCurrentUserService", "$tgAnalytics",
+                                      "$translate", "tgProjectService", "tgCurrentUserService", "$tgAnalytics",
                                       ProjectProfileDirective])
 
 
@@ -230,13 +264,25 @@ module.directive("tgProjectDefaultValues", ["$rootScope", "$tgRepo", "$tgConfirm
 ## Project Modules Directive
 #############################################################################
 
-ProjectModulesDirective = ($rootScope, $repo, $confirm, $loading) ->
+ProjectModulesDirective = ($rootScope, $repo, $confirm, $loading, $translate) ->
     link = ($scope, $el, $attrs) ->
         submit = =>
             form = $el.find("form").checksley()
             form.initializeFields() # Need to reset the form constrains
             form.reset() # Need to reset the form constrains
             return if not form.validate()
+
+            prettyDate = $translate.instant("COMMON.PICKERDATE.FORMAT")
+            start_date = $scope.project.start_date
+            end_date = $scope.project.end_date
+            expected_end_date = $scope.project.expected_end_date
+
+            $scope.prettyDate = prettyDate
+            $scope.project.start_date =  moment(start_date, prettyDate).format("YYYY-MM-DD")
+            $scope.project.expected_end_date =  moment(expected_end_date, prettyDate).format("YYYY-MM-DD")
+
+            if end_date
+                $scope.project.end_date =  moment(end_date, prettyDate).format("YYYY-MM-DD")
 
             promise = $repo.save($scope.project)
             promise.then ->
@@ -288,7 +334,7 @@ ProjectModulesDirective = ($rootScope, $repo, $confirm, $loading) ->
 
     return {link:link}
 
-module.directive("tgProjectModules", ["$rootScope", "$tgRepo", "$tgConfirm", "$tgLoading",
+module.directive("tgProjectModules", ["$rootScope", "$tgRepo", "$tgConfirm", "$tgLoading", "$translate"
                                       ProjectModulesDirective])
 
 
@@ -552,6 +598,9 @@ ProjectLogoDirective = ($auth, $model, $rs, $confirm) ->
 
         onSuccess = (response) ->
             project = $model.make_model("projects", response.data)
+            project.start_date_ui = moment(project.start_date, "YYYY-MM-DD").toDate()
+            project.end_date_ui = if project.end_date then moment(project.end_date, "YYYY-MM-DD").toDate() else null
+            project.expected_end_date_ui = moment(project.expected_end_date, "YYYY-MM-DD").toDate()
             $scope.project = project
 
             $el.find('.loading-overlay').removeClass('active')

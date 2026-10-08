@@ -1,0 +1,90 @@
+//- This source code is licensed under the terms of the
+//- GNU Affero General Public License found in the LICENSE file in
+//- the root directory of this source tree.
+//-
+//- Copyright (c) 2021-present Kaleidos INC
+
+.ticket-section-label
+  span.dependency-title(translate="COMMON.DEPENDENCIES.TITLE")
+
+.ticket-dependencies-content(ng-class="{'loading': vm.loading}")
+  div.loading-container(ng-show="vm.loading")
+    img.loading-spinner(
+      src="#{v}/svg/spinner-circle.svg",
+      alt="{{ 'COMMON.LOADING' | translate }}"
+    )
+
+  .ticket-users-actions
+    a.ticket-users-action(
+      href=""
+      ng-click="openModal()"
+    )
+      tg-svg.users-action.icon(svg-icon="icon-add")
+      span(translate="COMMON.DEPENDENCIES.ADD")
+
+.lightbox.lightbox-add-dependency
+  tg-lightbox-close
+
+  .lightbox-add-dependency-wrapper
+    h2.title(translate="COMMON.DEPENDENCIES.MODAL.TITLE")
+
+    fieldset.dependency-type-selector
+      label.dependency-type-label(translate="COMMON.DEPENDENCIES.MODAL.TYPE_LABEL")
+      select.dependency-type(ng-model="vm.dependencyType")
+        option(value="BKBY" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.BLOCKED_BY")
+        option(value="BK" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.BLOCKS")
+        option(value="RT" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.RELATED_TO")
+        option(value="DUFROM" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.DUPLICATED_FROM")
+        option(value="DUBY" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.DUPLICATED_BY")
+        option(value="DPON" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.DEPENDS_ON")
+        option(value="DPME" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.DEPENDS_ME")
+        option(value="DWT" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.DISCOVERD_WHILE_TESTING")
+        option(value="LTDWT" translate="COMMON.DEPENDENCIES.MODAL.RELATION_TYPES.LED_TO_DISCOVERY_DURING_TEST")
+
+    fieldset.dependency-type-selector
+      label.dependency-type-label(translate="COMMON.DEPENDENCIES.MODAL.ITEM_TYPE_LABEL")
+      select.item-type(
+        ng-model="vm.itemType"
+        ng-change="vm.onItemTypeChange()"
+      )
+        option(value="issue" translate="COMMON.DEPENDENCIES.CARD_TYPES.ISSUE")
+        option(value="task" translate="COMMON.DEPENDENCIES.CARD_TYPES.TASK")
+        option(value="userstory" translate="COMMON.DEPENDENCIES.CARD_TYPES.USERSTORY")
+        option(value="epic" translate="COMMON.DEPENDENCIES.CARD_TYPES.EPIC")
+
+    fieldset.ticket-search-wrapper
+      label.ticket-search-label(translate="COMMON.DEPENDENCIES.MODAL.SEARCH_LABEL")
+      input.ticket-search-input(
+        type="text"
+        placeholder="{{ 'COMMON.DEPENDENCIES.MODAL.SEARCH_PLACEHOLDER' | translate }}"
+        ng-model="vm.searchText"
+        ng-change="vm.onSearchUpdate(vm.searchText)"
+      )
+
+    .ticket-list-wrapper(ng-class="{'loading': vm.loading}")
+      .ticket-list-content(ng-if="!vm.loading")
+        .ticket-list(ng-if="vm.searchListItems.length > 0")
+          .ticket-item(
+            ng-repeat="item in vm.searchListItems track by $index"
+            ng-class="{'selected': vm.isItemSelected(item)}"
+            ng-click="vm.toggleItemSelection(item)"
+          )
+            .ticket-ref \#{{item.ref}} - {{item.subject}}
+            .ticket-status {{item.status_name}}
+
+        .no-results(
+          ng-if="vm.searchText && vm.searchListItems.length === 0"
+          translate="COMMON.DEPENDENCIES.MODAL.NO_RESULTS"
+        )
+
+        .start-search(
+          ng-if="!vm.searchText && vm.searchListItems.length === 0"
+          translate="COMMON.DEPENDENCIES.MODAL.START_SEARCH"
+        )
+
+    button.btn-big(
+      type="button"
+      ng-click="vm.saveAndClose()"
+      ng-disabled="vm.loading || vm.selectedItems.length === 0"
+      translate="COMMON.DEPENDENCIES.MODAL.SAVE"
+    )

@@ -8,16 +8,23 @@
 
 module = angular.module("taigaComponents")
 
+ACHIEVEMENT_OPTIONS = [
+    {value: 'achieved', labelKey: 'TASKBOARD.SPRINT_GOAL.ACHIEVEMENT.ACHIEVED'}
+    {value: 'partially_achieved', labelKey: 'TASKBOARD.SPRINT_GOAL.ACHIEVEMENT.PARTIALLY_ACHIEVED'}
+    {value: 'not_achieved', labelKey: 'TASKBOARD.SPRINT_GOAL.ACHIEVEMENT.NOT_ACHIEVED'}
+]
+
+# Keys the API uses for field errors on close_with_result, in display order.
+FIELD_ERROR_KEYS = ['goal_achievement', 'result', 'milestone_id']
+
 class MoveToSprintLightboxController
     @.$inject = [
         '$rootScope'
         '$scope'
         '$tgResources'
         'tgProjectService'
-        '$translate'
         'lightboxService'
-        '$tgConfirm',
-        '$q'
+        '$tgConfirm'
     ]
 
     constructor: (
@@ -25,115 +32,87 @@ class MoveToSprintLightboxController
         @scope
         @rs
         @projectService
-        @translate
         @lightboxService
         @confirm
-        @q
     ) ->
         @.projectId = @projectService.project.get('id')
         @.loading = false
-        @.someSelected = false
+        @.hasOpenItems = false
+        @.sprints = null
         @.selectedSprintId = null
-        @.typesSelected = {
-            uss: false
-            tasks: false
-            issues: false
+        @.achievementOptions = ACHIEVEMENT_OPTIONS
+        @.result = {
+            goal_achievement: null
+            result: ''
         }
-        @.itemsToMove = {}
-        @._loadSprints()
 
-        @scope.$watch "vm.openItems", (openItems) =>
+        @scope.$watch (() => @.openItems), (openItems) =>
             return if !openItems
             @._init(openItems)
 
     _init: (openItems) ->
-        @.hasManyItemTypes = _.size(@.openItems) > 1
+        @.ussCount = openItems.uss?.length or 0
+        @.tasksCount = openItems.tasks?.length or 0
+        @.issuesCount = openItems.issues?.length or 0
+        @.hasOpenItems = (@.ussCount + @.tasksCount + @.issuesCount) > 0
 
-        @.ussCount = parseInt(openItems.uss?.length)
-        @.updateSelected('uss', @.ussCount > 0)
-
-        @.tasksCount = parseInt(openItems.tasks?.length)
-        @.updateSelected('tasks', @.tasksCount > 0)
-
-        @.issuesCount = parseInt(openItems.issues?.length)
-        @.updateSelected('issues', @.issuesCount > 0)
+        # The destination sprint only matters when the server will have to move
+        # something, so the list is fetched only in that case.
+        @._loadSprints() if @.hasOpenItems
 
     _loadSprints: () ->
         @rs.sprints.list(@.projectId, {closed: false}).then (data) =>
             @.sprints = _.filter(data.milestones, (x) => x.id != @.sprint.id)
 
-    updateSelected: (itemType, value) ->
-        @.typesSelected[itemType] = value
-        @.someSelected = _.some(@.typesSelected)
+    hasGoal: () ->
+        return _.trim(@.sprint?.goal or '').length > 0
 
-        if value is true
-            @.itemsToMove[itemType] = @.openItems[itemType]
-        else if @.itemsToMove[itemType]
-            delete @.itemsToMove[itemType]
+    hasNoDestination: () ->
+        return @.hasOpenItems and @.sprints? and @.sprints.length == 0
+
+    isResultFilled: () ->
+        achievementOk = _.some(ACHIEVEMENT_OPTIONS, (option) => option.value == @.result.goal_achievement)
+        return achievementOk and _.trim(@.result.result or '').length > 0
+
+    canSubmit: () ->
+        return false if @.loading
+        # The server refuses to close a sprint with nothing finished (400);
+        # the button only anticipates it. hasClosedItems comes from the board.
+        return false if not @.hasClosedItems
+        return false if not @.isResultFilled()
+        return false if @.hasOpenItems and not @.selectedSprintId?
+        return true
 
     submit: () ->
-        itemsNotMoved = {}
-        _.map @.openItems, (itemsList, itemsType) =>
-            if not @.itemsToMove[itemsType]
-                itemsNotMoved[itemsType] = true
+        return if not @.canSubmit()
+
+        data = {
+            goal_achievement: @.result.goal_achievement
+            result: _.trim(@.result.result)
+        }
+        data.milestone_id = @.selectedSprintId if @.hasOpenItems
 
         @.loading = true
 
-        @moveItems().then () =>
-            @rootScope.$broadcast("taskboard:items:move", @.typesSelected)
-            @lightboxService.closeAll()
+        onSuccess = (response) =>
             @.loading = false
-            if _.size(itemsNotMoved) > 0
-                @.displayWarning(itemsNotMoved)
+            # The board reloads the sprint from the API (closed, result and the
+            # items that were moved), the same way it does after moving items.
+            @rootScope.$broadcast("taskboard:items:move", {uss: true, tasks: true, issues: true})
+            @lightboxService.closeAll()
 
-    moveItems: () ->
-        promises = []
-        if  @.itemsToMove.uss
-            promises.push(
-                @rs.sprints.moveUserStoriesMilestone(
-                    @.sprint.id
-                    @.projectId
-                    @.selectedSprintId
-                    @.itemsToMove.uss
-                )
-            )
-        if  @.itemsToMove.tasks
-            promises.push(
-                @rs.sprints.moveTasksMilestone(
-                    @.sprint.id
-                    @.projectId
-                    @.selectedSprintId
-                    @.itemsToMove.tasks
-                )
-            )
-        if  @.itemsToMove.issues
-            promises.push(
-                @rs.sprints.moveIssuesMilestone(
-                    @.sprint.id
-                    @.projectId
-                    @.selectedSprintId
-                    @.itemsToMove.issues
-                )
-            )
-        return @q.all(promises)
+        onError = (response) =>
+            @.loading = false
+            @confirm.notify("error", @._errorMessage(response))
 
-    displayWarning: (itemsNotMoved) ->
-        action = @translate.instant('COMMON.I_GET_IT')
-        if _.size(itemsNotMoved) == 1 and itemsNotMoved.issues is true
-            title = @translate.instant('TASKBOARD.MOVE_TO_SPRINT.WARNING_ISSUES_NOT_MOVED_TITLE')
-            desc = @translate.instant('TASKBOARD.MOVE_TO_SPRINT.WARNING_ISSUES_NOT_MOVED')
-        else
-            totalItemsMoved = 0
-            _.map @.itemsToMove, (itemsList, itemsType) -> totalItemsMoved += itemsList.length
-            title = @translate.instant(
-                'TASKBOARD.MOVE_TO_SPRINT.WARNING_SPRINT_STILL_OPEN_TITLE'
-                { total: totalItemsMoved }
-                'messageformat'
-            )
-            desc = @translate.instant(
-                'TASKBOARD.MOVE_TO_SPRINT.WARNING_SPRINT_STILL_OPEN'
-                { sprintName: @.sprint?.name }
-            )
-        @confirm.success(title, desc, null, action)
+        return @rs.sprints.closeWithResult(@.sprint.id, data).then(onSuccess, onError)
+
+    _errorMessage: (response) ->
+        data = response?.data or {}
+        return data._error_message if data._error_message
+        return data.detail if data.detail
+        for key in FIELD_ERROR_KEYS
+            return data[key][0] if _.isArray(data[key]) and data[key].length
+        return undefined
 
 module.controller("MoveToSprintLbCtrl", MoveToSprintLightboxController)

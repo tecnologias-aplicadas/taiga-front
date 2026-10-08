@@ -6,8 +6,8 @@
 //- Copyright (c) 2021-present Kaleidos INC
 
 a.move-to-sprint-button.is-editable(
-  title="{{ 'TASKBOARD.MOVE_TO_SPRINT.TITLE_ACTION_MOVE_UNFINISHED' | translate }}"
-  ng-class="{'disabled': !vm.hasOpenItems || vm.disabled}"
+  title="{{ 'TASKBOARD.MOVE_TO_SPRINT.CLOSE_SPRINT' | translate }}"
+  ng-class="{'disabled': !vm.canCloseSprint() || vm.disabled}"
   ng-click="vm.openLightbox()"
 )
-    tg-svg(svg-icon="icon-move")
+    tg-svg(svg-icon="icon-sprint-closed")

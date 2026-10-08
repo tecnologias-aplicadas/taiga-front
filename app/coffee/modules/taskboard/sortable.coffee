@@ -16,12 +16,11 @@ groupBy = @.taiga.groupBy
 
 module = angular.module("taigaBacklog")
 
-
 #############################################################################
 ## Sortable Directive
 #############################################################################
 
-TaskboardSortableDirective = ($repo, $rs, $rootscope, $translate) ->
+TaskboardSortableDirective = ($repo, $rs, $rootscope, $translate, $tgConfirm) ->
     link = ($scope, $el, $attrs) ->
         unwatch = $scope.$watch "usTasks", (usTasks) ->
             return if !usTasks || !usTasks.size
@@ -35,6 +34,7 @@ TaskboardSortableDirective = ($repo, $rs, $rootscope, $translate) ->
             newParentScope = null
             itemEl = null
             tdom = $el
+            initialContainer = null
 
             filterError = ->
                 text = $translate.instant("BACKLOG.SORTABLE_FILTER_ERROR")
@@ -50,12 +50,11 @@ TaskboardSortableDirective = ($repo, $rs, $rootscope, $translate) ->
             drake = dragula(containers, {
                 copySortSource: false,
                 copy: false,
-                accepts: (el, target) -> return !$(target).hasClass('taskboard-row-title-box')
+                accepts: (el, target) -> 
+                    return !$(target).hasClass('taskboard-row-title-box')
                 moves: (item) ->
                     return $(item).is('tg-card')
             })
-
-            initialContainer = null
 
             drake.on 'shadow', (item) ->
                 $(item).removeClass('folded-dragging')
@@ -72,6 +71,10 @@ TaskboardSortableDirective = ($repo, $rs, $rootscope, $translate) ->
 
             drake.on 'drag', (item) ->
                 oldParentScope = $(item).parent().scope()
+                
+                # Armazenar a posição original para possível restauração
+                $(item).data('original-index', $(item).index())
+                $(item).data('original-container', $(item).parent())
 
                 if $(item).width() == 30
                     $(item).addClass('folded-dragging')
@@ -85,7 +88,61 @@ TaskboardSortableDirective = ($repo, $rs, $rootscope, $translate) ->
 
                     return false
 
+            # Variável para controlar se o movimento foi cancelado
+            moveCancelled = false
+            
+            # Adicionar estilo de transição se ainda não existir
+            if !$('#card-transition-style').length
+                $('head').append('<style id="card-transition-style">.card-transition{transition:transform 0.3s ease, opacity 0.3s ease;}</style>')
+            
+            drake.on 'drop', (item, target, source, sibling) ->
+                oldParentScope = $(source).scope()
+                newParentScope = $(target).scope()
+
+                oldUsId = if oldParentScope.us then oldParentScope.us.id else null
+                newUsId = if newParentScope.us then newParentScope.us.id else null
+
+                if newUsId != oldUsId
+                    # Marcar como cancelado
+                    moveCancelled = true
+                    
+                    # Restaurar à posição original imediatamente
+                    originalContainer = $(item).data('original-container')
+                    originalIndex = $(item).data('original-index') || 0
+                    
+                    # Adicionar classe de transição para suavizar o retorno
+                    $(item).addClass('card-transition')
+                    
+                    # Usar setTimeout para garantir que o DOM seja atualizado
+                    setTimeout(() ->
+                        # Remover o item do alvo
+                        $(item).detach()
+                        
+                        # Reinserir na origem
+                        if originalIndex == 0
+                            $(source).prepend($(item))
+                        else
+                            $(source).children().eq(originalIndex - 1).after($(item))
+                            
+                        # Notificar o usuário
+                        errorMsg = $translate.instant("TASKBOARD.ERROR_MOVE_TO_ANOTHER_US")
+                        $tgConfirm.notify("error", errorMsg)
+                        
+                        # Remover classe de transição após a animação
+                        setTimeout(() ->
+                            $(item).removeClass('card-transition')
+                        , 300)
+                    , 0)
+                    
+                    return false
+
+
             drake.on 'dragend', (item) ->
+                # Verificar se o movimento foi cancelado pelo evento drop
+                if moveCancelled
+                    moveCancelled = false
+                    return
+                    
                 parentEl = $(item).parent()
                 itemEl = $(item)
                 itemTask = $scope.taskMap.get(Number(item.dataset.id))
@@ -97,28 +154,34 @@ TaskboardSortableDirective = ($repo, $rs, $rootscope, $translate) ->
                 newUsId = if newParentScope.us then newParentScope.us.id else null
                 newStatusId = newParentScope.st.id
 
+                # Verificar novamente se mudou de história (caso o evento drop não tenha sido acionado)
+                if newUsId != oldUsId
+                    return
+
                 if initialContainer != parentEl
                     $(parentEl).addClass('new')
-
-                    $(parentEl).one 'animationend', ()  ->
+                    $(parentEl).one 'animationend', () ->
                         $(parentEl).removeClass('new')
 
-                if newStatusId != oldStatusId or newUsId != oldUsId
+                if newStatusId != oldStatusId
                     deleteElement(itemEl)
 
-                $scope.$apply ->
-                    # prevent fold/unfold animation
+                scopeDefer $scope, ->
                     tableBody = $('.taskboard-table-body')
-
                     tableBody.addClass('moving')
 
-                    # wait animation end
                     setTimeout () ->
                         tableBody.removeClass('moving')
                     , 1000
 
-                    $rootscope.$broadcast("taskboard:task:move", itemTask, itemTask.getIn(['model', 'status']), newUsId, newStatusId, itemIndex)
-
+                    $rootscope.$broadcast(
+                        "taskboard:task:move",
+                        itemTask,
+                        newStatusId,
+                        newUsId,
+                        newStatusId,
+                        itemIndex
+                    )
 
             scroll = autoScroll([$('.taskboard-table-body')[0]], {
                 margin: 100,
@@ -140,5 +203,6 @@ module.directive("tgTaskboardSortable", [
     "$tgResources",
     "$rootScope",
     "$translate",
+    "$tgConfirm",
     TaskboardSortableDirective
 ])

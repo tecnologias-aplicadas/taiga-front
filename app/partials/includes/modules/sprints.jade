@@ -46,14 +46,20 @@ section.sprints
             sprint="sprint"
         )
 
+    div.closed-sprints-without-result-alert(ng-if="totalClosedMilestonesWithoutResult")
+        tg-svg(svg-icon="icon-alert")
+        span(translate="BACKLOG.SPRINTS.CLOSED_SPRINTS_WITHOUT_RESULT")
+
     a.filter-closed-sprints(href="", tg-backlog-toggle-closed-sprints-visualization,
-                            ng-if="totalClosedMilestones")
+                            ng-if="totalClosedMilestones"
+                            ng-class="{'has-sprints-without-result': totalClosedMilestonesWithoutResult}")
         tg-svg(svg-icon="icon-folder")
         span.text(translate="BACKLOG.SPRINTS.ACTION_SHOW_CLOSED_SPRINTS")
 
     div.sprint.sprint-closed(ng-repeat="sprint in closedSprints track by sprint.id",
                              tg-backlog-sprint="sprint",
-                             tg-sprint-sortable)
+                             tg-sprint-sortable
+                             ng-class="{'sprint-without-result': sprint.closed && !sprint.result}")
         tg-sprint(
             project="project"
             sprint="sprint"

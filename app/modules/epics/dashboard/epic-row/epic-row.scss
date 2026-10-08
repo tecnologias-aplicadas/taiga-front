@@ -12,25 +12,31 @@
     padding-left: 1rem;
     position: relative;
     transition: background .2s;
+
     &.unfold,
     &:hover {
         background-color: $color-gray200;
+
         .icon-drag {
             opacity: 1;
         }
     }
+
     &.not-empty {
         cursor: pointer;
     }
+
     &.is-blocked {
         background: $color-solid-red;
     }
+
     &.is-closed {
         .name a {
             color: lighten($gray-light, 15%);
             text-decoration: line-through;
         }
     }
+
     &.unfold {
         .name {
             .icon {
@@ -38,32 +44,76 @@
             }
         }
     }
+
     .fold-us {
         flex-shrink: 0;
         margin-left: .75rem;
         width: 1rem;
     }
+
     .name {
         align-items: center;
         display: flex;
         padding-left: 0;
+
         a {
             &:hover {
+
                 .ref,
                 .subject {
                     color: $color-link-primary;
                 }
             }
         }
+
         .subject {
             color: $color-black600;
             margin-left: .25rem;
         }
+
         .icon {
             transform: rotate(0);
             transition: all .2s;
         }
     }
+
+    .start-date,
+    .expected-completion-date,
+    .completion-date {
+        display: block;
+        font-size: 14px;
+        margin-right: 4px;
+        padding: 0 5px;
+        text-align: center;
+        width: 135px;
+
+        >input {
+            padding: 4px;
+        }
+    }
+
+    .completion-date {
+        >input {
+            background-color: #e4e4e4;
+        }
+    }
+
+    .date-error {
+        font-size: 9px;
+        color: #f00;
+    }
+
+
+
+    .created_date {
+        flex-basis: 75px;
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        padding: .5rem;
+        text-align: center;
+    }
+
     .icon-drag {
         @include svg-size(1rem);
         cursor: move;
@@ -73,6 +123,7 @@
         position: absolute;
         transition: opacity .1s;
     }
+
     .epic-pill {
         @include font-type(regular);
         @include font-size(xsmall);
@@ -84,9 +135,11 @@
         padding: .1rem .25rem;
         width: 12px;
     }
+
     .status-holder {
         cursor: pointer;
         position: relative;
+
         button {
             align-items: center;
             background: none;
@@ -94,32 +147,131 @@
             margin: 0 auto;
         }
     }
+
     .icon-arrow-down {
         @include svg-size(.7rem);
         fill: $gray-light;
         margin-left: .1rem;
     }
+
     .progress-bar,
     .progress-status {
         height: 1.5rem;
-        left: 0;
-        position: absolute;
-        top: .25rem;
+        display: flex;
+
+        span {
+            color: $color-white;
+        }
     }
+
     .progress-bar {
-        background-color: $color-white;
+        background-color: #bfbfbf;
         max-width: 40vw;
-        padding-right: 1rem;
         width: 100%;
+        height: 100%;
+        border-radius: 3px;
+        position: absolute;
+        top: 0;
+        left: 0;
     }
+
     .progress-status {
         background-color: $color-link-primary;
         width: 10vw;
+
+        color: $color-white;
+        font-size: 10px;
+        font-weight: bold;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+        z-index: 10;
+        white-space: nowrap;
+        min-width: 25px;
+        text-align: center;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
+
+    .progress-status-remain {
+        background-color: #bfbfbf;
+        width: 10vw;
+
+        color: $color-white;
+        font-size: 10px;
+        font-weight: bold;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+        z-index: 10;
+        white-space: nowrap;
+        min-width: 25px;
+        text-align: center;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .progress-status-done {
+        background-color: #6994ea;
+        width: 10vw;
+
+        color: $color-white;
+        font-size: 10px;
+        font-weight: bold;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+        z-index: 10;
+        white-space: nowrap;
+        min-width: 25px;
+        text-align: center;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .progress-segment {
+        height: 100%;
+        position: absolute;
+        top: 0;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        &:hover {
+            opacity: 0.8;
+        }
+        &:first-child {
+            left: 0;
+            border-radius: 3px 0 0 3px;
+        }
+        &:last-child {
+            border-radius: 0 3px 3px 0;
+        }
+        &:only-child {
+            border-radius: 3px;
+        }
+    }
+    .progress-segment-text {
+        color: $color-white;
+        font-size: 10px;
+        font-weight: bold;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+        z-index: 10;
+        white-space: nowrap;
+        min-width: 25px;
+        text-align: center;
+    }
+
     .assigned {
         align-items: center;
         display: flex;
         justify-content: center;
+
         img {
             border-radius: 50%;
             height: 2rem;
@@ -127,22 +279,54 @@
             width: 2rem;
         }
     }
+
     .is-unassigned {
         color: $gray-light;
     }
+
     .epic-statuses {
-        @include popover(
-            $width: 150px,
-            $top: 40px,
-            $right: 0,
-            $arrow-width: 0
-        );
+        @include popover($width: 150px, $top: 40px, $right: 0, $arrow-width: 0);
         display: block;
         text-align: left;
     }
+
     .loading-spinner {
         height: 10px;
         width: 10px;
+    }
+
+    .schedulable {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        gap: .1rem;
+        justify-content: center;
+    }
+
+    .schedulable-label,
+    .schedulable-impact {
+        font-size: .75rem;
+        text-align: center;
+
+        &.is-yes {
+            color: #25a28c;
+        }
+
+        &.is-no {
+            color: #ca81be;
+        }
+
+        &.is-na {
+            color: #a9aabc;
+        }
+    }
+
+    .schedulable-label {
+        font-weight: 600;
+    }
+
+    .schedulable-impact {
+        font-size: .7rem;
     }
 }
 

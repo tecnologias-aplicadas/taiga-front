@@ -24,6 +24,7 @@ CreateEditSprint = ($repo, $confirm, $rs, $rootscope, lightboxService, $loading,
         $scope.newSprint = {}
         ussToAdd = null
         $scope.createEditOpen = false
+        $scope.isNewSprint = true
 
         resetSprint = () ->
             form.reset() if form
@@ -33,7 +34,16 @@ CreateEditSprint = ($repo, $confirm, $rs, $rootscope, lightboxService, $loading,
                 name: null
                 estimated_start: null
                 estimated_finish: null
+                goal: null
             }
+
+        # The goal is required on create and read-only on edit (the API refuses
+        # changing it), so the form only sends it when creating a sprint.
+        $scope.isSprintGoalEmpty = () ->
+            return _.trim($scope.newSprint?.goal or "").length == 0
+
+        $scope.isSaveDisabled = () ->
+            return $scope.isNewSprint and $scope.isSprintGoalEmpty()
 
         submit = debounce 2000, (event) =>
             event.preventDefault()
@@ -63,7 +73,7 @@ CreateEditSprint = ($repo, $confirm, $rs, $rootscope, lightboxService, $loading,
                 broadcastEvent = "sprintform:create:success"
             else
                 newSprint = $scope.newSprint.realClone()
-                newSprint.estimated_start =  moment(estimated_start, prettyDate).format("YYYY-MM-DD")
+                newSprint.estimated_start = moment(estimated_start, prettyDate).format("YYYY-MM-DD")
                 newSprint.estimated_finish = moment(estimated_end, prettyDate).format("YYYY-MM-DD")
 
                 promise = $repo.save(newSprint)
@@ -135,6 +145,7 @@ CreateEditSprint = ($repo, $confirm, $rs, $rootscope, lightboxService, $loading,
 
          $scope.$on "sprintform:create", (event, projectId, uss) ->
             $scope.createEditOpen = true
+            $scope.isNewSprint = true
 
             openFn () ->
                 ussToAdd = uss
@@ -189,6 +200,7 @@ CreateEditSprint = ($repo, $confirm, $rs, $rootscope, lightboxService, $loading,
 
         $scope.$on "sprintform:edit", (ctx, sprint) ->
             $scope.createEditOpen = true
+            $scope.isNewSprint = false
 
             openFn () ->
                 resetSprint()

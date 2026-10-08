@@ -30,12 +30,33 @@
                 ng-if="!vm.editMode"
                 tg-bind-wysiwyg-html="vm.comment.comment"
             )
+            .comment-reactions(tg-emoji)
+                span.loading(ng-if="vm.loadingReactions[vm.comment.id]") Carregando reações...
+                span.reaction-emoji(
+                    ng-if="vm.comment.reactions && !vm.loadingReactions[vm.comment.id]"
+                    ng-repeat="(emoji, data) in vm.comment.reactions track by emoji"
+                    ng-click="vm.toggleReaction(emoji)"
+                    ng-class="{ 'user-reacted': data.users.indexOf(vm.user.get('id')) !== -1 }"
+                    title="{{ data.tooltip }}"
+                )
+                    span.emoji {{ emoji }}
+                    span.count {{ data.count }}
+                button.emoji-picker-button(
+                    tg-emoji-picker
+                    comment-id="{{vm.comment.id}}"
+                    on-select="vm.toggleReaction(emoji)"
+                )
+                    | 🙂
+
 
             .comment-editor(
                 ng-if="vm.editMode"
                 ng-keyup="vm.checkCancelComment($event)"
             )
-                tg-comment-edit-wysiwyg.edit-comment
+                tg-comment-edit-wysiwyg.edit-comment(
+                    comment="vm.comment"
+                    on-save="vm.saveComment(text, cb)"
+                )
 
         .comment-options(ng-if="vm.canEditDeleteComment() && !vm.editMode")
             tg-svg.comment-option(

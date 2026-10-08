@@ -47,6 +47,47 @@ taiga.PageMixin = PageMixin
 
 
 #############################################################################
+## Detail Events Mixin
+#############################################################################
+# This mixin requires @scope, @events ($tgEvents) and @editingTracker (tgEditingTracker)
+#
+# A tela de detalhe assina o canal de eventos e recarrega em silêncio quando o
+# evento é do card aberto. Enquanto houver campo em edição a recarga fica
+# adiada e é aplicada quando o rastreador avisar `editing:idle`.
+
+class DetailEventsMixin
+    # `subscriptions`: lista de {routingKey, matches(message), reload()}
+    subscribeDetailEvents: (subscriptions) ->
+        @.pendingReloads = []
+
+        for subscription in subscriptions
+            do (subscription) =>
+                @events.subscribe @scope, subscription.routingKey, (message) =>
+                    return if not subscription.matches(message)
+                    @.reloadOrDefer(subscription.reload)
+
+        @scope.$on "editing:idle", =>
+            reloads = @.pendingReloads
+            @.pendingReloads = []
+            reload() for reload in reloads
+
+    reloadOrDefer: (reload) ->
+        if @editingTracker.isEditing()
+            @.pendingReloads.push(reload) if not _.includes(@.pendingReloads, reload)
+        else
+            reload()
+
+    # `pk` chega como número ou, nas operações em lote, como lista
+    eventTargets: (message, ids) ->
+        ids = [ids] if not _.isArray(ids)
+        ids = _.filter(ids, (id) -> id?)
+        pks = if _.isArray(message?.pk) then message.pk else [message?.pk]
+        return _.intersection(pks, ids).length > 0
+
+taiga.DetailEventsMixin = DetailEventsMixin
+
+
+#############################################################################
 ## Filters Mixin
 #############################################################################
 # This mixin requires @location ($tgLocation), and @scope
@@ -186,6 +227,16 @@ class UsFiltersMixin
 
     removeFilter: (filter) ->
         @.unselectFilter(filter.dataType, filter.id, false, filter.mode)
+        @.filtersReloadContent()
+        @.generateFilters()
+
+    removeAllFilters: (filter) ->
+        @.unselectFilter(filter.dataType, filter.id, true, filter.mode)
+        @.filtersReloadContent()
+        @.generateFilters()
+
+    removeAllFiltersExclude: (filter) ->
+        @.unselectFilter(filter.dataType, filter.id, true, 'exclude') #Garantindo que ele interprete como exclude
         @.filtersReloadContent()
         @.generateFilters()
 

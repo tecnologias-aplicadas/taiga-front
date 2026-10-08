@@ -58,6 +58,12 @@ div.wrapper(
                 project="project"
                 required-edition-perm="modify_epic"
             )
+            
+            tg-dependencies-list(
+                item="item"
+                project="project"
+                shared="shared"
+            )
 
             tg-attachments-full(
                 obj-id="epic.id"
@@ -92,6 +98,55 @@ div.wrapper(
                 ng-model="epic"
             )
 
+        section.ticket-section.progress
+            div.progress-row
+                span.dot.done
+                span.label(translate="EPICS.DETAILS.DONE")
+                span.value {{ctrl.completionPercentDone}}
+
+            div.progress-row
+                span.dot.progress
+                span.label(translate="EPICS.DETAILS.PROGRESS")
+                span.value {{ctrl.completionPercentProgress}}
+
+        section.ticket-section.dates
+            div
+                .start-date
+                    h5(translate="EPICS.DETAILS.START_DATE")
+                    input(
+                        ng-disabled="!ctrl.canModify"
+                        type="date"
+                        name="start_date"
+                        ng-model="ctrl.startDate"
+                        data-required="true"
+                        ng-blur="ctrl.blurStartDate()"
+                        min="{{ctrl.startDateMin | date:'yyyy-MM-dd'}}"
+                        required
+                        max="{{ctrl.calculatedStartDateMax | date:'yyyy-MM-dd'}}"
+                        style="{{ctrl.startDateBorderAlert}}"
+                    )
+                    .date-error(ng-if="ctrl.canModify") {{ctrl.startDateError}}
+        
+                .expected-completion-date.date
+                    h5(translate="EPICS.DETAILS.EXPECTED_COMPLETION_DATE")
+                    input(
+                        ng-disabled="!ctrl.canModify"
+                        type="date"
+                        name="expected_completion_date"
+                        ng-model="ctrl.expectedCompletionDate"
+                        data-required="true"
+                        ng-blur="ctrl.blurExpectedCompletionDate()"
+                        required
+                        ng-attr-min="{{ctrl.calculatedMinAllowedDate | date:'yyyy-MM-dd'}}"
+                        style="{{ctrl.expectedCompletionDateBorderAlert}}"
+                    )
+                    .date-error(ng-if="ctrl.canModify") {{ctrl.expectedCompletionDateError}}
+
+                .completion-date.date
+                    h5(translate="EPICS.DETAILS.COMPLETION_DATE")
+                    span(ng-if="!ctrl.completionDate") {{'N/A'}}
+                    span(ng-if="ctrl.completionDate") {{ ctrl.completionDate | date:'dd/MM/yyyy' }}
+
         section.ticket-section.ticket-assigned-to(
             tg-assigned-to
             ng-model="epic"
@@ -106,6 +161,13 @@ div.wrapper(
             on-unwatch="ctrl.onUnwatch"
             required-perm="modify_epic"
         )
+        
+        section.ticket-section.ticket-dependencies
+            tg-ticket-dependencies(
+                item="item"
+                project="project"
+                shared="shared"
+            )
 
         section.ticket-section.ticket-detail-settings
             tg-us-team-requirement-button(ng-model="epic")
@@ -113,6 +175,7 @@ div.wrapper(
             tg-block-button(
                 tg-check-permission="modify_epic",
                 ng-model="epic"
+                style="pointer-events: none; opacity: 0.4;"
             )
             tg-delete-button(
                 tg-check-permission="delete_epic",

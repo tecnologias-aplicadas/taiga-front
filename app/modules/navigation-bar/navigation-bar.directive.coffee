@@ -13,10 +13,14 @@ NavigationBarDirective = (currentUserService, navigationBarService, locationServ
         taiga.defineImmutableProperty(scope.vm, "projects", () -> currentUserService.projects.get("recents"))
         taiga.defineImmutableProperty(scope.vm, "isAuthenticated", () -> currentUserService.isAuthenticated())
         taiga.defineImmutableProperty(scope.vm, "isEnabledHeader", () -> navigationBarService.isEnabledHeader())
+        taiga.defineImmutableProperty(scope.vm, "isAdmin", () -> currentUserService.getUser()?.get("is_superuser") == true)
+        # taiga.defineImmutableProperty(scope.vm, "environment", () -> navigationBarService.environment())
 
         scope.vm.publicRegisterEnabled = config.get("publicRegisterEnabled")
         scope.vm.customSupportUrl = config.get("supportUrl")
         scope.vm.isFeedbackEnabled = config.get("feedbackEnabled")
+        scope.vm.environment = config.get("environment")
+
 
         loadUserPilot = () =>
             userPilotIframe = document.querySelector('#userpilot-resource-centre-frame')

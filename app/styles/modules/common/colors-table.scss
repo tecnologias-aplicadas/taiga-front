@@ -1,5 +1,17 @@
 .colors-table {
     overflow-x: inherit;
+    &.custom-wrapper {
+        display: block;
+        max-height: 0;
+        transition: max-height .25s ease;
+        overflow-x: hidden;
+
+        &.ng-hide {
+            display: block !important; /* stylelint-disable-line declaration-no-important */
+            overflow-x: inherit;
+            max-height: 1200px;
+        }
+    }
     .table-header {
         @include font-size(medium);
         @include font-type(medium);
@@ -65,6 +77,7 @@
             position: relative;
         }
         .is-archived-column,
+        .status-percentage-column,
         .is-closed-column,
         .options-column,
         .thresold-column,
@@ -120,6 +133,10 @@
             text-align: center;
         }
         .is-closed-column {
+            max-width: 100px;
+            text-align: center;
+        }
+        .status-percentage-column {
             max-width: 100px;
             text-align: center;
         }

@@ -17,15 +17,19 @@ a.list-itemtype-ticket(
         )
     .list-itemtype-avatar(ng-if="vm.type == 'watching'")
         img(
-            ng-if="vm.duty.get('assigned_to_extra_info')"
-            title="{{ ::vm.duty.get('assigned_to_extra_info').get('full_name_display') }}"
-            tg-avatar="vm.duty.get('assigned_to_extra_info')"
+            ng-if="vm.getAssignedUser()"
+            title="{{ ::vm.getAssignedUser().get('full_name_display') }}"
+            tg-avatar="vm.getAssignedUser()"
         )
         img(
-            ng-if="!vm.duty.get('assigned_to_extra_info')"
+            ng-if="!vm.getAssignedUser()"
             src="#{v}/images/unnamed.png"
             title="{{'ACTIVITY.VALUES.UNASSIGNED' | translate}}"
         )
+        span.avatar-overflow(
+            ng-if="vm.getExtraAssigneesCount() > 0"
+            title="+{{vm.getExtraAssigneesCount()}} {{ 'EPICS.DASHBOARD.MORE_ASSIGNED' | translate }}"
+        ) +{{vm.getExtraAssigneesCount()}}
     .list-itemtype-ticket-data
         .list-itemtype-data-meta
             span.ticket-project {{ ::vm.duty.getIn(['project', 'name']) }}

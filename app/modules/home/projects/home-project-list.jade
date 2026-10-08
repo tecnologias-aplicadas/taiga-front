@@ -90,6 +90,7 @@ section.projects-empty(ng-if="vm.projects != undefined && vm.projects.size === 0
     tg-svg(svg-icon="icon-project")
     p(translate="HOME.EMPTY_PROJECT_LIST")
     a.btn-small.create-project-button(
+        ng-if="vm.isAdmin"
         variant="primary"
         href="#",
         tg-nav="create-project"

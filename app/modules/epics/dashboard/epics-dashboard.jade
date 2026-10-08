@@ -21,6 +21,10 @@
                     ng-click="vm.onCreateEpic()"
                 )
 
+        tg-schedule-charts(
+            ng-if="vm.epics.size"
+        )
+
         tg-epics-table(
             ng-if="vm.epics.size"
         )

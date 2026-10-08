@@ -1,0 +1,33 @@
+
+//- This source code is licensed under the terms of the
+//- GNU Affero General Public License found in the LICENSE file in
+//- the root directory of this source tree.
+//-
+//- Copyright (c) 2021-present Kaleidos INC
+
+.sprint-goal(ng-if="sprintGoal.isExpanded")
+    .sprint-goal-text.wysiwyg(
+        ng-if="sprintGoal.hasGoal()"
+        tg-bind-wysiwyg-html="sprintGoal.sprint.goal"
+    )
+    p.sprint-goal-empty(
+        ng-if="!sprintGoal.hasGoal()"
+        translate="TASKBOARD.SPRINT_GOAL.EMPTY"
+    )
+    .sprint-goal-result(ng-if="sprintGoal.hasResult()")
+        hr.sprint-goal-divider
+        h3.sprint-goal-result-title
+            span(translate="TASKBOARD.SPRINT_GOAL.RESULT_TITLE")
+            span.sprint-goal-achievement(
+                ng-class="sprintGoal.achievementClass()"
+                translate="{{sprintGoal.achievementLabelKey()}}"
+            )
+        .sprint-goal-result-text.wysiwyg(
+            tg-bind-wysiwyg-html="sprintGoal.sprint.result"
+        )
+        p.sprint-goal-closed
+            tg-svg(svg-icon="icon-lock")
+            span(
+                translate="TASKBOARD.SPRINT_GOAL.CLOSED_INFO"
+                translate-values="{date: sprintGoal.resultDateLabel(), author: sprintGoal.resultAuthorLabel()}"
+            )

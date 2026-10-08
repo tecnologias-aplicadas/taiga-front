@@ -123,6 +123,11 @@ CustomAttributesValuesDirective = ($templates, $storage) ->
             $ctrl.initialize($attrs.type, value.id)
             $ctrl.loadCustomAttributesValues()
 
+        # O card foi recarregado por evento do servidor: reconsulta os valores
+        # (salvar pelo próprio usuário não passa por aqui)
+        $scope.$on "custom-attributes-values:reload", ->
+            $ctrl.loadCustomAttributesValues()
+
         $scope.toggleCollapse = () ->
             $scope.collapsed = !$scope.collapsed
             $storage.set(hash, $scope.collapsed)
@@ -149,14 +154,20 @@ module.directive("tgCustomAttributesValues", ["$tgTemplate", "$tgStorage", "$tra
                                               CustomAttributesValuesDirective])
 
 
-CustomAttributeValueDirective = ($template, $selectedText, $compile, $translate, datePickerConfigService, wysiwygService) ->
+CustomAttributeValueDirective = ($template, $selectedText, $compile, $translate, datePickerConfigService, wysiwygService, $timeout, editingTracker) ->
     template = $template.get("custom-attributes/custom-attribute-value.html", true)
     templateEdit = $template.get("custom-attributes/custom-attribute-value-edit.html", true)
 
     link = ($scope, $el, $attrs, $ctrl) ->
         prettyDate = $translate.instant("COMMON.PICKERDATE.FORMAT")
+        editingKey = "custom-attribute-#{$scope.$id}"
+        editing = false
 
         render = (attributeValue, edit=false) ->
+            # Avisa o rastreador de edição para a tela adiar recargas enquanto o campo estiver aberto
+            editing = edit
+            if edit then editingTracker.begin(editingKey) else editingTracker.end(editingKey)
+
             if attributeValue.type is DATE_TYPE and attributeValue.value
                 value = moment(attributeValue.value, "YYYY-MM-DD").format(prettyDate)
             if attributeValue.type is NUMBER_TYPE and attributeValue.value
@@ -181,7 +192,8 @@ CustomAttributeValueDirective = ($template, $selectedText, $compile, $translate,
             scope.model = value
             scope.project = $scope.project
 
-            if editable and (edit or not value)
+            isEmpty = if attributeValue.type is CHECKBOX_TYPE then true else not value
+            if editable and (edit or isEmpty)
                 html = templateEdit(ctx)
 
                 html = $compile(html)(scope)
@@ -252,6 +264,15 @@ CustomAttributeValueDirective = ($template, $selectedText, $compile, $translate,
         $scope.customAttributeValue = attributeValue
         render(attributeValue)
 
+        # Valores reconsultados após recarga do card por evento: aplica o que mudou no
+        # servidor; um campo que o usuário abriu não é fechado nem reaberto
+        normalizeValue = (value) -> if value? then String(value) else ""
+
+        $scope.$watch (-> $ctrl.customAttributesValues?.attributes_values?[attributeValue.id]), (value) ->
+            return if normalizeValue(value) == normalizeValue(attributeValue.value)
+            attributeValue.value = if value? then value else ""
+            render(attributeValue, false) if not editing
+
         ## Actions (on view mode)
 
         $el.on "click", ".js-value-view-mode span a", (event) ->
@@ -279,7 +300,15 @@ CustomAttributeValueDirective = ($template, $selectedText, $compile, $translate,
 
         $el.on "click", ".js-save-description", submit
 
+        $el.on "change", "input[name=value]", ->
+            return unless attributeValue.type is CHECKBOX_TYPE
+            attributeValue.value = $el.find("input[name=value]")[0].checked
+            $scope.$apply ->
+                $ctrl.updateAttributeValue(attributeValue).then ->
+                    render(attributeValue, false)
+
         $scope.$on "$destroy", ->
+            editingTracker.end(editingKey)
             $el.off()
 
     return {
@@ -289,4 +318,5 @@ CustomAttributeValueDirective = ($template, $selectedText, $compile, $translate,
     }
 
 module.directive("tgCustomAttributeValue", ["$tgTemplate", "$selectedText", "$compile", "$translate",
-                                            "tgDatePickerConfigService", "tgWysiwygService", CustomAttributeValueDirective])
+                                            "tgDatePickerConfigService", "tgWysiwygService", "$timeout",
+                                            "tgEditingTracker", CustomAttributeValueDirective])

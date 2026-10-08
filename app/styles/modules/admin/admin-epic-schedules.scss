@@ -1,0 +1,197 @@
+.admin-epic-schedules {
+    .admin-title {
+        @include font-type(medium);
+        margin-bottom: 1.5rem;
+    }
+
+    .epic-schedules-loading,
+    .epic-schedules-empty {
+        color: $gray;
+        margin-top: 2rem;
+        text-align: center;
+    }
+
+    .epic-schedules-table {
+        table {
+            border-collapse: collapse;
+            width: 100%;
+
+            thead tr {
+                border-bottom: 2px solid $whitish;
+            }
+
+            th {
+                @include font-type(medium);
+                @include font-size(small);
+                color: $grayer;
+                padding: .6rem .75rem;
+                text-align: left;
+                white-space: nowrap;
+            }
+
+            tbody tr {
+                border-bottom: 1px solid $whitish;
+
+                &:hover {
+                    background: lighten($primary, 60%);
+                    transition: background .15s ease-in;
+                }
+
+                &:last-child {
+                    border-bottom: 0;
+                }
+            }
+
+            td {
+                @include font-size(small);
+                padding: .5rem .75rem;
+                vertical-align: middle;
+            }
+        }
+    }
+
+    // col-epic: cor + ref + nome
+    .col-epic {
+        min-width: 180px;
+
+        .epic-color {
+            border-radius: 2px;
+            display: inline-block;
+            height: 12px;
+            margin-right: .35rem;
+            vertical-align: middle;
+            width: 12px;
+        }
+
+        .epic-ref {
+            color: $gray;
+            margin-right: .25rem;
+        }
+    }
+
+    // col-assigned: avatar
+    .col-assigned {
+        min-width: 80px;
+        text-align: center;
+
+        img.avatar {
+            border-radius: 50%;
+            height: 28px;
+            object-fit: cover;
+            width: 28px;
+        }
+
+        .no-assigned {
+            color: $gray-light;
+            font-style: italic;
+        }
+    }
+
+    // inputs e selects editáveis
+    .es-select,
+    .es-input {
+        border: 1px solid $whitish;
+        border-radius: 3px;
+        color: inherit;
+        font-size: .8rem;
+        padding: .25rem .4rem;
+
+        &:focus {
+            border-color: $primary;
+            outline: none;
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            opacity: .5;
+        }
+    }
+
+    .col-schedulable .es-select {
+        font-weight: 600;
+        width: 80px;
+
+        &.is-yes {
+            border-color: #25a28c;
+            color: #25a28c;
+        }
+
+        &.is-no {
+            border-color: #ca81be;
+            color: #ca81be;
+        }
+
+        &.is-na {
+            border-color: #a9aabc;
+            color: #a9aabc;
+        }
+    }
+
+    .col-percentage-impact {
+        white-space: nowrap;
+
+        .es-input {
+            width: 70px;
+        }
+
+        span {
+            margin-left: .2rem;
+        }
+    }
+
+    .col-date .es-input {
+        width: 140px;
+    }
+
+    // status dropdown colorido
+    .col-status {
+        min-width: 140px;
+    }
+
+    .es-status-holder {
+        cursor: pointer;
+        position: relative;
+    }
+
+    .es-status-btn {
+        align-items: center;
+        background: none;
+        border: 0;
+        cursor: pointer;
+        display: flex;
+        font-size: .8rem;
+        gap: .25rem;
+        padding: 0;
+
+        &:disabled {
+            cursor: not-allowed;
+            opacity: .5;
+        }
+
+        tg-svg {
+            @include svg-size(.65rem);
+            fill: $gray-light;
+        }
+    }
+
+    .es-status-list {
+        @include popover($width: 160px, $top: 28px, $left: 0, $arrow-width: 0);
+        display: block;
+
+        li {
+            align-items: center;
+            cursor: pointer;
+            display: flex;
+            gap: .4rem;
+            padding: .3rem .5rem;
+        }
+    }
+
+    .es-status-dot {
+        border-radius: 50%;
+        display: inline-block;
+        flex-shrink: 0;
+        height: 10px;
+        width: 10px;
+    }
+}

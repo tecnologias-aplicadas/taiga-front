@@ -15,21 +15,31 @@ class HistorySectionController
         "$tgStorage",
         "tgProjectService",
         "tgActivityService",
-        "tgWysiwygService"
+        "tgWysiwygService",
+        "tgCommentsReactionsService"
     ]
 
-    constructor: (@rs, @repo, @storage, @projectService, @activityService, @wysiwygService) ->
+    constructor: (@rs, @repo, @storage, @projectService, @activityService, @wysiwygService, @commentsReactionsService) ->
         @.editing = null
         @.deleting = null
         @.editMode = {}
         @.viewComments = true
 
         @.reverse = @storage.get("orderComments")
-
+        @.activeUsers = []
         taiga.defineImmutableProperty @, 'disabledActivityPagination', () =>
             return @activityService.disablePagination
         taiga.defineImmutableProperty @, 'loadingActivity', () =>
             return @activityService.loading
+    
+    _loadActiveUsers: ->
+        return unless @project?.id
+        @rs.projects.usersList(@project.id).then (users) =>
+            active = _.filter(users, (u) -> u.is_active)
+            @activeUsers = _.sortBy(active, "full_name_display")
+
+    $onInit: ->
+        @._loadActiveUsers()
 
     _loadHistory: () ->
         if @.totalComments == 0
@@ -46,11 +56,18 @@ class HistorySectionController
             @.activities = response.toJS()
 
     _loadComments: () ->
+        # Salvar as reações de todos os comentários antes de recarregar
+        if @.comments?.length
+            @commentsReactionsService.storeAllReactions(@.comments)
+        
         @rs.history.get(@.name, @.id, 'comment').then (comments) =>
             @.comments = _.filter(comments, (item) -> item.comment != "")
-
+            
+            # Restaurar as reações para todos os comentários
+            @commentsReactionsService.restoreAllReactions(@.comments)
+            
             if @.reverse
-                @.comments - _.reverse(@.comments)
+                @.comments = _.reverse(@.comments)
             @.commentsNum = @.comments.length
 
     nextActivityPage: () ->
@@ -86,10 +103,26 @@ class HistorySectionController
         objectId = @.id
         activityId = commentId
         @.editing = commentId
+        
+        # Salvar as reações de todos os comentários antes da edição
+        if @.comments?.length
+            @commentsReactionsService.storeAllReactions(@.comments)
+        
         return @rs.history.editComment(type, objectId, activityId, comment).then =>
-            @._loadComments()
-            @.toggleEditMode(commentId)
-            @.editing = null
+            # Recarregar comentários diretamente em vez de chamar @._loadComments()
+            @rs.history.get(@.name, @.id, 'comment').then (comments) =>
+                @.comments = _.filter(comments, (item) -> item.comment != "")
+                
+                # Restaurar as reações para todos os comentários
+                @commentsReactionsService.restoreAllReactions(@.comments)
+                
+                if @.reverse
+                    @.comments = _.reverse(@.comments)
+                @.commentsNum = @.comments.length
+                
+                # Finalizar edição
+                @.toggleEditMode(commentId)
+                @.editing = null
 
     restoreDeletedComment: (commentId) ->
         type = @.name
@@ -101,6 +134,10 @@ class HistorySectionController
             @.editing = null
 
     addComment: () ->
+        # Salvar as reações de todos os comentários antes de adicionar um novo
+        if @.comments?.length
+            @commentsReactionsService.storeAllReactions(@.comments)
+            
         @.editMode = {}
         @.editing = null
         @._loadComments()

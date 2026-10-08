@@ -26,6 +26,7 @@ describe "navigationBarDirective", () ->
         mocks.currentUserService = {
             projects: projects
             isAuthenticated: sinon.stub()
+            getUser: sinon.stub()
         }
 
         provide.value "tgCurrentUserService", mocks.currentUserService
@@ -62,6 +63,9 @@ describe "navigationBarDirective", () ->
     _mockTgDropdownUserDirective = () ->
         provide.factory 'tgDropdownUserDirective', () -> {}
 
+    _mockTgDropdownNotificationsDirective = () ->
+        provide.factory 'tgDropdownNotificationsDirective', () -> {}
+
     _mockTgFeedbackService = () ->
         mocks.feedbackService = {
             sendFeedback: sinon.stub()
@@ -78,6 +82,7 @@ describe "navigationBarDirective", () ->
             _mockTranslateFilter()
             _mockTgDropdownProjectListDirective()
             _mockTgDropdownUserDirective()
+            _mockTgDropdownNotificationsDirective()
             _mocksConfig()
             _mockTgFeedbackService()
 
@@ -134,3 +139,43 @@ describe "navigationBarDirective", () ->
         expect(mocks.feedbackService.sendFeedback.callCount).to.be.equal(0)
         vm.sendFeedback()
         expect(mocks.feedbackService.sendFeedback.callCount).to.be.equal(1)
+
+    it "logo do usuário autenticado leva ao painel pela rota relativa, sem host", () ->
+        inject (tgNavigationBarService) -> tgNavigationBarService.enableHeader()
+        mocks.currentUserService.isAuthenticated.returns(true)
+        elm = createDirective()
+        scope.$apply()
+        logo = elm.find("a.logo")
+        expect(logo.length).to.be.equal(1)
+        expect(logo.attr("tg-nav")).to.be.equal("dashboard")
+        expect(logo.attr("href")).not.to.match(/^(https?:)?\/\//)
+
+    it "logo de quem não está autenticado leva à home pública, sem host", () ->
+        inject (tgNavigationBarService) -> tgNavigationBarService.enableHeader()
+        mocks.currentUserService.isAuthenticated.returns(false)
+        elm = createDirective()
+        scope.$apply()
+        logo = elm.find("a.logo")
+        expect(logo.length).to.be.equal(1)
+        expect(logo.attr("tg-nav")).to.be.equal("home")
+        expect(logo.attr("href")).not.to.match(/^(https?:)?\/\//)
+
+    it "superusuário vê o ícone do carrossel à esquerda do guia de story points", () ->
+        inject (tgNavigationBarService) -> tgNavigationBarService.enableHeader()
+        mocks.currentUserService.isAuthenticated.returns(true)
+        mocks.currentUserService.getUser.returns(Immutable.fromJS({is_superuser: true}))
+        elm = createDirective()
+        scope.$apply()
+        wrapper = elm.find(".news-admin-wrapper")
+        expect(wrapper.length).to.be.equal(1)
+        expect(wrapper.find("a").attr("tg-nav")).to.be.equal("news-admin")
+        expect(wrapper.next().hasClass("story-points-guide-wrapper")).to.be.true
+
+    it "quem não é superusuário não vê o ícone do carrossel", () ->
+        inject (tgNavigationBarService) -> tgNavigationBarService.enableHeader()
+        mocks.currentUserService.isAuthenticated.returns(true)
+        mocks.currentUserService.getUser.returns(Immutable.fromJS({is_superuser: false}))
+        elm = createDirective()
+        scope.$apply()
+        expect(elm.find(".news-admin-wrapper").length).to.be.equal(0)
+        expect(elm.find(".story-points-guide-wrapper").length).to.be.equal(1)

@@ -1,0 +1,47 @@
+//- This source code is licensed under the terms of the
+//- GNU Affero General Public License found in the LICENSE file in
+//- the root directory of this source tree.
+//-
+//- Copyright (c) 2021-present Kaleidos INC
+
+//- Sem slide ativo ou sem resposta do servidor, a seção inteira some (sem flash: nada aparece enquanto carrega)
+section.hl-news(ng-if="vm.total > 0")
+    .hl-news__inner
+        .hl-section-header
+            .hl-badge.hl-badge--light.hl-badge--glow(translate="HOME_LANDING.NEWS_BADGE")
+            h2.hl-section-title-inblack(translate="HOME_LANDING.NEWS_TITLE")
+
+        h2.sr-only(style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)" translate="HOME_LANDING.NEWS_CAROUSEL_SR")
+
+        .hl-news__carousel
+            .hl-cw-stage
+                .hl-cw-track
+                    .hl-cw-slide(ng-repeat="slide in vm.track track by $index")
+                        .hl-cw-bg-img
+                            img(ng-src="{{ slide.image_url }}" alt="{{ slide.title }}")
+                        .hl-cw-slide-content
+                            .hl-cw-glass-panel
+                                h3.hl-cw-slide-title {{ slide.title }}
+                                p.hl-cw-slide-desc {{ slide.description }}
+
+            .hl-cw-nav-zone
+                .hl-cw-nav-left
+                    button.hl-cw-nav-btn(type="button" ng-click="vm.prev()" translate-attr="{'aria-label': 'HOME_LANDING.NEWS_PREV'}")
+                        svg(viewBox="0 0 24 24")
+                            polyline(points="15 18 9 12 15 6")
+                    button.hl-cw-nav-btn(type="button" ng-click="vm.next()" translate-attr="{'aria-label': 'HOME_LANDING.NEWS_NEXT'}")
+                        svg(viewBox="0 0 24 24")
+                            polyline(points="9 18 15 12 9 6")
+                    span.hl-cw-counter
+                        b {{ vm.current + 1 }}
+                        |  / {{ vm.total }}
+                .hl-cw-dots-wrap
+                    .hl-cw-dot(
+                        ng-repeat="slide in vm.slides track by slide.id"
+                        ng-class="{'hl-cw-dot--active': $index === vm.current}"
+                        ng-click="vm.go($index)"
+                    )
+                .hl-cw-prog-ring
+                    svg(width="38" height="38" viewBox="0 0 38 38")
+                        circle.hl-cw-ring-track(cx="19" cy="19" r="15" stroke-dasharray="94.2")
+                        circle.hl-cw-ring-fill(cx="19" cy="19" r="15" stroke-dasharray="94.2" stroke-dashoffset="94.2")

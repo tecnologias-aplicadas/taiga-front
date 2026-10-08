@@ -133,6 +133,7 @@ class NotificationsService extends taiga.Service
             "issue": "project-issues-detail",
             "task": "project-tasks-detail",
             "userstory": "project-userstories-detail",
+            "epic": "project-epics-detail",
         }
         url = @navUrls.resolve(urlMapping[contentType], {
             project: notification.getIn(['data', 'project', 'slug']),
@@ -148,10 +149,11 @@ class NotificationsService extends taiga.Service
             .attr('ng-non-bindable', true)
             .text(text)
 
-        return $('<a href="">')
+        return $('<a>')
+            .attr('href', url)
             .attr('title', title)
             .attr('class', css)
-            .attr('ng-click', "vm.setAsRead(notification, \"#{url}\")")
+            .attr('ng-click', "$event.preventDefault(); vm.setAsRead(notification, \"#{url}\")")
             .append(span)
             .prop('outerHTML')
 

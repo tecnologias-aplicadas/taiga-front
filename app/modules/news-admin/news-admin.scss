@@ -1,0 +1,303 @@
+// Gestão do carrossel de novidades (só superusuário), com o mesmo container,
+// espaçamento e tipografia do guia de story points (story-points-guide.scss):
+// largura máxima 900px centralizada, padding 2rem 1.5rem 4rem, cabeçalho com
+// título/subtítulo e seções com 2.5rem entre si. Cores e fontes só do tema.
+
+.news-admin {
+    max-width: 900px;
+    padding: 2rem 1.5rem 4rem;
+
+    .header {
+        border-bottom: 2px solid $color-solid-primary;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+
+        .title {
+            @include font-type(bold);
+            @include font-size(xxlarge);
+
+            color: $color-black900;
+            margin-bottom: .25rem;
+        }
+
+        .subtitle {
+            @include font-size(medium);
+
+            color: $color-black600;
+            margin: 0;
+        }
+    }
+
+    .section {
+        margin-bottom: 2.5rem;
+    }
+
+    .section-title {
+        @include font-type(bold);
+        @include font-size(xlarge);
+
+        color: $color-link-primary;
+        margin-bottom: 1rem;
+    }
+
+    // Formulário de novo slide, campos no padrão de core/forms.scss
+    .news-admin-form {
+        background: $mass-white;
+        padding: 1rem;
+
+        fieldset {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            @include font-type(regular);
+
+            display: block;
+            margin-bottom: .2rem;
+        }
+
+        // Cinco linhas visíveis (rows="5"); o min-height global de 10rem não se aplica
+        textarea {
+            min-height: 8rem;
+            resize: vertical;
+        }
+    }
+
+    .news-admin-order-field {
+        max-width: 10rem;
+    }
+
+    .news-admin-form-actions {
+        align-items: center;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+
+    .news-admin-hint {
+        @include font-size(small);
+
+        color: $gray-light;
+        display: block;
+        margin-top: .25rem;
+    }
+
+    .news-admin-error {
+        @include font-size(small);
+
+        color: $color-link-red;
+        margin: .5rem 0;
+    }
+
+    .news-admin-state {
+        @include font-size(base);
+
+        color: $color-black700;
+        line-height: 1.6;
+        margin-bottom: .75rem;
+    }
+
+    // Tabela de slides com as bordas do tema
+    .news-admin-table {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        .row {
+            align-items: center;
+            display: flex;
+            flex-wrap: nowrap;
+            width: 100%;
+
+            > div {
+                padding: 0 .5rem;
+            }
+        }
+
+        .table-header {
+            @include font-type(medium);
+
+            border-bottom: 3px solid $whitish;
+            color: $gray;
+
+            .row {
+                padding: .5rem 0;
+            }
+        }
+
+        .table-body .row {
+            border-bottom: 1px solid $whitish;
+            color: $gray;
+            padding: .75rem 0;
+            transition: background .2s linear;
+
+            &:hover {
+                background: rgba($primary-light, .05);
+            }
+        }
+
+    }
+
+    .news-admin-col-image {
+        flex-basis: 8rem;
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+
+    .news-admin-col-title {
+        flex-basis: 20%;
+        flex-shrink: 0;
+    }
+
+    .news-admin-col-description {
+        flex-basis: 30%;
+        flex-grow: 1;
+    }
+
+    .news-admin-col-state,
+    .news-admin-col-order {
+        flex-basis: 6rem;
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+
+    .news-admin-col-actions {
+        flex-basis: 14rem;
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+
+    .news-admin-row-inactive {
+        color: $gray-light;
+
+        .news-admin-thumb {
+            opacity: .6;
+        }
+    }
+
+    // Miniatura com o tratamento da logo do projeto na administração: imagem
+    // ocupando a largura da coluna, com borda discreta
+    .news-admin-thumb {
+        background: $white;
+        border: 1px solid $whitish;
+        border-radius: 3px;
+        display: block;
+        height: 4rem;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    // Estado com as cores do tema: verde de link para ativo, cinza para inativo
+    .news-admin-badge {
+        @include font-size(xsmall);
+        @include font-type(medium);
+
+        background: $color-gray300;
+        border-radius: 1rem;
+        color: $color-black600;
+        display: inline-block;
+        padding: .15rem .6rem;
+        text-transform: uppercase;
+        white-space: nowrap;
+
+        &.active {
+            background: $color-link-green;
+            color: $color-white;
+        }
+    }
+
+    .news-admin-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .25rem;
+        justify-content: flex-end;
+
+        .button-red,
+        .btn-small {
+            @include font-size(xsmall);
+
+            padding: .3rem .6rem;
+        }
+
+        // Subir/Descer só com ícone: botão quadrado compacto, mesma altura dos demais
+        .news-admin-icon-button {
+            min-width: 2rem;
+            padding: .3rem .45rem;
+
+            tg-svg svg {
+                fill: currentColor;
+                height: 1rem;
+                width: 1rem;
+            }
+        }
+    }
+
+    // Seleção de imagem traduzida: input nativo visualmente oculto (segue
+    // funcional e focável), label-botão do tema e o nome do arquivo ao lado
+    .news-admin-field-label {
+        @include font-type(regular);
+
+        display: block;
+        margin-bottom: .2rem;
+    }
+
+    .news-admin-file-row {
+        align-items: center;
+        display: flex;
+        flex-basis: 100%;
+        flex-wrap: wrap;
+        gap: .75rem;
+        margin-bottom: .25rem;
+    }
+
+    .news-admin-file-button {
+        cursor: pointer;
+        margin: 0;
+
+        &:focus-within {
+            outline: 2px solid $color-link-primary;
+        }
+    }
+
+    .news-admin-file-input {
+        clip: rect(0, 0, 0, 0);
+        height: 1px;
+        overflow: hidden;
+        position: absolute;
+        white-space: nowrap;
+        width: 1px;
+    }
+
+    .news-admin-file-name {
+        @include font-size(small);
+
+        color: $gray;
+    }
+
+    // Modal de edição: formulário no padrão das lightboxes genéricas
+    .lightbox-news-slide-edit {
+        .title {
+            margin-bottom: 1.5rem;
+        }
+
+        fieldset {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            @include font-type(regular);
+
+            display: block;
+            margin-bottom: .2rem;
+        }
+
+        textarea {
+            min-height: 8rem;
+            resize: vertical;
+        }
+
+        .news-admin-form-actions {
+            margin-top: 1.5rem;
+        }
+    }
+}

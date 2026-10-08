@@ -36,10 +36,23 @@ class CreateEpicController
 
         @.loading = false
 
-    createEpic: () ->
+    createEpic: () -> 
         return if not @.validateForm()
 
+        # Foram criados os campos .._date_ui para evitar conflitos entre o Angular, o datepicker e o backend.
+        # O datepicker exibe e edita datas no formato DD/MM/YYYY, enquanto o backend espera o formato YYYY-MM-DD.
+        # Embora a conversão correta para o backend seja feita no submit do formulário (e somente nesse momento),
+        # o Angular detecta "magicamente" diferenças entre os dados do backend e os valores exibidos no datepicker.
+        # Isso faz com que, o submit do formulário resulte no Error: [ngModel:datefmt] Expected `2025-05-27` to be a date
+        # Esse erro não impede o submit do formulário, mas fica nos logs do front
+        # Para resolver isso, os campos .._date_ui são usados exclusivamente no datepicker,
+        # mantendo os campos originais intactos até o momento do submit, quando a conversão final é feita.
+        @.newEpic.start_date = moment(@.newEpic.start_date_ui).format("YYYY-MM-DD")
+        @.newEpic.expected_completion_date = moment(@.newEpic.expected_completion_date_ui).format("YYYY-MM-DD")
+
         @.loading = true
+
+
 
         @epicsService.createEpic(@.newEpic, @.attachments)
             .then (response) => # On success

@@ -17,3 +17,12 @@ e2e/screenshots/
 e2e/reports/
 app/modules/compile-modules/
 yarn.lock
+package-lock.json
+.vscode
+.claude
+
+**/.obsidian/workspace.json
+**/.obsidian/workspace-mobile.json
+**/.obsidian/cache
+**/.obsidian/graph.json
+**/.obsidian/plugins/*/data.json

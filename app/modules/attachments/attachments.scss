@@ -90,19 +90,44 @@
 .single-attachment {
     @include font-size(small);
     background: $color-white;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+    min-width: 0;
     .attachment-name {
         display: flex;
         padding-right: 1rem;
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        align-items: center;
+        white-space: nowrap;
         svg {
             fill: $color-black600;
             margin-right: .25rem;
+            flex: 0 0 auto;
         }
         a {
             display: flex;
+            overflow: hidden;
+            align-items: center;
+            white-space: nowrap;
+            min-width: 0;
+        }
+        span {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
     .attachment-size {
         color: $color-black600;
+        flex: 0 0 auto;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
     &.ng-enter {
         opacity: 0;
@@ -114,6 +139,10 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.attachment-settings {
+    flex-shrink: 0;
 }
 
 .more-attachments {

@@ -18,6 +18,7 @@ $dropdown-width: 260px;
         z-index: $negative-layer;
     }
     .nav-left,
+    .nav-right,
     .nav-right {
         align-content: center;
         align-items: center;
@@ -28,6 +29,7 @@ $dropdown-width: 260px;
                 align-items: center;
                 display: flex;
                 justify-content: center;
+                width: 5rem;
             }
         }
     }
@@ -42,7 +44,30 @@ $dropdown-width: 260px;
             }
         }
     }
+
     .nav-right {
+        .br-tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-around;
+            border-radius: 4px;
+            padding: 0.25rem 1rem;
+        }
+        .environment-tag {
+            background-color: #000;
+            @include font-size(medium);
+            font-weight: bold;
+            // width: 100%;
+            color: #fff;
+            tg-svg {
+                margin-right: 0.5rem;
+                margin-bottom: 0.2rem;
+                svg {
+                    width: 1.2rem;
+                    height: 1.2rem;
+                }
+            }
+        }
         margin-left: auto;
         > a {
             @include font-size(small);
@@ -392,6 +417,121 @@ $dropdown-width: 260px;
             padding: 1rem .5rem .25rem .5rem;
         }
     }
+}
+
+.story-points-guide-wrapper,
+.news-admin-wrapper {
+    height: 100%;
+
+    & > a {
+        align-items: center;
+        display: flex;
+        height: 100%;
+        padding: .5rem 1rem;
+    }
+
+    // Só contorno, em repouso: ancorado em .navbar .nav-right para vencer
+    // a regra geral `.navbar .nav-right svg { fill }` dos ícones da barra.
+    .navbar .nav-right & > a svg {
+        fill: none;
+        stroke: $color-link-primary;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2px;
+        transition: all .2s linear;
+    }
+
+    &:hover {
+        .navbar-dropdown-story-points {
+            animation: dropdownFade .2s cubic-bezier(.09, 0, .99, .01) both;
+            display: block;
+        }
+    }
+
+    // Hover, foco e ativo: muda só a cor do traço, nunca preenche. Mesma
+    // especificidade da regra geral de hover da barra e declarada depois dela.
+    .navbar .nav-right &:hover > a svg,
+    .navbar .nav-right & > a:focus svg,
+    .navbar .nav-right &.active > a svg {
+        fill: none;
+        stroke: $color-link-tertiary;
+    }
+
+    .navbar-dropdown-story-points {
+        background: $color-gray100;
+        border-radius: 2px;
+        box-shadow: 4px 4px 8px rgba(46, 52, 64, .1);
+        display: none;
+        padding: 1rem;
+        position: absolute;
+        right: 0;
+        top: 3rem;
+        width: 420px;
+        z-index: $layout-floating-layer;
+
+        .story-points-table {
+            border-collapse: collapse;
+            margin-bottom: .75rem;
+            width: 100%;
+
+            th {
+                @include font-type(medium);
+                @include font-size(small);
+
+                border-bottom: 2px solid $color-solid-primary;
+                color: $color-black600;
+                padding: .4rem .5rem;
+                text-align: left;
+                white-space: nowrap;
+            }
+
+            td {
+                @include font-size(small);
+
+                border-bottom: 1px solid rgba($color-solid-primary, .5);
+                padding: .35rem .5rem;
+
+                &:first-child {
+                    @include font-type(bold);
+
+                    color: $color-link-primary;
+                    white-space: nowrap;
+                    width: 90px;
+                }
+            }
+
+            tr:last-child td {
+                border-bottom: none;
+            }
+        }
+
+        .action {
+            @include font-size(small);
+            @include font-type(medium);
+
+            color: $color-link-primary;
+            display: block;
+            padding: .5rem;
+            text-align: center;
+
+            &:hover {
+                color: $color-link-tertiary;
+            }
+        }
+    }
+}
+
+// Só o ícone do guia (espiral de Fibonacci): 20% maior; transform não muda a caixa
+// do link nem desloca os vizinhos; o traço segue os 2px da regra compartilhada
+.navbar .nav-right .story-points-guide-wrapper > a svg {
+    transform: scale(1.2);
+    transform-origin: center;
+}
+
+// Só o ícone do carrossel: 10% maior e 1px para baixo, sem mudar a caixa do link
+.navbar .nav-right .news-admin-wrapper > a svg {
+    transform: translateY(1px) scale(1.1);
+    transform-origin: center;
 }
 
 .nav-bar-support {

@@ -15,7 +15,7 @@ form.single-attachment(
         a.e2e-attachment-link(
             tg-attachment-link="vm.attachment"
             href="{{::vm.attachment.getIn(['file', 'url'])}}"
-            title="{{::vm.attachment.get(['file', 'name'])}}"
+            title="{{::vm.attachment.getIn(['file', 'name'])}}"
             target="_blank"
             download="{{::vm.attachment.getIn(['file', 'name'])}}"
         )

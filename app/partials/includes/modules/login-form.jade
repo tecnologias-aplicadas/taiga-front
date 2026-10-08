@@ -6,37 +6,64 @@
 //- Copyright (c) 2021-present Kaleidos INC
 
 .login-form-container(tg-login)
-    form.login-form(ng-if="defaultLoginEnabled")
-        fieldset
-            input(
-                type="text"
-                autocorrect="off"
-                autocapitalize="none"
-                autofocus
-                required
-                name="username"
-                data-required="true"
-                placeholder="{{'LOGIN_COMMON.PLACEHOLDER_AUTH_NAME' | translate}}"
+
+    .login-tabs
+        button.login-tab.js-tab-corporate(
+            type="button"
+        )
+            span(translate="LOGIN_COMMON.TAB_CORPORATE")
+        button.login-tab.js-tab-external(
+            type="button"
+        )
+            span(translate="LOGIN_COMMON.TAB_EXTERNAL")
+
+    //- ABA CORPORATIVO
+    form.login-form.login-form-corporate(autocomplete="off")
+        .corporate-logo
+            img(
+                src="#{v}/images/logo-itaipuparquetec.png"
+                alt="Itaipu Parquetec"
             )
 
-        fieldset.login-password
-            input(
-                type="password"
-                name="password"
-                data-required="true"
-                placeholder="{{'LOGIN_COMMON.PLACEHOLDER_AUTH_PASSWORD' | translate}}"
-                ng-focus="capslockIcon = !capslockIcon"
-                ng-keyup="onKeyUp($event)"
+        fieldset.fieldset-icon
+            .input-icon-wrapper
+                svg.input-icon(xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9e9abf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+                    path(d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2")
+                    circle(cx="12" cy="7" r="4")
+                input(
+                    type="text"
+                    autocorrect="off"
+                    autocapitalize="none"
+                    autofocus
+                    required
+                    name="username"
+                    data-required="true"
+                    data-error-container="fieldset"
+                    placeholder="{{'LOGIN_COMMON.PLACEHOLDER_CORPORATE_USERNAME' | translate}}"
+                )
+            span.username-at-error(
+                style="display:none"
+                translate="LOGIN_COMMON.ERROR_USERNAME_NO_EMAIL"
             )
 
-            a.forgot-pass(
-                href=""
-                tg-nav="forgot-password"
-                title="{{'LOGIN_COMMON.TITLE_LINK_FORGOT_PASSWORD' | translate}}"
-                translate="LOGIN_COMMON.LINK_FORGOT_PASSWORD"
-            )
+        fieldset.login-password.fieldset-icon
+            .input-icon-wrapper
+                button.input-icon.password-toggle(type="button" tabindex="-1")
+                    svg(xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9e9abf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+                        path(d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z")
+                        circle(cx="12" cy="12" r="3")
+                input(
+                    type="password"
+                    name="password"
+                    data-required="true"
+                    data-error-container="fieldset"
+                    placeholder="{{'LOGIN_COMMON.PLACEHOLDER_AUTH_PASSWORD' | translate}}"
+                    ng-focus="capslockIcon = !capslockIcon"
+                    ng-keyup="onKeyUp($event)"
+                )
+                tg-capslock
 
-            tg-capslock
+        .g-recaptcha(data-sitekey="{{reCaptchaSiteKey}}")
 
         fieldset.end
             button.btn-small.full(
@@ -46,6 +73,76 @@
                 translate="LOGIN_COMMON.ACTION_SIGN_IN"
             )
 
+        a.go-home-link(
+            tg-nav="home"
+            href="#"
+            title="{{'LOGIN_COMMON.LINK_GO_HOME' | translate}}"
+            translate="LOGIN_COMMON.LINK_GO_HOME"
+        )
+
+    //- ABA EXTERNO
+    form.login-form.login-form-external(autocomplete="off")
+        .corporate-logo
+            img(
+                src="#{v}/images/taiga_externo.png"
+                alt="Acesso Externo"
+            )
+
+        fieldset.fieldset-icon
+            .input-icon-wrapper
+                svg.input-icon(xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9e9abf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+                    path(d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2")
+                    circle(cx="12" cy="7" r="4")
+                input(
+                    type="text"
+                    autocorrect="off"
+                    autocapitalize="none"
+                    required
+                    name="username"
+                    data-required="true"
+                    data-error-container="fieldset"
+                    placeholder="{{'LOGIN_COMMON.PLACEHOLDER_AUTH_NAME' | translate}}"
+                )
+
+        fieldset.login-password.fieldset-icon
+            .input-icon-wrapper
+                button.input-icon.password-toggle(type="button" tabindex="-1")
+                    svg(xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9e9abf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+                        path(d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z")
+                        circle(cx="12" cy="12" r="3")
+                input(
+                    type="password"
+                    name="password"
+                    data-required="true"
+                    data-error-container="fieldset"
+                    placeholder="{{'LOGIN_COMMON.PLACEHOLDER_AUTH_PASSWORD' | translate}}"
+                    ng-focus="capslockIcon = !capslockIcon"
+                    ng-keyup="onKeyUp($event)"
+                )
+                a.forgot-pass(
+                    href=""
+                    tg-nav="forgot-password"
+                    title="{{'LOGIN_COMMON.TITLE_LINK_FORGOT_PASSWORD' | translate}}"
+                    translate="LOGIN_COMMON.LINK_FORGOT_PASSWORD"
+                )
+                tg-capslock
+        .g-recaptcha(data-sitekey="{{reCaptchaSiteKey}}")
+
+        fieldset.end
+            button.btn-small.full(
+                variant="primary"
+                type="submit"
+                title="{{'LOGIN_COMMON.ACTION_SIGN_IN' | translate}}"
+                translate="LOGIN_COMMON.ACTION_SIGN_IN"
+            )
+
+        a.go-home-link(
+            tg-nav="home"
+            href="#"
+            title="{{'LOGIN_COMMON.LINK_GO_HOME' | translate}}"
+            translate="LOGIN_COMMON.LINK_GO_HOME"
+        )
+
     .contrib-plugins-wrapper(ng-if="authPlugins.length")
         label(translate="LOGIN_COMMON.ALT_LOGIN", ng-if="defaultLoginEnabled")
 
@@ -54,4 +151,3 @@
             ng-include="plugin.template"
         )
 
-    tg-public-register-message

@@ -224,6 +224,58 @@
             }
         }
     }
+    .sprint-field {
+        flex-basis: 150px;
+        flex-grow: 0;
+        flex-shrink: 0;
+        margin: 0 .5rem;
+        position: relative;
+
+        .issue-sprint {
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            padding-block-start: .25rem;
+
+            tg-svg {
+                fill: $color-black900;
+                margin-left: .4rem;
+            }
+        }
+
+        .issue-sprint-bind {
+            @include ellipsis(100%);
+        }
+
+        .pop-sprint {
+            @include popover(
+                $width: 200px,
+                $top: 24px,
+                $left: auto,
+                $arrow-width: 0
+            );
+            right: 0;
+
+            ul {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            a {
+                @include font-size(small);
+                color: $color-link-primary;
+                cursor: pointer;
+                display: block;
+                padding: .4rem .6rem;
+
+                &:hover {
+                    background: $color-gray200;
+                }
+            }
+        }
+    }
+
     .modified-field,
     .assigned-field,
     .attachments-field,

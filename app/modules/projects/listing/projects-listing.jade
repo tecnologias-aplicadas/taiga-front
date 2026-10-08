@@ -10,6 +10,7 @@
         h1(translate="PROJECTS.MY_PROJECTS")
         .create-options
             a.create-project-btn.btn-small(
+                ng-if="vm.isAdmin"
                 variant="primary"
                 href="#"
                 tg-nav="create-project"
@@ -44,6 +45,14 @@
                                         tg-nav="project:project=project.get('slug'),section=project.get('my_homepage')"
                                         title="{{ ::project.get('name') }}"
                                     ) {{project.get('name')}}
+                                    span.label-active-project(
+                                        ng-if="!project.get('end_date')"
+                                        translate="PROJECT.STATUS.ACTIVE"
+                                    )
+                                    span.label-active-project(
+                                        ng-if="project.get('end_date')"
+                                        translate="PROJECT.STATUS.FINISHED"
+                                    )
                                     tg-svg(
                                         ng-if="project.get('is_private')",
                                         svg-icon="icon-private",
@@ -59,6 +68,28 @@
                                         svg-icon="icon-blocked-project",
                                         svg-title-translate="PROJECT.BLOCKED_PROJECT.BLOCKED"
                                     )
+                                .list-itemtype-data-meta
+                                    .project-dates
+                                        span.project-date(
+                                            ng-class="{'--empty': !project.get('start_date')}"
+                                        )
+                                            tg-svg(svg-icon="icon-calendar")
+                                            | {{ 'PROJECT.DATES.START' | translate }}:&nbsp;
+                                            | {{ project.get('start_date') ? (project.get('start_date') | date:'dd/MM/yyyy') : '--/--/----' }}
+
+                                        span.project-date(
+                                            ng-class="{'--empty': !project.get('expected_end_date')}"
+                                        )
+                                            tg-svg(svg-icon="icon-calendar")
+                                            | {{ 'PROJECT.DATES.EXPECTED' | translate }}:&nbsp;
+                                            | {{ project.get('expected_end_date') ? (project.get('expected_end_date') | date:'dd/MM/yyyy') : '--/--/----' }}
+
+                                        span.project-date(
+                                            ng-class="{'--empty': !project.get('end_date')}"
+                                        )
+                                            tg-svg(svg-icon="icon-calendar")
+                                            | {{ 'PROJECT.DATES.END' | translate }}:&nbsp;
+                                            | {{ project.get('end_date') ? (project.get('end_date') | date:'dd/MM/yyyy') : '--/--/----' }}
 
                                 .list-itemtype-data-meta.project-description {{ ::project.get('description') | limitTo:300 }}
                                     span(ng-if="::project.get('description').length > 300") ...

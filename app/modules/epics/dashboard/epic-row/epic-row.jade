@@ -77,11 +77,60 @@
 
     .progress(ng-if="vm.options.progress")
         .progress-bar
-        .progress-status(
-            ng-if="::vm.percentage"
-            ng-style="{'width':vm.percentage}"
-        )
 
+        .progress-segment(
+            ng-repeat="segment in vm.segments track by $index"
+            ng-style="{'width': segment.width, 'left': segment.left, 'background-color': segment.color, 'min-width': 'fit-content', 'padding': '3px'}"
+            title="{{segment.name}}: {{segment.percentage}}%"
+        )
+            .progress-segment-text
+                span {{segment.percentage}}%
+
+    .schedulable(ng-if="vm.options.schedulable")
+        span.schedulable-label(ng-class="vm.schedulableClass()") {{vm.schedulableLabel()}}
+        span.schedulable-impact(ng-class="vm.schedulableClass()" ng-if="vm.schedulableClass() !== 'is-na'") {{vm.epic.get('percentage_impact')}}%
+
+    .start-date.date(
+        tg-isolate-click
+    )
+        input(
+            ng-disabled="!vm.canEditEpics()"
+            type="date"
+            name="start_date"
+            ng-model="vm.startDate"
+            data-required="true"
+            ng-blur="vm.blurStartDate()"
+            min="{{vm.startDateMin | date:'yyyy-MM-dd'}}"
+            max="{{vm.calculatedStartDateMax | date:'yyyy-MM-dd'}}"
+            style="{{vm.startDateBorderAlert}}"
+        )
+        .date-error(ng-if="vm.canModify") {{vm.startDateError}}
+        
+    .expected-completion-date.date( 
+        tg-isolate-click
+    )
+        input(
+            ng-disabled="!vm.canEditEpics()"
+            type="date"
+            name="expected_completion_date"
+            ng-model="vm.expectedCompletionDate"
+            data-required="true"
+            ng-blur="vm.blurExpectedCompletionDate()"
+            min="{{vm.calculatedMinAllowedDate | date:'yyyy-MM-dd'}}"
+            style="{{vm.expectedCompletionDateBorderAlert}}"
+        )
+        .date-error(ng-if="vm.canModify") {{vm.expectedCompletionDateError}}
+
+    .completion-date.date(
+        ng-if="!vm.epic.get('is_closed')"
+    )
+        span N/A
+
+    .completion-date.date(
+        ng-if="vm.epic.get('is_closed')"
+    )
+        span {{ vm.textDateFormatter(vm.completionDate) }}
+    
 .epic-stories-wrapper(ng-if="vm.displayUserStories && vm.epicStories")
     .epic-story(tg-repeat="story in vm.epicStories track by story.get('id')")
         tg-story-row.e2e-story(

@@ -23,7 +23,7 @@ html(lang="en", ng-attr-dir="{{ isRTL ? 'rtl' : 'ltr' }}")
 
         //-meta(name="viewport", content="width=device-width, user-scalable=no")
         link(rel="stylesheet", href="#{v}/styles/theme-taiga.css")
-        link(rel="icon", type="image/png", href="#{v}/images/favicon.png")
+        link(rel="icon", type="image/png", href="#{v}/images/logo_taiga_parquetec.png")
 
         //- PRERENDER SERVICE: This is to know when the page is completely loaded.
         script(type='text/javascript').
@@ -44,6 +44,8 @@ html(lang="en", ng-attr-dir="{{ isRTL ? 'rtl' : 'ltr' }}")
         div(ng-if="errorHandling.permissionDenied", ng-include="'error/permission-denied.html'")
         div(ng-if="errorHandling.blocked", ng-include="'projects/project/blocked-project.html'")
 
+        tg-thai-chat-fab
+
         div.lightbox.lightbox-generic-ask
             include partials/includes/modules/lightbox-generic-ask
         div.lightbox.lightbox-ask-choice
@@ -62,6 +64,7 @@ html(lang="en", ng-attr-dir="{{ isRTL ? 'rtl' : 'ltr' }}")
         include partials/includes/components/notification-message
 
         div(tg-live-announcement)
+        script(src="https://cdn.jsdelivr.net/npm/emoji-mart@5.6.0/dist/browser.min.js")
 
         script(src="#{v}/js/app-loader.js")
 

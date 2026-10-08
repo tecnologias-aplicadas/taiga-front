@@ -131,7 +131,7 @@
         "SEE_USER_PROFILE": "Guarda il profilo di {{username }}",
         "USER_STORY": "Storia utente",
         "TASK": "Compito",
-        "ISSUE": "Problema",
+        "ISSUE": "Issue",
         "EPIC": "Epico",
         "TAGS": {
             "PLACEHOLDER": "Inserisci etichetta",
@@ -1634,7 +1634,7 @@
                 "TYPE": "Tipo",
                 "SEVERITY": "Gravità",
                 "PRIORITY": "Priorità",
-                "ISSUE": "Problema",
+                "ISSUE": "Issue",
                 "VOTES": "Voti",
                 "STATUS": "Stato",
                 "ATTACHMENTS": "Allegati",
@@ -1845,7 +1845,7 @@
         "NEW_USER": "{{username}} si é iscritto su Taiga",
         "ITEM_TYPES": {
             "USERSTORY": "Storia Utente",
-            "ISSUE": "Problema",
+            "ISSUE": "Issue",
             "TASK": "Compito"
         }
     },

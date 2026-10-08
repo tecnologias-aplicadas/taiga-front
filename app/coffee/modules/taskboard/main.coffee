@@ -111,6 +111,55 @@ class TaskboardController extends mixOf(taiga.Controller, taiga.PageMixin, taiga
             else
                 @scope.issues = []
 
+    getTotalTasksByStatus: (statusId) ->
+        total = 0
+        usTasks = @scope.usTasks
+        return total unless usTasks
+
+        # Soma todas as tasks de todas as US para o status informado
+        usTasks.forEach (tasksByStatus, usId) ->
+            tasks = tasksByStatus.get(statusId.toString())
+            if tasks?
+                total += tasks.size
+
+        return total
+
+    # Responsáveis distintos pelas tarefas de uma célula (história × status) do quadro,
+    # para a linha recolhida. usId null é a linha "tarefas sem história".
+    # Tarefa sem responsável entra uma vez só, como null, e vira o ícone de não atribuído.
+    getCellAssignees: (usId, statusId) ->
+        usTasks = @scope.usTasks
+        taskMap = @scope.taskMap
+        return [] unless usTasks and taskMap
+
+        taskIds = usTasks.getIn([String(usId), String(statusId)])
+        return [] unless taskIds
+
+        assignees = []
+        seen = {}
+        taskIds.forEach (taskId) ->
+            user = taskMap.getIn([taskId, 'assigned_to'])
+            key = if user then user.get('id') else 'null'
+            return if seen[key]
+
+            seen[key] = true
+            assignees.push(user or null)
+
+        return assignees
+
+    # Quantas miniaturas cabem na célula é conta de layout: a diretiva squish publica
+    # scope.cellCapacity[statusId] junto com a largura da coluna. Quando há mais responsáveis
+    # que espaço, uma vaga fica para a bolinha "+X". Sem capacidade conhecida, mostra todos.
+    getVisibleCellAssignees: (usId, statusId) ->
+        assignees = @.getCellAssignees(usId, statusId)
+        capacity = @scope.cellCapacity?[statusId]
+
+        if !_.isFinite(capacity) or assignees.length <= capacity
+            return {visible: assignees, hidden: 0}
+
+        visible = assignees.slice(0, Math.max(capacity - 1, 0))
+        return {visible: visible, hidden: assignees.length - visible.length}
+
     getQueryParams: () ->
         return _.pick(_.clone(@location.search()), @.validQueryParams)
 
@@ -151,6 +200,16 @@ class TaskboardController extends mixOf(taiga.Controller, taiga.PageMixin, taiga
 
     removeFilter: (filter) ->
         @.unselectFilter(filter.dataType, filter.id, false, filter.mode)
+        @.loadTasks()
+        @.generateFilters()
+
+    removeAllFilters: (filter) ->
+        @.unselectFilter(filter.dataType, filter.id, true, filter.mode)
+        @.loadTasks()
+        @.generateFilters()
+
+     removeAllFiltersExclude: (filter) ->
+        @.unselectFilter(filter.dataType, filter.id, true, 'exclude') #Garantindo que ele interprete como exclude
         @.loadTasks()
         @.generateFilters()
 
@@ -579,9 +638,12 @@ class TaskboardController extends mixOf(taiga.Controller, taiga.PageMixin, taiga
                 promise.then =>
                     @scope.$broadcast("taskboard:task:deleted")
                     askResponse.finish()
-                promise.then null, ->
+                promise.then null, (data) =>
                     askResponse.finish(false)
-                    @confirm.notify("error")
+                    if data?.code
+                        @confirm.notify("error", @translate.instant("ERRORS.#{data.code.toUpperCase()}"))
+                    else
+                        @confirm.notify("error")
 
     deleteIssue: (id) ->
         issue = @.taskboardIssuesService.getIssue(id)
@@ -597,9 +659,12 @@ class TaskboardController extends mixOf(taiga.Controller, taiga.PageMixin, taiga
                 promise.then =>
                     @scope.$broadcast("taskboard:issue:deleted")
                     askResponse.finish()
-                promise.then null, ->
+                promise.then null, (data) =>
                     askResponse.finish(false)
-                    @confirm.notify("error")
+                    if data?.code
+                        @confirm.notify("error", @translate.instant("ERRORS.#{data.code.toUpperCase()}"))
+                    else
+                        @confirm.notify("error")
 
     removeIssueFromSprint: (id) ->
         issue = @.taskboardIssuesService.getIssue(id)
@@ -629,6 +694,10 @@ class TaskboardController extends mixOf(taiga.Controller, taiga.PageMixin, taiga
         @scope.movingTask = true
         task = @taskboardTasksService.getTaskModel(task.get('id'))
 
+        originalStatus  = task.status
+        originalUsId    = task.user_story
+        originalOrder   = @taskboardTasksService.order[task.id]
+
         moveUpdateData = @taskboardTasksService.move(task.id, usId, statusId, order)
 
         params = {
@@ -642,7 +711,9 @@ class TaskboardController extends mixOf(taiga.Controller, taiga.PageMixin, taiga
             }
         }
 
-        promise = @repo.save(task, true, params, options, true).then (result) =>
+        promise = @repo.save(task, true, params, options, true)
+
+        promise.then (result) =>
             if result[0] and result[0].user_story
                 @.reloadUserStory(result[0].user_story)
 
@@ -657,6 +728,20 @@ class TaskboardController extends mixOf(taiga.Controller, taiga.PageMixin, taiga
             @.generateFilters()
             if @.isFilterDataTypeSelected('status')
                 @.loadTasks()
+
+        promise.catch (response) =>
+            @scope.movingTask = false
+            task.status      = originalStatus
+            task.user_story  = originalUsId
+            @taskboardTasksService.order[task.id] = originalOrder
+            @taskboardTasksService.refresh()
+
+            rawCode = response?.code or null
+            rawCode = rawCode[0] if Array.isArray(rawCode)
+            if rawCode
+                @confirm.notify('error', @translate.instant("ERRORS.#{rawCode.toUpperCase()}"))
+            else
+                @confirm.notify('error')
 
     reloadUserStory: (userStoryId) ->
         @rs.userstories.get(@scope.project.id, userStoryId).then (us) =>
@@ -811,12 +896,16 @@ TaskboardSquishColumnDirective = (rs) ->
     horizontalPadding = 32
     avatarWidth = 30
     maxColumnWidth = 292
-    zoom0ColumnWidth = 182
+    zoom0ColumnWidth = 232
     minWidth = avatarWidth + horizontalPadding
     maxRows = 3
+    counterWidth = 36 # pílula do contador da célula com até três algarismos
     firstLoad = false
 
     link = ($scope, $el, $attrs) ->
+        # miniaturas de responsáveis que cabem em cada coluna, na célula da linha recolhida
+        $scope.cellCapacity = {}
+
         $scope.$watch "ctrl.zoom", () =>
             if firstLoad
                 recalculateTaskboardWidth()
@@ -866,6 +955,15 @@ TaskboardSquishColumnDirective = (rs) ->
 
             return width
 
+        # quantas miniaturas de 30px cabem ao lado do contador, na largura real da coluna
+        # (no zoom 0 a coluna é travada em zoom0ColumnWidth pelo CSS)
+        getCellCapacity = (width) =>
+            if Number($scope.ctrl.zoomLevel) == 0
+                width = Math.min(width, zoom0ColumnWidth)
+
+            available = width - horizontalPadding - counterWidth - gridGap
+            return Math.max(Math.floor((available + gridGap) / (avatarWidth + gridGap)), 0)
+
         setStatusColumnWidth = (statusId, width) =>
             column = $el.find(".squish-status-#{statusId}")
 
@@ -873,6 +971,7 @@ TaskboardSquishColumnDirective = (rs) ->
                 width = minWidth
 
             column.css('max-width', width)
+            $scope.cellCapacity[statusId] = getCellCapacity(width)
             return width
 
         recalculateStatusColumnWidth = (statusId) =>

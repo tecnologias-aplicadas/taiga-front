@@ -51,6 +51,22 @@ tg-lightbox-close
                 ng-attr-placeholder="{{'EPICS.CREATE.PLACEHOLDER_DESCRIPTION' | translate}}"
                 ng-model="vm.newEpic.description"
             )
+        fieldset.date-container 
+            div
+                p(translate="EPICS.CREATE.START_DATE")
+                input(
+                    type="date"
+                    ng-model="vm.newEpic.start_date_ui"
+                    data-required="true"
+                )
+            div
+                p(translate="EPICS.CREATE.EXPECTED_COMPLETION_DATE")
+                input(
+                    type="date"
+                    ng-model="vm.newEpic.expected_completion_date_ui"
+                    data-required="true"
+                    min="{{vm.newEpic.start_date_ui | date:'yyyy-MM-dd'}}"
+                )
         fieldset
             tg-attachments-simple(
                 attachments="vm.attachments"

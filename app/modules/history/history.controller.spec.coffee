@@ -57,6 +57,13 @@ describe "HistorySection", ->
         }
         provide.value "tgWysiwygService", mocks.tgWysiwygService
 
+    _mockTgCommentsReactionsService = () ->
+        mocks.tgCommentsReactionsService = {
+            storeAllReactions: sinon.stub()
+            restoreAllReactions: sinon.stub()
+        }
+        provide.value "tgCommentsReactionsService", mocks.tgCommentsReactionsService
+
     _mocks = () ->
         module ($provide) ->
             provide = $provide
@@ -66,6 +73,7 @@ describe "HistorySection", ->
             _mockTgProjectService()
             _mockTgActivityService()
             _mockTgWysiwygService()
+            _mockTgCommentsReactionsService()
             return null
 
     beforeEach ->
@@ -162,9 +170,8 @@ describe "HistorySection", ->
             expect(historyCtrl._loadComments).have.been.called
             expect(historyCtrl.deleting).to.be.null
 
-    it "edit comment", () ->
+    it "edit comment", (done) ->
         historyCtrl = controller "HistorySection"
-        historyCtrl._loadComments = sinon.stub()
 
         historyCtrl.name = "type"
         historyCtrl.id = 1
@@ -175,13 +182,26 @@ describe "HistorySection", ->
         objectId = historyCtrl.id
         commentId = activityId
 
+        currentComments = [{id: 7, comment: "old comment"}]
+        historyCtrl.comments = currentComments
+
+        reloadedComments = [{id: 7, comment: comment}, {id: 8, comment: ""}]
+
         promise = mocks.tgResources.history.editComment
         .withArgs(type, objectId, activityId, comment).promise().resolve()
 
+        mocks.tgResources.history.get
+        .withArgs(type, objectId, 'comment').promise().resolve(reloadedComments)
+
         historyCtrl.editing = 7
         historyCtrl.editComment(commentId, comment).then () ->
-            expect(historyCtrl._loadComments).has.been.called
+            expect(mocks.tgCommentsReactionsService.storeAllReactions).has.been.calledWith(currentComments)
+            expect(mocks.tgResources.history.get).has.been.calledWith(type, objectId, 'comment')
+            expect(historyCtrl.comments).to.be.eql([{id: 7, comment: comment}])
+            expect(historyCtrl.commentsNum).to.be.equal(1)
+            expect(mocks.tgCommentsReactionsService.restoreAllReactions).has.been.calledWith(historyCtrl.comments)
             expect(historyCtrl.editing).to.be.null
+            done()
 
     it "restore comment", () ->
         historyCtrl = controller "HistorySection"

@@ -9,18 +9,19 @@ nav.navbar(ng-if="vm.isEnabledHeader")
     .nav-left
         a.logo(
             ng-if="!vm.isAuthenticated"
-            href="https://taiga.io/",
-            title="{{'PROJECT.NAVIGATION.HOMEPAGE' | translate}}"
-        )
-            include ../../svg/logo.svg
-
-        a.logo(
-            ng-if="vm.isAuthenticated"
             href="#",
             tg-nav="home",
             title="{{'PROJECT.NAVIGATION.HOMEPAGE' | translate}}"
         )
-            include ../../svg/logo.svg
+            include ../../svg/logo_taiga_parquetec.svg
+
+        a.logo(
+            ng-if="vm.isAuthenticated"
+            href="#",
+            tg-nav="dashboard",
+            title="{{'PROJECT.NAVIGATION.HOMEPAGE' | translate}}"
+        )
+            include ../../svg/logo_taiga_parquetec.svg
 
         .topnav-dropdown-wrapper(
             ng-if="vm.isAuthenticated"
@@ -29,65 +30,122 @@ nav.navbar(ng-if="vm.isEnabledHeader")
         )
 
     .nav-right.center(ng-if="!vm.isAuthenticated")
+        .br-tag.environment-tag(ng-if="vm.environment === 'local'")
+            tg-svg(svg-icon="icon-info")
+            span {{'COMMON.ENVIRONMENT.LOCAL' | translate}}
+
+        .br-tag.environment-tag(ng-if="vm.environment === 'develop'")
+                tg-svg(svg-icon="icon-info")
+                span {{'COMMON.ENVIRONMENT.DEVELOP' | translate}}
+
+        .br-tag.environment-tag(ng-if="vm.environment === 'staging'")
+                tg-svg(svg-icon="icon-info")
+                span {{'COMMON.ENVIRONMENT.STAGING' | translate}}
         a.login(
             ng-click="vm.login()"
             href="#",
             title="{{ 'LOGIN_COMMON.ACTION_SIGN_IN' | translate }}"
             translate="LOGIN_COMMON.ACTION_SIGN_IN"
         )
-        a.register(
-            href="#"
-            ng-if="vm.publicRegisterEnabled"
-            tg-nav="register"
-            title="{{ 'REGISTER_FORM.ACTION_SIGN_UP' | translate }}"
-            translate="REGISTER_FORM.ACTION_SIGN_UP"
-        )
 
     .nav-right(ng-if="vm.isAuthenticated")
-        a(
-            tg-nav="discover",
-            ng-class="{'active': vm.active == 'discover' }"
-            title="{{'PROJECT.NAVIGATION.DISCOVER_TITLE' | translate}}"
-        )
-            tg-svg(svg-icon="icon-compass")
+        .br-tag.environment-tag(ng-if="vm.environment === 'local'")
+                tg-svg(svg-icon="icon-info")
+                span {{'COMMON.ENVIRONMENT.LOCAL' | translate}}
 
-        .topnav-dropdown-wrapper.nav-bar-support(ng-if="vm.customSupportUrl")
+        .br-tag.environment-tag(ng-if="vm.environment === 'develop'")
+                tg-svg(svg-icon="icon-info")
+                span {{'COMMON.ENVIRONMENT.DEVELOP' | translate}}
+
+        .br-tag.environment-tag(ng-if="vm.environment === 'staging'")
+                tg-svg(svg-icon="icon-info")
+                span {{'COMMON.ENVIRONMENT.STAGING' | translate}}
+        //- a(
+        //-     tg-nav="discover",
+        //-     ng-class="{'active': vm.active == 'discover' }"
+        //-     title="{{'PROJECT.NAVIGATION.DISCOVER_TITLE' | translate}}"
+        //- )
+        //-     tg-svg(svg-icon="icon-compass")
+
+        //- .topnav-dropdown-wrapper.nav-bar-support(ng-if="vm.customSupportUrl")
+        //-     a(
+        //-         ng-if="vm.customSupportUrl"
+        //-         href="{{ vm.customSupportUrl }}",
+        //-         target="_blank",
+        //-         title="{{'PROJECT.NAVIGATION.HELP_TITLE' | translate}}",
+        //-     )
+        //-         tg-svg(svg-icon="icon-help-circle")
+
+        //-     .navbar-dropdown.navigation-help
+        //-         ul
+        //-             li(ng-if="vm.userpilotEnabled")
+        //-                 a.secondary(
+        //-                     href="#"
+        //-                     title="{{ vm.userPilotTitle }}"
+        //-                 )
+        //-                     tg-svg(svg-icon="icon-lifeguard")
+        //-                     span {{ vm.userPilotTitle }}
+
+        //-             li
+        //-                 a.secondary(
+        //-                     href="{{ vm.customSupportUrl }}",
+        //-                     target="_blank",
+        //-                     title="{{ 'PROJECT.NAVIGATION.TAIGA_COMMUNITY_TITLE' | translate }}"
+        //-                 )
+        //-                     tg-svg(svg-icon="icon-resources")
+        //-                     span {{ 'PROJECT.NAVIGATION.TAIGA_COMMUNITY' | translate }}
+
+        //-             li
+        //-                 a.secondary(
+        //-                     ng-show="vm.isFeedbackEnabled"
+        //-                     href="#"
+        //-                     ng-click="vm.sendFeedback()",
+        //-                     title="{{ 'PROJECT.NAVIGATION.FEEDBACK_TITLE' | translate }}"
+        //-                 )
+        //-                     tg-svg(svg-icon="icon-message-square")
+        //-                     span {{ 'PROJECT.NAVIGATION.FEEDBACK' | translate }}
+
+        .topnav-dropdown-wrapper.news-admin-wrapper(ng-if="vm.isAdmin")
             a(
-                ng-if="vm.customSupportUrl"
-                href="{{ vm.customSupportUrl }}",
-                target="_blank",
-                title="{{'PROJECT.NAVIGATION.HELP_TITLE' | translate}}",
+                href=""
+                tg-nav="news-admin"
+                title="{{ 'NEWS_ADMIN.ICON_TITLE' | translate }}"
             )
-                tg-svg(svg-icon="icon-help-circle")
+                tg-svg(svg-icon="icon-carousel")
 
-            .navbar-dropdown.navigation-help
-                ul
-                    li(ng-if="vm.userpilotEnabled")
-                        a.secondary(
-                            href="#"
-                            title="{{ vm.userPilotTitle }}"
-                        )
-                            tg-svg(svg-icon="icon-lifeguard")
-                            span {{ vm.userPilotTitle }}
-
-                    li
-                        a.secondary(
-                            href="{{ vm.customSupportUrl }}",
-                            target="_blank",
-                            title="{{ 'PROJECT.NAVIGATION.TAIGA_COMMUNITY_TITLE' | translate }}"
-                        )
-                            tg-svg(svg-icon="icon-resources")
-                            span {{ 'PROJECT.NAVIGATION.TAIGA_COMMUNITY' | translate }}
-
-                    li
-                        a.secondary(
-                            ng-show="vm.isFeedbackEnabled"
-                            href="#"
-                            ng-click="vm.sendFeedback()",
-                            title="{{ 'PROJECT.NAVIGATION.FEEDBACK_TITLE' | translate }}"
-                        )
-                            tg-svg(svg-icon="icon-message-square")
-                            span {{ 'PROJECT.NAVIGATION.FEEDBACK' | translate }}
+        .topnav-dropdown-wrapper.story-points-guide-wrapper
+            a(
+                href=""
+                tg-nav="story-points-guide"
+                title="{{ 'STORY_POINTS_GUIDE.ICON_TITLE' | translate }}"
+            )
+                tg-svg(svg-icon="icon-fibonacci-spiral")
+            .navbar-dropdown-story-points
+                table.story-points-table
+                    thead
+                        tr
+                            th {{ 'STORY_POINTS_GUIDE.COLUMN_POINTS' | translate }}
+                            th {{ 'STORY_POINTS_GUIDE.COLUMN_DESCRIPTION' | translate }}
+                    tbody
+                        tr
+                            td 1
+                            td {{ 'STORY_POINTS_GUIDE.ROW_1' | translate }}
+                        tr
+                            td 3
+                            td {{ 'STORY_POINTS_GUIDE.ROW_3' | translate }}
+                        tr
+                            td 5
+                            td {{ 'STORY_POINTS_GUIDE.ROW_5' | translate }}
+                        tr
+                            td 8
+                            td {{ 'STORY_POINTS_GUIDE.ROW_8' | translate }}
+                        tr
+                            td 13
+                            td {{ 'STORY_POINTS_GUIDE.ROW_13' | translate }}
+                        tr
+                            td 21
+                            td {{ 'STORY_POINTS_GUIDE.ROW_21' | translate }}
+                a.action(tg-nav="story-points-guide") {{ 'STORY_POINTS_GUIDE.SEE_MORE' | translate }}
 
         .topnav-dropdown-wrapper(
             tg-dropdown-notifications

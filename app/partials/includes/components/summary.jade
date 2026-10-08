@@ -6,21 +6,21 @@
 //- Copyright (c) 2021-present Kaleidos INC
 
 div.summary
-    div.summary-progress-bar(tg-backlog-progress-bar="stats")
+    div.summary-progress-bar(tg-backlog-progress-bar="stats", title="{{'Progresso geral do projeto baseado nos pontos fechados em relação aos pontos definidos.\nCálculo: (Pontos Fechados / Pontos Definidos) * 100'}}")
 
     div.data
         span.number(ng-bind="stats.completedPercentage + '%'")
 
-    div.summary-stats(ng-if="stats.total_points")
+    div.summary-stats(ng-if="stats.total_points", title="{{'Total de pontos de todas as histórias de usuário do projeto, incluindo as não estimadas e não definidas.'}}")
         span.number(ng-bind="stats.total_points | number") --
         span.description(translate="BACKLOG.SUMMARY.PROJECT_POINTS")
-    div.summary-stats
+    div.summary-stats(title="{{'Pontos das histórias de usuário que já foram estimadas e estão prontas para desenvolvimento.'}}")
         span.number(ng-bind="stats.defined_points | number") --
         span.description(translate="BACKLOG.SUMMARY.DEFINED_POINTS")
-    div.summary-stats
+    div.summary-stats(title="{{'Pontos das histórias de usuário que foram completadas e fechadas.'}}")
         span.number(ng-bind="stats.closed_points | number") --
         span.description(translate="BACKLOG.SUMMARY.CLOSED_POINTS")
-    div.summary-stats
+    div.summary-stats(title="{{'Velocidade média da equipe: pontos completados por sprint. Calculado com base no histórico de sprints anteriores.'}}")
         span.number(ng-bind="stats.speed | number:0") --
         span.description(translate="BACKLOG.SUMMARY.POINTS_PER_SPRINT")
 

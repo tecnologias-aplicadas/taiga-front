@@ -32,5 +32,8 @@
         "ar",
         "fa",
         "he"
-    ]
+    ],
+    "reCaptchaSiteKey": "${CAPCHA_SITE_KEY}",
+    "environment": "${ENVIRONMENT}",
+    "chatStreamUrl": "${CHAT_STREAM_URL}"
 }

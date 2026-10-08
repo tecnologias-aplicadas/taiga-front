@@ -23,9 +23,17 @@
         flex-shrink: 0;
         margin-right: .75rem;
         min-width: 3rem;
+        position: relative;
         img {
             border-radius: 50%;
             width: 100%;
+        }
+        .avatar-overflow {
+            @include avatar-overflow(1.25rem);
+            bottom: 0;
+            margin-left: 0;
+            position: absolute;
+            right: -.25rem;
         }
     }
     .ticket-status {

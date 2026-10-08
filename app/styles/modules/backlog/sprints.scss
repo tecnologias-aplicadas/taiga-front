@@ -45,6 +45,18 @@
             margin-right: .5rem;
             transition: all .2s ease;
         }
+
+        &.has-sprints-without-result {
+            color: $color-link-red;
+
+            tg-svg {
+                fill: $color-link-red;
+            }
+        }
+    }
+    .closed-sprints-without-result-alert {
+        @include sprint-goal-callout($color-solid-red, $color-link-red);
+        margin-bottom: 1rem;
     }
     .loading {
         text-align: center;
@@ -391,6 +403,13 @@
     }
     .button-gray {
         background: $gray-light;
+    }
+
+    // Closed sprint whose result was never registered
+    &.sprint-without-result {
+        background: $color-solid-red;
+        border-left: 3px solid $color-link-red;
+        padding: .75rem 1rem;
     }
 }
 

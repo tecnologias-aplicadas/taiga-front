@@ -44,6 +44,20 @@ mixin epicSwitch(name, model)
             translate="EPICS.TABLE.PROGRESS"
             ng-if="vm.options.progress"
         )
+        .schedulable(
+            translate="EPICS.TABLE.SCHEDULABLE"
+            title="{{'EPICS.TABLE.SCHEDULABLE_TOOLTIP' | translate}}"
+            ng-if="vm.options.schedulable"
+        )
+        .start-date(
+            translate="EPICS.TABLE.START_DATE"
+        )
+        .expected-completion-date(
+            translate="EPICS.TABLE.EXPECTED_COMPLETION_DATE"
+        )
+        .completion-date(
+            translate="EPICS.TABLE.COMPLETION_DATE"
+        )
         .epics-table-options-wrapper(
             ng-mouseleave="vm.hideEpicTableOption()"
         )
@@ -84,6 +98,12 @@ mixin epicSwitch(name, model)
                         for="switch-progress"
                     )
                     +epicSwitch('switch-progress', 'vm.options.progress')
+                .fieldset
+                    label.epics-table-options-vote(
+                        translate="EPICS.TABLE.SCHEDULABLE"
+                        for="switch-schedulable"
+                    )
+                    +epicSwitch('switch-schedulable', 'vm.options.schedulable')
                 .fieldset
                     label.epics-table-options-vote(
                         translate="EPICS.TABLE.CLOSED_EPICS"

@@ -41,9 +41,30 @@ form(ng-if="createEditOpen")
                 placeholder="{{'LIGHTBOX.ADD_EDIT_SPRINT.PLACEHOLDER_SPRINT_END' | translate}}"
             )
 
+    fieldset.sprint-goal-field
+        textarea.sprint-goal-input.e2e-sprint-goal(
+            ng-if="isNewSprint"
+            rows=5
+            name="goal"
+            ng-model="newSprint.goal"
+            data-required="true"
+            placeholder="{{'LIGHTBOX.ADD_EDIT_SPRINT.PLACEHOLDER_SPRINT_GOAL' | translate}}"
+        )
+        .sprint-goal-readonly(ng-if="!isNewSprint")
+            label.sprint-goal-label(translate="LIGHTBOX.ADD_EDIT_SPRINT.GOAL_LABEL")
+            .wysiwyg(
+                ng-if="!isSprintGoalEmpty()"
+                tg-bind-wysiwyg-html="newSprint.goal"
+            )
+            p.sprint-goal-readonly-empty(
+                ng-if="isSprintGoalEmpty()"
+                translate="TASKBOARD.SPRINT_GOAL.EMPTY"
+            )
+
     .sprint-add-edit-actions
         button.btn-big.button-large.button-block(
             type="submit"
+            ng-disabled="isSaveDisabled()"
             title="{{'COMMON.SAVE' | translate}}"
             translate="COMMON.SAVE"
         )

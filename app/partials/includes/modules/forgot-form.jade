@@ -11,6 +11,14 @@ div.forgot-form-container(tg-forgot-password)
         br
         span(translate="FORGOT_PASSWORD_FORM.SUBTITLE")
 
+    .corporate-info-box
+        span.corporate-info-icon ℹ
+        span(translate="FORGOT_PASSWORD_FORM.CORPORATE_INFO")
+
+    .corporate-warning-box(ng-if="corporateWarning")
+        span.corporate-warning-title(translate="FORGOT_PASSWORD_FORM.CORPORATE_USER_TITLE")
+        span.corporate-warning-wrong-type(translate="FORGOT_PASSWORD_FORM.CORPORATE_USER_WRONG_TYPE" translate-values="{adminTeam: adminTeam}")
+
     form(ng-submit="ctrl.submit()")
         fieldset
             input(

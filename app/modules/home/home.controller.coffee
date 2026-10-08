@@ -19,3 +19,18 @@ class HomeController
 
 
 angular.module("taigaHome").controller("Home", HomeController)
+
+
+class HomeLandingController
+    @.$inject = [
+        "tgCurrentUserService",
+        "$location",
+        "$tgNavUrls"
+    ]
+
+    constructor: (@currentUserService, @location, @navUrls) ->
+        if @currentUserService.getUser()
+            @location.path(@navUrls.resolve("projects"))
+
+
+angular.module("taigaHome").controller("HomeLanding", HomeLandingController)

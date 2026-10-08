@@ -14,10 +14,29 @@ div.wrapper(
 )
     tg-project-menu
     section.main.taskboard
-        .taskboard-header
+        .taskboard-header(tg-sprint-goal="sprint")
             h1
                 span.green(tg-bo-bind="sprint.name")
                 .date(tg-date-range="sprint.estimated_start,sprint.estimated_finish")
+                button.sprint-goal-toggle(
+                    type="button"
+                    ng-if="sprintGoal.sprint.id"
+                    ng-click="sprintGoal.toggle()"
+                    ng-class="{'active': sprintGoal.isExpanded}"
+                    aria-expanded="{{sprintGoal.isExpanded}}"
+                    title="{{(sprintGoal.isExpanded ? 'TASKBOARD.SPRINT_GOAL.HIDE' : 'TASKBOARD.SPRINT_GOAL.SHOW') | translate}}"
+                )
+                    tg-svg(ng-if="!sprintGoal.isExpanded", svg-icon="icon-arrow-down")
+                    tg-svg(ng-if="sprintGoal.isExpanded", svg-icon="icon-arrow-up")
+                    span(translate="TASKBOARD.SPRINT_GOAL.TITLE")
+                button.sprint-goal-register-result(
+                    type="button"
+                    ng-if="sprintGoal.canRegisterResult()"
+                    ng-click="sprintGoal.openRegisterResult()"
+                    title="{{'TASKBOARD.MOVE_TO_SPRINT.REGISTER_RESULT_TITLE' | translate}}"
+                )
+                    span(translate="TASKBOARD.MOVE_TO_SPRINT.REGISTER_RESULT")
+            include ../includes/components/sprint-goal
 
         .taskboard-inner
             include ../includes/components/sprint-summary
@@ -75,6 +94,8 @@ div.wrapper(
                         on-remove-custom-filter="ctrl.removeCustomFilter(filter)"
                         on-remove-filter="ctrl.removeFilter(filter)"
                         on-change-q="ctrl.changeQ(q)"
+                        on-remove-all-filters="ctrl.removeAllFilters(filter)"
+                        on-remove-all-filters-exclude="ctrl.removeAllFiltersExclude(filter)"
                     )
                 include ../includes/modules/taskboard-table
 

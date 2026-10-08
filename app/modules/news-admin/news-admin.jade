@@ -1,0 +1,124 @@
+//- This source code is licensed under the terms of the
+//- GNU Affero General Public License found in the LICENSE file in
+//- the root directory of this source tree.
+//-
+//- Copyright (c) 2021-present Kaleidos INC
+
+div.wrapper.page-with-footer
+    div.news-admin.centered.page-with-footer-content(ng-if="vm.isAdmin")
+        header.header
+            h1.title(translate="NEWS_ADMIN.PAGE_TITLE")
+            p.subtitle(translate="NEWS_ADMIN.PAGE_SUBTITLE")
+
+        //- Novo slide
+        section.section
+            h2.section-title(translate="NEWS_ADMIN.NEW_SLIDE")
+            form.news-admin-form(name="newSlideForm" ng-submit="vm.create()" novalidate)
+                fieldset
+                    span.news-admin-field-label(translate="NEWS_ADMIN.FIELD_IMAGE")
+                    .news-admin-file-row
+                        label.btn-small.news-admin-file-button(variant="primary")
+                            span(translate="NEWS_ADMIN.CHOOSE_IMAGE")
+                            input#news-admin-image.news-admin-file-input(type="file" accept="image/*" tg-file-change="vm.selectImage(files)")
+                        span.news-admin-file-name(ng-if="vm.form.fileName") {{ vm.form.fileName }}
+                        span.news-admin-file-name(ng-if="!vm.form.fileName" translate="NEWS_ADMIN.NO_IMAGE_SELECTED")
+                    span.news-admin-hint(translate="NEWS_ADMIN.IMAGE_HINT")
+                fieldset
+                    label(for="news-admin-title" translate="NEWS_ADMIN.FIELD_TITLE")
+                    input#news-admin-title(type="text" ng-model="vm.form.title" maxlength="255" required)
+                fieldset
+                    label(for="news-admin-description" translate="NEWS_ADMIN.FIELD_DESCRIPTION")
+                    textarea#news-admin-description(ng-model="vm.form.description" maxlength="500" rows="5")
+                    span.news-admin-hint {{ vm.form.description.length || 0 }} / {{ vm.descriptionMaxLength }}
+                fieldset.news-admin-order-field
+                    label(for="news-admin-order" translate="NEWS_ADMIN.FIELD_ORDER")
+                    input#news-admin-order(type="number" min="0" step="1" ng-model="vm.form.order")
+                .news-admin-form-actions
+                    p.news-admin-error(ng-if="vm.formError") {{ vm.formError }}
+                    button.btn-small(type="submit" variant="primary" ng-disabled="vm.saving" translate="NEWS_ADMIN.CREATE")
+
+        //- Slides cadastrados
+        section.section
+            h2.section-title(translate="NEWS_ADMIN.SLIDES")
+            p.news-admin-state(ng-if="vm.loading" translate="NEWS_ADMIN.LOADING")
+            p.news-admin-state.news-admin-error(ng-if="vm.loadError" translate="NEWS_ADMIN.LOAD_ERROR")
+            p.news-admin-state(ng-if="!vm.loading && !vm.loadError && !vm.slides.length" translate="NEWS_ADMIN.EMPTY")
+            p.news-admin-error(ng-if="vm.listError") {{ vm.listError }}
+
+            .news-admin-table(ng-if="vm.slides.length")
+                .table-header
+                    .row
+                        .news-admin-col-image(translate="NEWS_ADMIN.COLUMN_IMAGE")
+                        .news-admin-col-title(translate="NEWS_ADMIN.COLUMN_TITLE")
+                        .news-admin-col-description(translate="NEWS_ADMIN.COLUMN_DESCRIPTION")
+                        .news-admin-col-state(translate="NEWS_ADMIN.COLUMN_STATE")
+                        .news-admin-col-order(translate="NEWS_ADMIN.COLUMN_ORDER")
+                        .news-admin-col-actions(translate="NEWS_ADMIN.COLUMN_ACTIONS")
+                .table-body
+                    .row.news-admin-row(
+                        ng-repeat="slide in vm.slides track by slide.id"
+                        ng-class="{'news-admin-row-inactive': !slide.is_active}"
+                    )
+                        .news-admin-col-image
+                            img.news-admin-thumb(ng-src="{{ slide.image_url }}" alt="{{ slide.title }}")
+                        .news-admin-col-title {{ slide.title }}
+                        .news-admin-col-description {{ slide.description }}
+                        .news-admin-col-state
+                            span.news-admin-badge(ng-class="{'active': slide.is_active}")
+                                | {{ (slide.is_active ? 'NEWS_ADMIN.ACTIVE' : 'NEWS_ADMIN.INACTIVE') | translate }}
+                        .news-admin-col-order {{ slide.order }}
+                        .news-admin-col-actions
+                            div.news-admin-actions
+                                button.btn-small.news-admin-icon-button(
+                                    type="button"
+                                    variant="primary"
+                                    ng-click="vm.moveUp($index)"
+                                    ng-disabled="$first || vm.saving"
+                                    title="{{ 'NEWS_ADMIN.MOVE_UP' | translate }}"
+                                    translate-attr="{'aria-label': 'NEWS_ADMIN.MOVE_UP'}"
+                                )
+                                    tg-svg(svg-icon="icon-arrow-up")
+                                button.btn-small.news-admin-icon-button(
+                                    type="button"
+                                    variant="primary"
+                                    ng-click="vm.moveDown($index)"
+                                    ng-disabled="$last || vm.saving"
+                                    title="{{ 'NEWS_ADMIN.MOVE_DOWN' | translate }}"
+                                    translate-attr="{'aria-label': 'NEWS_ADMIN.MOVE_DOWN'}"
+                                )
+                                    tg-svg(svg-icon="icon-arrow-down")
+                                button.btn-small(type="button" variant="primary" ng-click="vm.startEdit(slide)" ng-disabled="vm.saving" translate="NEWS_ADMIN.EDIT")
+                                button.btn-small(type="button" variant="primary" ng-click="vm.toggleActive(slide)" ng-disabled="vm.saving")
+                                    | {{ (slide.is_active ? 'NEWS_ADMIN.DEACTIVATE' : 'NEWS_ADMIN.ACTIVATE') | translate }}
+                                button.button-red(type="button" ng-click="vm.remove(slide)" ng-disabled="vm.saving" translate="NEWS_ADMIN.DELETE")
+
+        //- Edição de slide em modal (lightbox do Taiga: fecha no X, no Esc, no Cancelar e ao salvar)
+        div.lightbox.lightbox-generic-form.lightbox-news-slide-edit
+            tg-lightbox-close
+            form(ng-if="vm.editing" ng-submit="vm.saveEdit()" novalidate)
+                h2.title(translate="NEWS_ADMIN.EDIT_TITLE")
+                fieldset
+                    span.news-admin-field-label(translate="NEWS_ADMIN.FIELD_IMAGE")
+                    .news-admin-file-row
+                        label.btn-small.news-admin-file-button(variant="primary")
+                            span(translate="NEWS_ADMIN.CHANGE_IMAGE")
+                            input.news-admin-file-input(type="file" accept="image/*" tg-file-change="vm.selectEditImage(files)")
+                        span.news-admin-file-name(ng-if="vm.editing.fileName") {{ vm.editing.fileName }}
+                        span.news-admin-file-name(ng-if="!vm.editing.fileName" translate="NEWS_ADMIN.NO_IMAGE_SELECTED")
+                    span.news-admin-hint(translate="NEWS_ADMIN.IMAGE_HINT")
+                fieldset
+                    label(for="news-admin-edit-title" translate="NEWS_ADMIN.FIELD_TITLE")
+                    input#news-admin-edit-title(type="text" ng-model="vm.editing.title" maxlength="255" required)
+                fieldset
+                    label(for="news-admin-edit-description" translate="NEWS_ADMIN.FIELD_DESCRIPTION")
+                    textarea#news-admin-edit-description(ng-model="vm.editing.description" maxlength="500" rows="5")
+                fieldset.news-admin-order-field
+                    label(for="news-admin-edit-order" translate="NEWS_ADMIN.FIELD_ORDER")
+                    input#news-admin-edit-order(type="number" min="0" step="1" ng-model="vm.editing.order")
+                p.news-admin-error(ng-if="vm.editError") {{ vm.editError }}
+                .news-admin-form-actions
+                    button.btn-small(type="button" variant="primary" ng-click="vm.cancelEdit()" ng-disabled="vm.saving" translate="NEWS_ADMIN.CANCEL")
+                    button.btn-small(type="submit" variant="primary" ng-disabled="vm.saving" translate="NEWS_ADMIN.SAVE")
+
+    //- Rodapé institucional compacto, de ponta a ponta, após o conteúdo
+    tg-institutional-footer(compact="true")

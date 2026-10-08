@@ -33,5 +33,9 @@
         "ar",
         "fa",
         "he"
-    ]
+    ],
+    "reCaptchaSiteKey": "ADICIONAR_A_KEY_AQUI",
+    "environment": "local",
+    "chatStreamUrl": "https://.../agente/api/chat/stream"
 }
+

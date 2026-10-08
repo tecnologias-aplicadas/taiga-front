@@ -60,6 +60,7 @@ class IssuesController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
         "assigned_to",
         "owner",
         "role",
+        "milestone",
     ]
 
     validQueryParams: [
@@ -79,6 +80,8 @@ class IssuesController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
         'role',
         'exclude_owner',
         'owner',
+        'exclude_milestone',
+        'milestone',
         'order_by'
     ]
 
@@ -140,6 +143,18 @@ class IssuesController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
     removeFilter: (filter) ->
         @.unselectFilter("page")
         @.unselectFilter(filter.dataType, filter.id, false, filter.mode)
+        @.loadIssues()
+        @.generateFilters()
+
+     removeAllFilters: (filter) ->
+        @.unselectFilter("page")
+        @.unselectFilter(filter.dataType, filter.id, true, filter.mode)
+        @.loadIssues()
+        @.generateFilters()
+
+    removeAllFiltersExclude: (filter) ->
+        @.unselectFilter("page")
+        @.unselectFilter(filter.dataType, filter.id, true, 'exclude') #Garantindo que ele interprete como exclude
         @.loadIssues()
         @.generateFilters()
 
@@ -257,6 +272,16 @@ class IssuesController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
 
                 return it
 
+            noSprintLabel = @translate.instant("ISSUES.NO_SPRINT")
+            dataCollection.milestone = _.map data.milestones, (it) ->
+                if it.id
+                    it.id = it.id.toString()
+                else
+                    it.id = "null"
+
+                it.name = it.name or noSprintLabel
+                return it
+
             @.selectedFilters = []
 
             for key in @.filterCategories
@@ -312,6 +337,11 @@ class IssuesController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
                     title: @translate.instant("COMMON.FILTERS.CATEGORIES.CREATED_BY"),
                     dataType: "owner",
                     content: dataCollection.owner
+                },
+                {
+                    title: @translate.instant("COMMON.FILTERS.CATEGORIES.SPRINT"),
+                    dataType: "milestone",
+                    content: dataCollection.milestone
                 }
             ]
 
@@ -563,7 +593,7 @@ module.directive("tgIssuesOrdering", ["$log", "$tgLocation", "$tgTemplate", "$co
 ## Issue status Directive (popover for change status)
 #############################################################################
 
-IssueStatusInlineEditionDirective = ($repo, $template, $rootscope) ->
+IssueStatusInlineEditionDirective = ($repo, $template, $rootscope, $confirm, $translate) ->
     ###
     Print the status of an Issue and a popover to change it.
     - tg-issue-status-inline-edition: The issue
@@ -602,6 +632,7 @@ IssueStatusInlineEditionDirective = ($repo, $template, $rootscope) ->
             event.stopPropagation()
             target = angular.element(event.currentTarget)
 
+            originalStatus = issue.status
             issue.status = target.data("status-id")
             $el.find(".pop-status").popover().close()
             updateIssueStatus($el, issue, $scope.issueStatusById)
@@ -616,6 +647,16 @@ IssueStatusInlineEditionDirective = ($repo, $template, $rootscope) ->
                     issue._modifiedAttrs = {}
 
                     $rootscope.$broadcast("status:changed", response)
+                .catch (response) ->
+                    issue.status = originalStatus
+                    updateIssueStatus($el, issue, $scope.issueStatusById)
+
+                    rawCode = response?.status?[0] or response?.code or null
+                    rawCode = rawCode[0] if Array.isArray(rawCode)
+                    if rawCode
+                        $confirm.notify("error", $translate.instant("ERRORS.#{rawCode.toUpperCase()}"))
+                    else
+                        $confirm.notify("error")
 
         taiga.bindOnce $scope, "project", (project) ->
             $el.append(selectionTemplate({ 'statuses':  project.issue_statuses }))
@@ -634,7 +675,7 @@ IssueStatusInlineEditionDirective = ($repo, $template, $rootscope) ->
 
     return {link: link}
 
-module.directive("tgIssueStatusInlineEdition", ["$tgRepo", "$tgTemplate", "$rootScope",
+module.directive("tgIssueStatusInlineEdition", ["$tgRepo", "$tgTemplate", "$rootScope", "$tgConfirm", "$translate",
                                                 IssueStatusInlineEditionDirective])
 
 
@@ -714,3 +755,46 @@ IssueAssignedToInlineEditionDirective = ($repo, $rootscope, $translate, avatarSe
 
 module.directive("tgIssueAssignedToInlineEdition", ["$tgRepo", "$rootScope", "$translate", "tgAvatarService",
                                                     "tgLightboxFactory", IssueAssignedToInlineEditionDirective])
+
+
+#############################################################################
+## Issue Sprint Inline Edition Directive
+
+IssueSprintInlineEditionDirective = ($repo, $rs, $rootscope, $confirm) ->
+    link = ($scope, $el, $attrs) ->
+        issue = $scope.$eval($attrs.tgIssueSprintInlineEdition)
+
+        loadSprints = ->
+            $rs.sprints.list($scope.projectId, {closed: false}).then (data) ->
+                $scope.availableSprints = data.milestones
+
+        $el.on "click", ".issue-sprint", (event) ->
+            event.preventDefault()
+            event.stopPropagation()
+            loadSprints().then ->
+                $el.find(".pop-sprint").popover().open()
+
+        $el.on "click", ".sprint-option", (event) ->
+            event.preventDefault()
+            event.stopPropagation()
+            target = angular.element(event.currentTarget)
+            milestoneId = target.data("milestone-id")
+            milestoneName = target.data("milestone-name")
+
+            $el.find(".pop-sprint").popover().close()
+
+            $scope.$apply ->
+                issue.milestone = milestoneId or null
+                issue.milestone_name = milestoneName or null
+                $repo.save(issue).then ->
+                    $rootscope.$broadcast("sprint:changed", issue)
+                .catch ->
+                    $confirm.notify("error")
+
+        $scope.$on "$destroy", ->
+            $el.off()
+
+    return {link: link}
+
+module.directive("tgIssueSprintInlineEdition", ["$tgRepo", "$tgResources", "$rootScope", "$tgConfirm",
+                                                IssueSprintInlineEditionDirective])

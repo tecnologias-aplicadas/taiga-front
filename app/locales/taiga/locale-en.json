@@ -18,7 +18,6 @@
         "COPY_TO_CLIPBOARD": "Copy to clipboard",
         "COPIED_TO_CLIPBOARD": "Text has been copied to clipboard",
         "MOVE_TO_TOP": "Move to top",
-        "MOVE_TO_TOP": "Move to top",
         "EDIT": "Edit",
         "DRAG": "Drag",
         "TAG_LINE": "Your agile, free, and open source project management tool",
@@ -50,6 +49,99 @@
         "CONFIRM_CLOSE_EDIT_MODE_TITLE": "Are you sure you want to close the edit mode?",
         "CONFIRM_CLOSE_EDIT_MODE_MESSAGE": "Remember that if you close the edit mode without saving all the changes will be lost",
         "RELATED_USERSTORIES": "Related user stories",
+        "DEPENDENCIES": {
+            "ADD": "Add dependency",
+            "DELETE": "Delete dependency",
+            "RESOLVE": "Mark as resolved",
+            "TITLE": "Card Dependencies",
+            "UNASSIGNED": "unassigned",
+            "BY": "|",
+            "AT": "at",
+            "DATE_FORMAT": "MMM DD, YYYY [at] hh:mm A",
+            "CURRENT_ITEM": "This item",
+            "SOURCE_RELATION_TYPES": {
+                "RELATIONSHIP_RT": "Related to {{target_kind}}",
+                "RELATIONSHIP_BK": "Blocks {{target_kind}}",
+                "RELATIONSHIP_BKBY": "Blocked by {{target_kind}}",
+                "RELATIONSHIP_DPON": "Depends on {{target_kind}}",
+                "RELATIONSHIP_DPME": "Is a dependency of {{target_kind}}",
+                "RELATIONSHIP_DUBY": "Duplicated by {{target_kind}}",
+                "RELATIONSHIP_DUFROM": "Is duplicated from {{target_kind}}",
+                "RELATIONSHIP_DWT": "Discovered while testing {{target_kind}}",
+                "RELATIONSHIP_LTDWT": "Led to discovery in {{target_kind}}"
+            },
+            "TARGET_RELATION_TYPES": {
+                "RELATIONSHIP_RT": "Related to {{source_kind}}",
+                "RELATIONSHIP_BK": "Blocked by {{source_kind}}",
+                "RELATIONSHIP_BKBY": "Blocks {{source_kind}}",
+                "RELATIONSHIP_DPON": "Is a dependency of {{source_kind}}",
+                "RELATIONSHIP_DPME": "Depends on {{source_kind}}",
+                "RELATIONSHIP_DUBY": "Is duplicated by {{source_kind}}",
+                "RELATIONSHIP_DUFROM": "Is duplicated from {{source_kind}}",
+                "RELATIONSHIP_DWT": "Related to {{source_kind}}",
+                "RELATIONSHIP_LTDWT": "Discovered while testing {{source_kind}}"
+            },
+            "MODAL": {
+                "TITLE": "Create new dependency",
+                "TYPE_LABEL": "Dependency type:",
+                "ITEM_TYPE_LABEL": "Item type:",
+                "SEARCH_LABEL": "Search item:",
+                "SEARCH_PLACEHOLDER": "Type to search for an item...",
+                "NO_RESULTS": "No items found with these criteria.",
+                "START_SEARCH": "Type to search for items.",
+                "CANCEL": "Cancel",
+                "SAVE": "Save",
+                "RELATION_TYPES": {
+                    "RELATED_TO": "related to",
+                    "BLOCKS": "blocks",
+                    "BLOCKED_BY": "blocked by",
+                    "DEPENDS_ON": "depends on",
+                    "DEPENDS_ME": "is a dependency of",
+                    "DUPLICATED_BY": "duplicated by",
+                    "DUPLICATED_FROM": "is duplicated from",
+                    "DISCOVERD_WHILE_TESTING": "discovered while testing",
+                    "LED_TO_DISCOVERY_DURING_TEST": "led to discovery during test"
+                }
+            },
+            "CARD_TYPES": {
+                "ISSUE": "Issue",
+                "TASK": "Task",
+                "USERSTORY": "User story",
+                "EPIC": "Epic"
+            },
+            "NOTIFICATIONS": {
+                "LOAD_ERROR": "Could not load dependencies",
+                "LOAD_INVALID": "Could not load dependencies. Invalid item.",
+                "MOCK_DATA": "Using mock data for display",
+                "CREATE_SUCCESS": "Dependencies created successfully",
+                "CREATE_ERROR": "Could not create all dependencies",
+                "CREATE_INVALID_ID": "Could not create dependency. Invalid reference item.",
+                "CREATE_INVALID_TICKET": "Could not create dependencies: Ticket ID not found",
+                "CREATE_INVALID_IDS": "Could not create dependencies: Invalid IDs",
+                "REMOVE_SUCCESS": "Dependency removed successfully",
+                "REMOVE_ERROR": "Could not remove dependency",
+                "REMOVE_INVALID": "Could not remove dependency: IDs not found",
+                "NOT_FOUND": "Dependency not found",
+                "VIEW_FUTURE": "Ticket view functionality will be implemented soon",
+                "REMOVE_CONFIRM_TITLE": "Confirm removal",
+                "REMOVE_CONFIRM_MESSAGE": "Dependency with #{{ticketRef}} - {{ticketSubject}}",
+                "UPDATE_SUCCESS": "Dependency updated successfully",
+                "UPDATE_ERROR": "Could not update dependency",
+                "RESOLVE_SUCCESS": "Dependency marked as resolved",
+                "RESOLVE_ERROR": "Could not resolve dependency",
+                "RESOLVE_CONFIRM_TITLE": "Confirm resolution",
+                "RESOLVE_CONFIRM_SUBTITLE": "Dependency with #{{ticketRef}} - {{ticketSubject}}",
+                "RESOLVE_CONFIRM_MESSAGE": "This action is irreversible. Do you want to confirm?"
+            },
+            "VIEW": "View ticket",
+            "REMOVE": "Remove dependency",
+            "EDIT": "Edit dependency"
+        },
+        "ENVIRONMENT": {
+            "LOCAL": "Local Environment",
+            "DEVELOP": "Development Environment",
+            "STAGING": "Staging Environment"
+        },
         "CARD": {
             "ASSIGN_TO": "Assign To",
             "MOVE_TO_TOP": "Move to top",
@@ -151,6 +243,7 @@
             "VALUE": "Value",
             "SLUG": "Slug",
             "COLOR": "Color",
+            "PERCENTAGE": "Percentage",
             "IS_CLOSED": "Is closed?",
             "STATUS": "Status",
             "TYPE": "Type",
@@ -260,7 +353,8 @@
                 "ROLE": "Role",
                 "CREATED_BY": "Created by",
                 "CUSTOM_FILTERS": "Custom filters",
-                "EPIC": "Epic"
+                "EPIC": "Epic",
+                "SPRINT": "Sprint"
             }
         },
         "WYSIWYG": {
@@ -335,13 +429,23 @@
     },
     "LOGIN_COMMON": {
         "HEADER": "I already have a Taiga login",
-        "PLACEHOLDER_AUTH_NAME": "Username or email (case sensitive)",
+        "PLACEHOLDER_AUTH_NAME": "Email (case sensitive)",
+        "PLACEHOLDER_CORPORATE_USERNAME": "Username (e.g. name.lastname)",
         "LINK_FORGOT_PASSWORD": "Forgot it?",
         "TITLE_LINK_FORGOT_PASSWORD": "Did you forget your password?",
         "ACTION_ENTER": "Enter",
         "ACTION_SIGN_IN": "Login",
         "PLACEHOLDER_AUTH_PASSWORD": "Password (case sensitive)",
-        "ALT_LOGIN": "Or login with"
+        "ALT_LOGIN": "Or login with",
+        "TAB_CORPORATE": "Corporate",
+        "TAB_EXTERNAL": "External",
+        "LDAP_TIMEOUT": "Login is taking longer than expected. Please check your VPN connection.",
+        "INVALID_CREDENTIALS": "Invalid username or password.",
+        "UNDEFINED_CREDENTIALS": "Unknown user, please contact {{adminTeam}}.",
+        "INVALID_RECAPTCHA": "Please confirm you are not a robot and try again.",
+        "LINK_GO_HOME": "Go to Home",
+        "LINK_GO_LOGIN": "Go to login",
+        "ERROR_USERNAME_NO_EMAIL": "Use your username only, not your email."
     },
     "LOGIN_FORM": {
         "ERROR_AUTH_INCORRECT": "According to the Taiga, your username/email or password are incorrect.",
@@ -358,6 +462,12 @@
         "PLACEHOLDER_EMAIL": "Your email",
         "PLACEHOLDER_PASSWORD": "Set a password (case sensitive)",
         "ACTION_SIGN_UP": "Sign up",
+        "USERNAME_ALREADY_IN_USE": "This username is already in use. Pick another one.",
+        "EMAIL_ALREADY_IN_USE": "This email is already in use.",
+        "USER_CREATION_FAILED": "We could not create your account. Please try again.",
+        "PUBLIC_REGISTER_DISABLED": "This Taiga instance does not accept public registration.",
+        "TERMS_NOT_ACCEPTED": "To create your account, accept the terms of service and the privacy policy.",
+        "INVALID_REGISTRATION_TYPE": "This registration could not be processed.",
         "TITLE_LINK_LOGIN": "Log in",
         "LINK_LOGIN": "Are you already registered? Log in"
     },
@@ -373,11 +483,16 @@
         "LINK_CANCEL": "Nah, take me back. I think I remember it.",
         "SUCCESS_TITLE": "Check your inbox!",
         "SUCCESS_TEXT": "We sent you an email with the instructions to set a new password",
-        "ERROR": "According to the Taiga, you are not registered yet."
+        "ERROR": "According to the Taiga, you are not registered yet.",
+        "CORPORATE_INFO": "Corporate users (Itaipu Parquetec) must reset their password following the institutional flow.",
+        "CORPORATE_USER_TITLE": "Corporate user",
+        "CORPORATE_USER_WRONG_TYPE": "We have detected that you are a corporate user. If you are not a corporate user and your account is incorrectly set up, ask the project focal point at Itaipu Parquetec to request a manual adjustment from the {{adminTeam}}."
     },
     "CHANGE_PASSWORD": {
         "PAGE_TITLE": "Change you password - Taiga",
         "SECTION_NAME": "Change password",
+        "CORPORATE_INFO": "Your user is corporate. Password changes must be performed following the Itaipu Parquetec institutional flow.",
+        "CORPORATE_CANT_CHANGE": "Corporate users cannot change their password here. Please follow the Itaipu Parquetec institutional flow.",
         "FIELD_CURRENT_PASSWORD": "Current password",
         "PLACEHOLDER_CURRENT_PASSWORD": "Your current password (or empty if you have no password yet)",
         "FIELD_NEW_PASSWORD": "New password",
@@ -400,6 +515,10 @@
     },
     "INVITATION_LOGIN_FORM": {
         "NOT_FOUND": "The Taiga can't find your invitation.",
+        "EMAIL_MISMATCH": "Use the same email the invitation was sent to.",
+        "NOT_VALID": "This invitation is not valid. Ask the project administrator for a new one.",
+        "ALREADY_MEMBER": "You are already a member of this project.",
+        "USER_NOT_FOUND": "We could not find your account. Please log in again.",
         "SUCCESS": "You've successfully joined this project, Welcome to {{project_name}}"
     },
     "HOME": {
@@ -423,9 +542,14 @@
         "EPIC": "EPIC",
         "PAGE_TITLE": "Epics - {{projectName}}",
         "PAGE_DESCRIPTION": "The epics list of the project {{projectName}}: {{projectDescription}}",
+        "DONE": "Done",
+        "PROGRESS": "In Progress",
+        "NOT_STARTED": "Not Started",
+        "TASKS_INFO": "{{completed}}/{{total}} tasks",
         "DASHBOARD": {
             "ADD": "+ ADD EPIC",
-            "UNASSIGNED": "Unassigned"
+            "UNASSIGNED": "Unassigned",
+            "MORE_ASSIGNED": "more assignees"
         },
         "EMPTY": {
             "TITLE": "It looks like there aren't any epics yet",
@@ -435,6 +559,9 @@
         "TABLE": {
             "VOTES": "Votes",
             "NAME": "Name",
+            "START_DATE": "Started",
+            "EXPECTED_COMPLETION_DATE": "End (expected)",
+            "COMPLETION_DATE": "Completed on",
             "PROJECT": "Project",
             "SPRINT": "Sprint",
             "ASSIGNED_TO": "Assigned",
@@ -442,16 +569,42 @@
             "PROGRESS": "Progress",
             "CLOSED_US": "Closed user stories",
             "CLOSED_EPICS": "Closed epics",
-            "VIEW_OPTIONS": "View options"
+            "SCHEDULABLE": "P/I",
+            "SCHEDULABLE_TOOLTIP": "Planning/Impact",
+            "VIEW_OPTIONS": "View options",
+            "NO_SCHEDULED_EPICS": "There are no scheduled epics in this project",
+            "CLOSING_DATE_NOTICE": "Closing date: 25th of each month",
+            "CHART_TITLE": "Schedule: Activity Evolution",
+            "CHART_TITLE_HIGHLIGHT": "Completed",
+            "CHART_SCHEDULED_DONE": "scheduled completed",
+            "CHART_UNSCHEDULED_DONE": "unscheduled completed",
+            "CHART_DATASET_SCHED": "Schedulable",
+            "CHART_DATASET_UNSCHED": "Non-schedulable",
+            "CHART_MONTH_NAMES": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+            "SCHEDULABLE_YES": "Yes",
+            "SCHEDULABLE_NO": "No",
+            "TMP_CHANGE_CHANGED": "Epic #__ref__ from __from__% → __to__%",
+            "TMP_CHANGE_ADDED": "New Schedulable epic #__ref__",
+            "TMP_CHANGE_REMOVED": "Schedulable epic removed #__ref__"
         },
         "CREATE": {
             "TITLE": "New Epic",
             "PLACEHOLDER_DESCRIPTION": "Please add descriptive text to help others better understand this epic",
+            "START_DATE": "Started",
+            "EXPECTED_COMPLETION_DATE": "End (expected)",
+            "COMPLETION_DATE": "Completed on",
             "TEAM_REQUIREMENT": "Team requirement",
             "CLIENT_REQUIREMENT": "Client requirement",
             "BLOCKED": "Blocked",
             "BLOCKED_NOTE_PLACEHOLDER": "Why is this epic blocked?",
             "CREATE_EPIC": "Create epic"
+        },
+        "DETAILS": {
+            "DONE": "Done",
+            "PROGRESS": "In Progress",
+            "START_DATE": "Started",
+            "EXPECTED_COMPLETION_DATE": "End (expected)",
+            "COMPLETION_DATE": "Completed on"
         }
     },
     "PROJECTS": {
@@ -491,6 +644,10 @@
             "TITLE_ACTION_DELETE_TAG": "Delete tag"
         },
         "HELP": "Do you need help? Check out our support page!",
+        "PROJECT_DEFAULT_VALUES": {
+            "TITLE": "Default Values",
+            "SUBTITLE": "Select default values for all selectors."
+        },
         "PROJECT_PRESETS": {
             "MENU_TITLE": "Presets",
             "TITLE": "Default Values",
@@ -560,6 +717,7 @@
             "DELETE": "Delete this project",
             "CHANGE_LOGO": "Change logo",
             "ACTION_USE_DEFAULT_LOGO": "Use default image",
+            "LOGO_HINT": "Use a square image up to 1024×1024 px. Logo changes are saved automatically.",
             "MAX_PRIVATE_PROJECTS": "You've reached the maximum number of private projects your current plan allows",
             "MAX_PRIVATE_PROJECTS_MEMBERS": "The maximum number of members for private projects has been exceeded",
             "MAX_PUBLIC_PROJECTS": "Unfortunately, you've reached the maximum number of public projects your current plan allows",
@@ -573,7 +731,10 @@
             "REQUEST_OWNERSHIP_SUCCESS": "We'll notify the project owner",
             "CHANGE_OWNER": "Change owner",
             "CHANGE_OWNER_SUCCESS_TITLE": "Ok, your request has been sent!",
-            "CHANGE_OWNER_SUCCESS_DESC": "We will notify you by email if the project ownership request is accepted or declined"
+            "CHANGE_OWNER_SUCCESS_DESC": "We will notify you by email if the project ownership request is accepted or declined",
+            "START_DATE": "Project start date",
+            "EXPECTED_END_DATE": "Estimated project end date",
+            "END_DATE": "Project end date"
         },
         "REPORTS": {
             "TITLE": "Reports",
@@ -911,6 +1072,19 @@
             "THIS_PROJECT_IS_BLOCKED": "This project is temporarily blocked",
             "TO_UNBLOCK_CONTACT_THE_ADMIN_STAFF": "In order to unblock your projects, contact the administrator."
         },
+        "STATUS": {
+            "ACTIVE": "Active",
+            "FINISHED": "Finished"
+        },
+        "DATES": {
+            "START": "Start",
+            "EXPECTED": "Forecast",
+            "END": "Finished",
+            "ELAPSED": "Elapsed",
+            "REMAINING": "Remaining",
+            "FINISHED_EARLY": "Finished {{days}} d ahead of schedule",
+            "FINISHED_LATE": "Finished {{days}} d late"
+        },
         "SECTION": {
             "SEARCH": "Search",
             "TIMELINE": "Timeline",
@@ -1186,6 +1360,8 @@
             "PLACEHOLDER_SPRINT_NAME": "sprint name",
             "PLACEHOLDER_SPRINT_START": "Estimated Start",
             "PLACEHOLDER_SPRINT_END": "Estimated End",
+            "PLACEHOLDER_SPRINT_GOAL": "Sprint goal: what the team intends to achieve (Markdown supported)",
+            "GOAL_LABEL": "Sprint goal",
             "ACTION_DELETE_SPRINT": "Do you want to delete this sprint?",
             "TITLE_ACTION_DELETE_SPRINT": "delete sprint",
             "LAST_SPRINT_NAME": "last sprint is <strong> {{lastSprint}} ;-) </strong>"
@@ -1348,6 +1524,10 @@
             "SYNCHRONIZE_LINK": "synchronize with Taiga Tribe",
             "PUBLISH_MORE_INFO_TITLE": "Do you need somebody for this task?",
             "PUBLISH_MORE_INFO_TEXT": "<p>If you need help with a particular piece of work you can easily create gigs on<a href='http://taigatribe.com' title='Taiga Tribe'> Taiga Tribe </a> and receive help from all over the world. You will be able to control and manage the gig enjoying a great community eager to contribute.</p><p><a href='http://taigatribe.com' title='Taiga Tribe'> TaigaTribe </a>  was born as a Taiga sibling. Both platforms can live separately but we believe that there is much power in using them combined so we are making sure the integration works like a charm.</p>"
+        },
+        "DETAILS": {
+            "DONE": "Done",
+            "PROGRESS": "In Progress"
         }
     },
     "COMMENTS": {
@@ -1400,7 +1580,42 @@
             "DUE_DATE": "due date",
             "MILESTONE": "sprint",
             "COLOR": "color",
-            "PROMOTED_TO": "promoted to"
+            "PROMOTED_TO": "promoted to",
+            "START_DATE": "start date",
+            "EXPECTED_COMPLETION_DATE": "expected completion date"
+        },
+        "RELATIONSHIP_RT": "Related the {{source_kind}} {{source}} with the {{target_kind}} {{target}}",
+        "RELATIONSHIP_BK": "Added a block between the {{source_kind}} {{source}} and the {{target_kind}} {{target}}",
+        "RELATIONSHIP_BKBY": "Indicated that the {{source_kind}} {{source}} is blocked by the {{target_kind}} {{target}}",
+        "RELATIONSHIP_DPON": "Indicated that the {{source_kind}} {{source}} depends on the {{target_kind}} {{target}}",
+        "RELATIONSHIP_DPME": "Indicated that the {{target_kind}} {{target}} depends on the {{source_kind}} {{source}}",
+        "RELATIONSHIP_DUBY": "Indicated that the {{source_kind}} {{source}} is duplicated by the {{target_kind}} {{target}}",
+        "RELATIONSHIP_DUFROM": "Indicated that the {{source_kind}} {{source}} is a duplicate of the {{target_kind}} {{target}}",
+        "RELATIONSHIP_DWT": "Discovered the {{target_kind}} {{target}} while testing the {{source_kind}} {{source}}",
+        "RELATIONSHIP_LTDWT": "The {{source_kind}} {{source}} led to the discovery of {{target_kind}} {{target}} during testing",
+        "RELATIONSHIP_CHANGED": "Changed the relationship between the {{source_kind}} {{source}} and the {{target_kind}} {{target}} from {{from}} to {{to}}",
+        "RELATIONSHIP_RESOLVED": "Resolved the {{relation}} relationship between the {{source_kind}} {{source}} and the {{target_kind}} {{target}}",
+        "RELATIONSHIP_REMOVED": "Removed the {{relation}} relationship between the {{source_kind}} {{source}} and the {{target_kind}} {{target}}",
+        "RELATION": {
+            "RT": "\"Related to\"",
+            "BK": "\"Blocks\"",
+            "BKBY": "\"Blocked by\"",
+            "DPON": "\"Depends on\"",
+            "DPME": "\"Is depended on by\"",
+            "DUBY": "\"Duplicated by\"",
+            "DUFROM": "\"Duplicated from\"",
+            "DWT": "\"Discovered while testing\"",
+            "LTDWT": "\"Led to discovery during test\""
+        },
+        "RELATIONSHIP_UPDATED_PREFIX": "Changed the relationship between the {{source_kind}} {{source}} and the {{target_kind}} {{target}} from",
+        "RELATIONSHIP_UPDATED_MIDDLE": "to",
+        "RELATIONSHIP_REMOVED_PREFIX": "Resolved the relationship",
+        "RELATIONSHIP_REMOVED_SUFFIX": "between the {{source_kind}} {{source}} and the {{target_kind}} {{target}}",
+        "CARD_TYPES": {
+            "userstory": "User story",
+            "task": "Task",
+            "issue": "Issue",
+            "epic": "Epic"
         }
     },
     "BACKLOG": {
@@ -1461,6 +1676,7 @@
             "OPEN_TASKS": "open<br />tasks",
             "CLOSED_TASKS": "closed<br />tasks",
             "IOCAINE_DOSES": "iocaine<br />doses",
+            "CLOSE_SPRINT": "Close sprint",
             "SHOW_STATISTICS_TITLE": "Show statistics",
             "TOGGLE_BAKLOG_GRAPH": "Show/Hide burndown graph",
             "POINTS_PER_ROLE": "Points per role"
@@ -1487,7 +1703,8 @@
             "TITLE_ACTION_NEW_SPRINT": "Add a sprint",
             "TEXT_ACTION_NEW_SPRINT": "You may want to create a new sprint in your project",
             "ACTION_SHOW_CLOSED_SPRINTS": "Show closed sprints",
-            "ACTION_HIDE_CLOSED_SPRINTS": "Hide closed sprints"
+            "ACTION_HIDE_CLOSED_SPRINTS": "Hide closed sprints",
+            "CLOSED_SPRINTS_WITHOUT_RESULT": "There are closed sprints without a registered result."
         }
     },
     "ERROR": {
@@ -1502,6 +1719,7 @@
         "PAGE_TITLE": "{{sprintName}} - Sprint taskboard - {{projectName}}",
         "PAGE_DESCRIPTION": "Sprint {{sprintName}} (from {{startDate}} to {{endDate}}) of {{projectName}}. Completed {{completedPercentage}}% ({{completedPoints}} of {{totalPoints}} points). {{openTasks}} opened tasks of {{totalTasks}}.",
         "SECTION_NAME": "Taskboard",
+        "ERROR_MOVE_TO_ANOTHER_US": "Moving tasks to another user story is not allowed.",
         "TITLE_ACTION_ADD": "Add a new task",
         "TITLE_ACTION_ADD_BULK": "Add some new tasks in bulk",
         "TITLE_ACTION_ADD_ISSUE": "Add a new issue",
@@ -1512,6 +1730,21 @@
         "TASK_NOT_FOUND_TITLE": "No matching results found",
         "TASK_NOT_FOUND_TEXT": "Try again using more general search terms or disabling some filters.",
         "TITLE_DATE_RANGE": "{{startDate}} <span>to</span> {{endDate}}",
+        "SPRINT_GOAL": {
+            "TITLE": "Sprint goal",
+            "SHOW": "Show sprint goal",
+            "HIDE": "Hide sprint goal",
+            "EMPTY": "This sprint has no goal defined.",
+            "RESULT_TITLE": "Result achieved",
+            "NOT_INFORMED": "Not informed",
+            "CLOSED_INFO": "Sprint closed on {{date}} by {{author}}",
+            "ACHIEVEMENT": {
+                "ACHIEVED": "Achieved",
+                "PARTIALLY_ACHIEVED": "Partially achieved",
+                "NOT_ACHIEVED": "Not achieved",
+                "NOT_INFORMED": "Not informed"
+            }
+        },
         "TABLE": {
             "COLUMN": "User story",
             "TITLE_ACTION_FOLD": "Fold column",
@@ -1520,7 +1753,8 @@
             "TITLE_ACTION_UNFOLD_ROW": "Unfold Row",
             "FIELD_POINTS": "points",
             "ROW_STORYLESS_TASKS_TITLE": "Storyless tasks",
-            "ROW_ISSUES_TITLE": "Sprint issues"
+            "ROW_ISSUES_TITLE": "Sprint issues",
+            "NUMBER_TASKS": "Number of tasks"
         },
         "CHARTS": {
             "XAXIS_LABEL": "Days",
@@ -1536,6 +1770,7 @@
             "TITLE_MOVE_UNFINISHED": "Move unfinished items to another open sprint",
             "MOVE_TO_OPEN_SPRINT": "Move to open sprint",
             "NO_OPEN_SPRINTS": "There are no other open sprints. Please create one first.",
+            "NO_CLOSED_ITEMS": "There are no finished items in this sprint. Finish at least one to be able to close it.",
             "SELECT_DESTINATION_PLACEHOLDER": "Select destination",
             "UNFINISHED_USER_STORIES_COUNT": "{total, plural, =1{<strong>#</strong> unfinished user story} other{<strong>#</strong> unfinished user stories}}",
             "UNFINISHED_STORYLESS_TASKS_COUNT": "{total, plural, =1{<strong>#</strong> unfinished storyless task} other{<strong>#</strong> unfinished storyless tasks}}",
@@ -1543,7 +1778,13 @@
             "WARNING_ISSUES_NOT_MOVED_TITLE": "You just moved all user stories and taks, and the sprint'll be closed",
             "WARNING_ISSUES_NOT_MOVED": "The issues'll remain in the sprint and don't be removed",
             "WARNING_SPRINT_STILL_OPEN_TITLE": "{total, plural, =1{You just moved # item!} other{You just moved # items!}}",
-            "WARNING_SPRINT_STILL_OPEN": "Please note that the sprint {{sprintName}} <strong>will remain open</strong> as long as it contains unfinished items."
+            "WARNING_SPRINT_STILL_OPEN": "Please note that the sprint {{sprintName}} <strong>will remain open</strong> as long as it contains unfinished items.",
+            "CLOSE_SPRINT": "Close sprint",
+            "REGISTER_RESULT": "Register result",
+            "REGISTER_RESULT_TITLE": "Register sprint result",
+            "ACHIEVEMENT_QUESTION": "Was the goal achieved?",
+            "RESULT_PLACEHOLDER": "Describe the result achieved in this sprint (Markdown supported)",
+            "IMMUTABLE_WARNING": "The achievement and the result cannot be edited after the sprint is closed."
         }
     },
     "TASK": {
@@ -1561,7 +1802,11 @@
         "FIELDS": {
             "IS_IOCAINE": "Is iocaine"
         },
-        "TITLE_ACTION_IOCAINE": "Feeling a bit overwhelmed by a task? Make sure others know about it by clicking on Iocaine when editing a task. It's possible to become immune to this (fictional) deadly poison by consuming small amounts over time just as it's possible to get better at what you do by occasionally taking on extra challenges!"
+        "TITLE_ACTION_IOCAINE": "Feeling a bit overwhelmed by a task? Make sure others know about it by clicking on Iocaine when editing a task. It's possible to become immune to this (fictional) deadly poison by consuming small amounts over time just as it's possible to get better at what you do by occasionally taking on extra challenges!",
+        "DETAILS": {
+            "DONE": "Done",
+            "PROGRESS": "In Progress"
+        }
     },
     "NOTIFICATION": {
         "OK": "Everything is ok",
@@ -1600,6 +1845,7 @@
         "PAGE_DESCRIPTION": "The issues list panel of the project {{projectName}}: {{projectDescription}}",
         "SECTION_NAME": "Issue",
         "ACTION_NEW_ISSUE": "NEW ISSUE",
+        "NO_SPRINT": "No Sprint",
         "ACTION_ATTACH_SPRINT": "Attach issue to Sprint",
         "ACTION_DETACH_SPRINT": "Detach issue from Sprint",
         "EXTERNAL_REFERENCE": "This issue has been created from",
@@ -1634,9 +1880,11 @@
                 "STATUS": "Status",
                 "ATTACHMENTS": "Attachments",
                 "MODIFIED": "Modified",
-                "ASSIGNED_TO": "Assign to"
+                "ASSIGNED_TO": "Assign to",
+                "SPRINT": "Sprint"
             },
             "TITLE_ACTION_CHANGE_STATUS": "Change status",
+            "TITLE_ACTION_CHANGE_SPRINT": "Change sprint",
             "TITLE_ACTION_ASSIGNED_TO": "Assigned to",
             "BLOCKED": "Blocked",
             "EMPTY": {
@@ -1741,6 +1989,8 @@
         }
     },
     "USER_PROFILE": {
+        "LOCKED_FIELDS_INFO": "To change your username or email, contact {{adminTeam}}.",
+        "FIELDS_NOT_EDITABLE_ERROR": "Username and email cannot be changed. Please contact the administrator.",
         "ACTION_USE_GRAVATAR": "Use default image",
         "ACTION_DELETE_ACCOUNT": "Delete Taiga account",
         "ACTION_DOWNLOAD_PROFILE": "Download Taiga profile",
@@ -1856,7 +2106,8 @@
         "ADDED_YOU_AS_MEMBER": "{{username}} added you as member",
         "MENTIONED_YOU": "{{username}} mentioned you on {{obj_name}}",
         "MENTIONED_YOU_IN_COMMENT": "{{username}} mentioned you in a comment on {{obj_name}}",
-        "COMMENTED": "{{username}} has commented on {{obj_name}}"
+        "COMMENTED": "{{username}} has commented on {{obj_name}}",
+        "MARK_AS_READ": "Mark as read"
     },
     "LEGAL": {
         "TERMS_OF_SERVICE_AND_PRIVACY_POLICY_AD": "<span>When creating a new account, you agree to our </span><a href=\"{{ termsOfServiceUrl }}\" title=\"See terms of service\" target=\"_blank\">terms of service</a><span> and </span><a href=\"{{ privacyPolicyUrl }}\" title=\"See privacy policy\" target=\"_blank\">privacy policy</a>."
@@ -1968,5 +2219,213 @@
         "ZOOM-2": "Default",
         "ZOOM-3": "Detailed",
         "ZOOM-4": "Expanded"
+    },
+    "THAI_CHAT": {
+        "TITLE": "T·IA Chat",
+        "WELCOME": "Hi! I'm T·IA, the projects assistant here on Taiga.",
+        "ASK_TODAY": "What are we looking for today?",
+        "PLACEHOLDER": "Ask something... (Enter to send, Shift+Enter for new line)",
+        "SEND": "Send",
+        "CLOSE": "Close",
+        "ERROR": "**Oops! 😅**\n\n**Go ahead and get that docs done... ✏️**\n\n**T·IA** is dealing with a little technical hiccup here, be right back.",
+        "UNAVAILABLE": "**Oops! 😅**\n\n**T·IA** is not available in this environment for now. Please try again later.",
+        "SUGGESTIONS": {
+            "PROJECTS_0": "Which projects are expected to be completed in the next 3 months?",
+            "PROJECTS_1": "Are there any delayed projects?",
+            "PROJECT_0": "List the tasks that are paused",
+            "PROJECT_1": "List the tasks without assigned owners",
+            "PROJECT_2": "List completed tasks without completion comments",
+            "PROJECT_3": "Which tasks are overdue in this project?",
+            "PROFILE_0": "Which tasks assigned to me are yet to start?",
+            "PROFILE_1": "Which tasks assigned to me are in progress?",
+            "PROFILE_2": "What was my last recorded activity?"
+        },
+        "CLEAR": "Clear chat"
+    },
+    "ERRORS": {
+        "IS_CLOSED_HAS_EPICS": "Cannot uncheck \"is closed\": there are epics using this status.",
+        "COMPLETION_DATE_REQUIRES_CLOSED_STATUS": "Completion date can only be set when the epic status is closed.",
+        "PERCENTAGE_IMPACT_MUST_BE_INTEGER": "Percentage impact must be an integer between 0 and 100.",
+        "SCHEDULABLE_IMPACT_EXCEEDS_100": "The sum of impact for planned epics cannot exceed 100%.",
+        "RELATION_ALREADY_DELETED": "Relation has already been deleted.",
+        "CANNOT_EDIT_DELETED_RELATION": "This relation has been deleted and can no longer be edited.",
+        "CANNOT_EDIT_RESOLVED_RELATION": "This relation has been resolved and can no longer be edited.",
+        "SELF_RELATION_NOT_ALLOWED": "An activity cannot be related to itself.",
+        "PATCH_READONLY_FIELDS": "Only the relation type can be changed. All other fields are read-only.",
+        "EPIC_NOT_FOUND": "The specified epic was not found.",
+        "START_DATE_EXCEEDS_END_DATE": "The start date cannot be later than the expected end date.",
+        "END_DATE_BEFORE_START_DATE": "The expected end date cannot be earlier than the start date.",
+        "BLOCKED_ITEM_CANNOT_BE_CLOSED": "This item is blocked and cannot be moved to a closed status until the block is resolved.",
+        "COMPLETION_DATE_BEFORE_START_DATE": "The completion date cannot be earlier than the start date.",
+        "INVALID_STATUS_FOR_EPIC": "The selected status does not belong to this project.",
+        "MISSING_RELATION_FIELDS": "Cannot save the relation without specifying the project, source, and target.",
+        "INVALID_RELATION_TYPE": "Invalid relation type.",
+        "PROJECT_NOT_FOUND": "The specified project was not found.",
+        "CARD_NOT_FOUND": "The specified activity was not found.",
+        "CARD_NOT_IN_PROJECT": "Activities must belong to the specified project.",
+        "CARDS_DIFFERENT_PROJECTS": "Activities must belong to the same project.",
+        "RELATION_ALREADY_EXISTS": "This relation already exists.",
+        "SYMMETRIC_RELATION_EXISTS": "A symmetric relation already exists in the opposite direction.",
+        "INVALID_CARD_TYPE": "Invalid activity type.",
+        "UNSUPPORTED_CARD_TYPE": "Unsupported activity type.",
+        "INVALID_PROJECT_PARAM": "Invalid project parameter.",
+        "INVALID_CARD_REF_PARAM": "Invalid activity reference.",
+        "NO_MODIFY_PERM": "You do not have permission to modify one or more cards involved in this relation.",
+        "CARDS_ALREADY_RELATED": "A relationship already exists between these two cards.",
+        "HAS_ACTIVE_CARD_RELATIONS": "This card has active dependencies. Resolve them before deleting."
+    },
+    "HOME_LANDING": {
+        "NAV_SUBTITLE": "Center for Applied Technologies",
+        "NAV_CTA": "Sign in",
+        "HERO_TAG": "Project Management — TA.DT",
+        "HERO_TITLE_START": "How we manage projects with",
+        "HERO_TITLE_ACCENT": "agility",
+        "HERO_TITLE_END": "every day",
+        "HERO_SUBTITLE": "We use Taiga as the foundation to structure and track the team's activities, supported by agile practices and a centralized view of projects.",
+        "STAT_MODULES_LABEL": "Modules",
+        "STAT_PROJECTS_LABEL": "Projects",
+        "STAT_METHOD_VALUE": "Agile",
+        "STAT_METHOD_LABEL": "Methodology",
+        "STAT_TIA_LABEL": "Our Intelligent Agent",
+        "NEWS_BADGE": "What's new",
+        "NEWS_TITLE": "Stay up to date with the latest news",
+        "NEWS_CAROUSEL_SR": "Platform news carousel.",
+        "NEWS_PREV": "Previous",
+        "NEWS_NEXT": "Next",
+        "FEATURES_BADGE": "Features",
+        "FEATURES_TITLE": "Overview of the features for agile project management",
+        "FEATURES_SUBTITLE": "Get to know the modules available on the platform and how they support the team throughout development.",
+        "CARD_KANBAN_NAME": "Kanban",
+        "CARD_KANBAN_TAG": "Story Board",
+        "CARD_KANBAN_DESC": "See the work in columns by status (e.g. Backlog, To Do, In Progress, Done). Drag cards to update progress and keep a continuous flow with team transparency.",
+        "CARD_EPICS_NAME": "Epics",
+        "CARD_EPICS_TAG": "Major Initiatives",
+        "CARD_EPICS_DESC": "Structure larger initiatives (epics) and link related stories and tasks. Get a view of progress by stage, priority and deadlines, making it easier to track the schedule.",
+        "CARD_SCRUM_NAME": "Scrum",
+        "CARD_SCRUM_TAG": "Sprints and Metrics",
+        "CARD_SCRUM_DESC": "Manage backlog, sprints and tracking metrics (e.g. burndown). Helps prioritize what creates value, organize ceremonies and bring predictability to execution.",
+        "CARD_ISSUES_NAME": "Issues",
+        "CARD_ISSUES_TAG": "Incident Management",
+        "CARD_ISSUES_DESC": "Centralize incidents and requests (bugs, improvements, support) classified by severity, priority, status and assignee. Makes triage, traceability and quick response easier.",
+        "CARD_WIKI_NAME": "Wiki",
+        "CARD_WIKI_TAG": "Living Documentation",
+        "CARD_WIKI_DESC": "Create and maintain living project documentation: rules, decisions, guides and standards. Pages help reduce noise, speed up onboarding and keep a history.",
+        "CARD_AGENDA_NAME": "Online Calendar",
+        "CARD_AGENDA_TAG": "Quick Shortcut",
+        "CARD_AGENDA_DESC": "Quick-access button to the team's online calendars (meetings, reviews, planning, alignments). Helps standardize routines and cut the time spent looking for links.",
+        "FOOTER_COPY": "2025 Center for Applied Technologies · Itaipu Parquetec"
+    },
+    "NEWS_ADMIN": {
+        "PAGE_TITLE": "Home news - Taiga",
+        "PAGE_SUBTITLE": "Slides of the public home carousel. A new slide starts inactive: activate it when you want to publish.",
+        "ICON_TITLE": "Manage home news",
+        "NEW_SLIDE": "New slide",
+        "FIELD_IMAGE": "Image",
+        "IMAGE_HINT": "Required, up to 2 MB.",
+        "FIELD_TITLE": "Title",
+        "FIELD_DESCRIPTION": "Description",
+        "FIELD_ORDER": "Order",
+        "CREATE": "Create slide",
+        "SLIDES": "Slides",
+        "LOADING": "Loading...",
+        "LOAD_ERROR": "The slides could not be loaded.",
+        "EMPTY": "No slides yet.",
+        "COLUMN_IMAGE": "Image",
+        "COLUMN_TITLE": "Title",
+        "COLUMN_DESCRIPTION": "Description",
+        "COLUMN_STATE": "State",
+        "COLUMN_ORDER": "Order",
+        "COLUMN_ACTIONS": "Actions",
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive",
+        "MOVE_UP": "Move up",
+        "MOVE_DOWN": "Move down",
+        "EDIT_TITLE": "Edit slide",
+        "EDIT": "Edit",
+        "ACTIVATE": "Activate",
+        "DEACTIVATE": "Deactivate",
+        "DELETE": "Delete",
+        "DELETE_TITLE": "Delete slide",
+        "CHOOSE_IMAGE": "Choose image",
+        "NO_IMAGE_SELECTED": "No image selected",
+        "CHANGE_IMAGE": "Change image",
+        "SAVE": "Save",
+        "CANCEL": "Cancel",
+        "ERRORS": {
+            "GENERIC": "The operation could not be completed.",
+            "FORBIDDEN": "Only a superuser can change the carousel.",
+            "IMAGE_REQUIRED": "Choose an image.",
+            "INVALID_IMAGE": "The file is not a valid image.",
+            "IMAGE_TOO_LARGE": "The image is larger than 2 MB.",
+            "TITLE_REQUIRED": "Enter the title.",
+            "TITLE_TOO_LONG": "The title is longer than 255 characters.",
+            "DESCRIPTION_TOO_LONG": "The description is longer than 500 characters.",
+            "ORDER_NEGATIVE": "The order cannot be negative.",
+            "ORDER_INVALID": "The order must be a whole number.",
+            "SLIDE_NOT_FOUND": "One of the slides no longer exists. The list was reloaded.",
+            "EMPTY_BULK": "There are no slides to reorder."
+        }
+    },
+    "STORY_POINTS_GUIDE": {
+        "ICON_TITLE": "Story Points Guide",
+        "COLUMN_POINTS": "Story Points",
+        "COLUMN_DESCRIPTION": "Summary",
+        "ROW_1": "Very small. Simple, straightforward, no risk, low complexity",
+        "ROW_3": "Small to medium. Requires simple validation",
+        "ROW_5": "Medium. May have some uncertainty",
+        "ROW_8": "Large. Has known risk or dependency",
+        "ROW_13": "Very large. Should be well justified",
+        "ROW_21": "Too large. Almost always needs to be split",
+        "SEE_MORE": "click here for more information",
+        "PAGE_TITLE": "Story Points Guide",
+        "INTRO_SUBTITLE": "Story Points – Quick Reference Fibonacci",
+        "WHAT_ARE_TITLE": "What are Story Points?",
+        "WHAT_ARE_INTRO": "Story Points represent the relative size of a User Story, considering:",
+        "WHAT_ARE_EFFORT": "Implementation effort",
+        "WHAT_ARE_COMPLEXITY": "Technical complexity",
+        "WHAT_ARE_RISK": "Risk and uncertainty",
+        "NOT_HOURS": "Story Points do not represent hours.",
+        "SERVE_FOR": "They are used to compare stories and support work distribution.",
+        "SCALE_TITLE": "Story Points Scale Fibonacci",
+        "SCALE_BODY": "We use the Fibonacci sequence to reflect the increase of uncertainty as size grows.",
+        "FIBONACCI_LABEL": "Fibonacci Sequence",
+        "ALERT_8": "Ideal to work with stories up to 8 points",
+        "ALERT_13": "Above 13 points, the story should be broken before entering the sprint",
+        "EXAMPLES_TITLE": "Examples by Story Point",
+        "EXAMPLES_1_TITLE": "1 point",
+        "EXAMPLES_1_1": "Adjust button text",
+        "EXAMPLES_1_2": "Adjust label text on existing screen",
+        "EXAMPLES_1_3": "Fix simple validation on frontend",
+        "EXAMPLES_1_4": "Simple adjustment to a known rule",
+        "EXAMPLES_1_5": "Fix tooltip or simple validation message",
+        "EXAMPLES_3_TITLE": "3 points",
+        "EXAMPLES_3_1": "Add new field to existing screen",
+        "EXAMPLES_3_2": "Create simple endpoint without complex rule",
+        "EXAMPLES_3_3": "Small change involving both front and back end",
+        "EXAMPLES_3_4": "Add new optional field to existing screen, saving to back end and displaying in list",
+        "EXAMPLES_3_5": "Adjust list sorting rule, adding new configurable criterion",
+        "EXAMPLES_5_TITLE": "5 points",
+        "EXAMPLES_5_1": "Create simple complete functionality",
+        "EXAMPLES_5_2": "Integration with clear business rule",
+        "EXAMPLES_5_3": "Create CRUDs with beginning, middle and end, without dependencies",
+        "EXAMPLES_5_4": "Simple CSV or PDF export",
+        "EXAMPLES_8_TITLE": "8 points",
+        "EXAMPLES_8_1": "Functionality with external dependency",
+        "EXAMPLES_8_2": "More complex business rules",
+        "EXAMPLES_8_3": "Snapshot implementation",
+        "EXAMPLES_8_4": "Styled CSV or PDF export",
+        "EXAMPLES_13_TITLE": "13 points",
+        "EXAMPLES_13_1": "Large functionality with technical risk",
+        "EXAMPLES_13_2": "Involves multiple system components",
+        "EXAMPLES_13_3": "Implement new complete registration flow, involving multiple screens, complex validations and chained business rules",
+        "EXAMPLES_13_4": "Create integration with new external system, with authentication, data mapping, error handling and back and front adjustments",
+        "EXAMPLES_21_TITLE": "21 points",
+        "EXAMPLES_21_1": "Extensive implementation with multiple rules",
+        "EXAMPLES_21_2": "Strong candidate to be broken into smaller stories, probably an epic",
+        "BEST_PRACTICES_TITLE": "Best Practices",
+        "BEST_PRACTICES_1": "Prefer to break large stories",
+        "BEST_PRACTICES_2": "If there is too much doubt, use a spike before estimating",
+        "BEST_PRACTICES_3": "Story Points are for sizing, not for tracking hours",
+        "BEST_PRACTICES_4": "Maintain consistency between stories"
     }
 }

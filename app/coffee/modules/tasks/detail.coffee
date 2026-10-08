@@ -19,7 +19,7 @@ module = angular.module("taigaTasks")
 ## Task Detail Controller
 #############################################################################
 
-class TaskDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
+class TaskDetailController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.DetailEventsMixin)
     @.$inject = [
         "$scope",
         "$rootScope",
@@ -38,10 +38,13 @@ class TaskDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
         "tgErrorHandlingService",
         "tgProjectService",
         "tgAttachmentsFullService",
+        "$tgEvents",
+        "tgEditingTracker"
     ]
 
     constructor: (@scope, @rootscope, @repo, @confirm, @rs, @params, @q, @location,
-                  @log, @appMetaService, @navUrls, @analytics, @translate, @modelTransform, @errorHandlingService, @projectService, @attachmentsFullService) ->
+                  @log, @appMetaService, @navUrls, @analytics, @translate, @modelTransform, @errorHandlingService, @projectService, @attachmentsFullService,
+                  @events, @editingTracker) ->
         bindMethods(@)
 
         @scope.taskRef = @params.taskref
@@ -50,7 +53,7 @@ class TaskDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
         @scope.$on "attachments:loaded", () =>
             @scope.attachmentsReady = true
         @.initializeEventHandlers()
-
+        @scope.dependencies = []
         promise = @.loadInitialData()
 
         promise.then () =>
@@ -59,7 +62,16 @@ class TaskDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
 
         promise.then null, @.onInitialDataError.bind(@)
 
+    _updateProgress: ->
+        done     = parseFloat(@scope.task?.completion_percent_done     or 0)
+        progress = parseFloat(@scope.task?.completion_percent_progress or 0)
+        @completionPercentDone     = done + "%"
+        @completionPercentProgress = progress + "%"
+        @showDone     = done > 0
+        @showProgress = done is 0
+
     _setMeta: ->
+        @._updateProgress()
         title = @translate.instant("TASK.PAGE_TITLE", {
             taskRef: "##{@scope.task.ref}"
             taskSubject: @scope.task.subject
@@ -80,12 +92,28 @@ class TaskDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
             ctx = {project: @scope.project.slug, ref: ref}
             @location.path(@navUrls.resolve("project-userstories-detail", ctx))
 
+        # Ouvinte no scope da tela (o raiz faz $broadcast): morre com a tela
+        @scope.$on "object:updated", =>
+            @.loadTask()
+
         @scope.$on "attachment:create", =>
             @analytics.trackEvent("attachment", "create", "create attachment on task", 1)
         @scope.$on "custom-attributes-values:edit", =>
             @rootscope.$broadcast("object:updated")
         @scope.$on "comment:new", =>
             @.loadTask()
+
+    initializeSubscription: ->
+        @.subscribeDetailEvents [
+            {
+                # A própria tarefa: recarrega card e atividade; exclusão não reconsulta
+                routingKey: "changes.project.#{@scope.projectId}.tasks"
+                matches: (message) => message.type != "delete" and @.eventTargets(message, @scope.taskId)
+                reload: =>
+                    @rootscope.$broadcast("object:updated")
+                    @scope.$broadcast("custom-attributes-values:reload")
+            }
+        ]
 
     initializeOnDeleteGoToUrl: ->
         ctx = {project: @scope.project.slug}
@@ -115,6 +143,7 @@ class TaskDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
     loadTask: ->
         return @rs.tasks.getByRef(@scope.projectId, @params.taskref).then (task) =>
             @scope.task = task
+            @._updateProgress()
             @scope.taskId = task.id
             @scope.commentModel = task
 
@@ -158,6 +187,7 @@ class TaskDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
         project = @.loadProject()
 
         @.fillUsersAndRoles(project.members, project.roles)
+        @.initializeSubscription()
         return @.loadTask().then(=> @q.all([@.loadSprint(), @.loadUserStory()]))
 
     ###
@@ -296,8 +326,13 @@ TaskStatusButtonDirective = ($rootScope, $repo, $confirm, $loading, $modelTransf
                 $rootScope.$broadcast("object:updated")
                 currentLoading.finish()
 
-            onError = ->
-                $confirm.notify("error")
+            onError = (response) ->
+                rawCode = response?.code or null
+                rawCode = rawCode[0] if Array.isArray(rawCode)
+                if rawCode
+                    $confirm.notify("error", $translate.instant("ERRORS.#{rawCode.toUpperCase()}"))
+                else
+                    $confirm.notify("error")
                 currentLoading.finish()
 
             transform.then(onSuccess, onError)

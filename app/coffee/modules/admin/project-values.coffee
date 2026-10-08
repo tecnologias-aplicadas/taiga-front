@@ -480,6 +480,12 @@ ProjectValuesDirective = ($log, $repo, $confirm, $location, animationFrame, $tra
             return if not form.validate()
 
             value = formEl.scope().value
+            
+            if value.completion_percent? and value.completion_percent isnt ''
+                value.setAttr? 'completion_percent', parseInt(value.completion_percent)
+            else
+                value.setAttr? 'completion_percent', null
+
 
             # default color
             if !value.color
@@ -496,6 +502,15 @@ ProjectValuesDirective = ($log, $repo, $confirm, $location, animationFrame, $tra
 
             promise.then null, (data) ->
                 form.setErrors(data)
+                value.revert()
+                msg = if data.code
+                    $translate.instant("ERRORS.#{data.code.toUpperCase()}")
+                else if data._error_code
+                    $translate.instant("ERRORS.#{data._error_code}")
+                else
+                    data._error_message
+                if msg
+                    $confirm.notify("error", msg)
 
         saveNewValue = (target) ->
             formEl = target.parents("form")
@@ -505,6 +520,9 @@ ProjectValuesDirective = ($log, $repo, $confirm, $location, animationFrame, $tra
             $scope.newValue.project = $scope.project.id
 
             $scope.newValue.order = if $scope.maxValueOrder then $scope.maxValueOrder + 1 else 1
+
+            if $scope.newValue.completion_percent?
+                $scope.newValue.setAttr? 'completion_percent', parseInt($scope.newValue.completion_percent)
 
             # default color
             if !$scope.newValue.color
@@ -529,6 +547,15 @@ ProjectValuesDirective = ($log, $repo, $confirm, $location, animationFrame, $tra
                 row.addClass("hidden")
                 value.revert()
                 row.siblings(".visualization").removeClass('hidden')
+        
+        $el.on "click", ".toggle-table", (event) ->
+            event.preventDefault()
+            table = angular.element(event.currentTarget).closest(".admin-status-table").find(".colors-table").first()
+
+            if table.hasClass "ng-hide"
+                table.removeClass "ng-hide"
+            else
+                table.addClass "ng-hide"
 
         $el.on "click", ".show-add-new", (event) ->
             event.preventDefault()
@@ -602,10 +629,21 @@ ProjectValuesDirective = ($log, $repo, $confirm, $location, animationFrame, $tra
                 onError = ->
                     $confirm.notify("error")
                 $repo.remove(value, {"moveTo": response.selected}).then(onSucces, onError)
+    
+    validatePercentage = ($scope) ->
+        $scope.validatePercentage = (value) -> 
+            if value.completion_percent and parseInt(value.completion_percent) > 100
+                # Mantem os primeiros dois numero apenas, ex 122 => 12
+                value.completion_percent = Math.floor(parseInt(value.completion_percent) / 10)
+            else if value.completion_percent and parseInt(value.completion_percent) < 0
+                value.completion_percent = Math.abs(parseInt(value.completion_percent))
+                if value.completion_percent > 100
+                    value.completion_percent = Math.floor(value.completion_percent / 10) 
 
     link = ($scope, $el, $attrs) ->
         linkDragAndDrop($scope, $el, $attrs)
         linkValue($scope, $el, $attrs)
+        validatePercentage($scope)
 
         $scope.$on "$destroy", ->
             $el.off()

@@ -2,40 +2,78 @@
     tg-svg {
         display: inline-block;
     }
+
     .key {
         @include font-type(medium);
         background: $whitish;
-        margin-right: .5rem;
-        padding: .25rem;
+        margin-right: 0.5rem;
+        padding: 0.25rem;
     }
+
     .diff {
         line-height: 1.6;
     }
+
     .icon-arrow-right {
-        @include svg-size(.75rem);
+        @include svg-size(0.75rem);
         fill: $gray-light;
-        margin: 0 .5rem;
+        margin: 0 0.5rem;
     }
+
     .diff-status-wrapper {
         p {
             display: inline-block;
+            margin: 0;
             vertical-align: top;
         }
+
         ins {
-            background: lighten(rgba($primary-light, .3), 20%);
+            background: lighten(rgba($primary-light, 0.3), 20%);
             text-decoration: underline;
         }
+
         del {
-            background: rgba($red-light, .3);
+            background: rgba($red-light, 0.3);
         }
     }
+
     .diff-color-wrapper {
         align-items: center;
         display: flex;
+
         .diff {
             display: inline-block;
             height: 1.2rem;
             width: 1.2rem;
+        }
+    }
+
+    .diff-status-wrapper.relation-badge {
+        border-left: 3px solid transparent;
+        padding-left: 8px;
+
+        &.relation-BK,
+        &.relation-BKBY {
+            border-left-color: #e57373;
+        }
+
+        &.relation-RT {
+            border-left-color: #64b5f6;
+        }
+
+        &.relation-DPON,
+        &.relation-DPME {
+            border-left-color: #ffb74d;
+        }
+
+        &.relation-DUBY,
+        &.relation-DUFROM {
+            border-left-color: #ba68c8;
+        }
+
+        &.relation-LTDWT,
+        &.relation-DWT {
+            border-left-color: #81c784;
         }
     }
 }

@@ -24,11 +24,8 @@ class DuplicateProjectController
         taiga.defineImmutableProperty @, 'projects', () => @currentUserService.projects.get("all")
 
         @.projectForm = {
-            is_private: false
+            is_private: true
         }
-
-        if !@.canCreatePublicProjects.valid && @.canCreatePrivateProjects.valid
-            @.projectForm.is_private = true
 
     refreshReferenceProject: (slug) ->
         @projectsService.getProjectBySlug(slug).then (project) =>

@@ -286,6 +286,7 @@ class BacklogController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.F
             @.setMilestonesOrder(sprints)
 
             @scope.totalClosedMilestones = result.closed
+            @scope.totalClosedMilestonesWithoutResult = result.closedWithoutResult
 
             # NOTE: Fix order of USs because the filter orderBy does not work propertly in partials files
             for sprint in sprints
@@ -310,6 +311,7 @@ class BacklogController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.F
 
             @scope.totalMilestones = sprints
             @scope.totalClosedMilestones = result.closed
+            @scope.totalClosedMilestonesWithoutResult = result.closedWithoutResult
             @scope.totalOpenMilestones = result.open
             @scope.totalMilestones = @scope.totalOpenMilestones + @scope.totalClosedMilestones
 
@@ -676,9 +678,12 @@ class BacklogController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.F
                     @.loadSprints(),
                     @.resetFirstStoryIndicator()
                 ])
-            promise.then null, =>
+            promise.then null, (data) =>
                 askResponse.finish(false)
-                @confirm.notify("error")
+                if data?.code
+                    @confirm.notify("error", @translate.instant("ERRORS.#{data.code.toUpperCase()}"))
+                else
+                    @confirm.notify("error")
 
     addNewUs: (type) ->
         switch type

@@ -19,7 +19,7 @@ module = angular.module("taigaWiki")
 ## Wiki Detail Controller
 #############################################################################
 
-class WikiDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
+class WikiDetailController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.DetailEventsMixin)
     @.$inject = [
         "$scope",
         "$rootScope",
@@ -39,10 +39,14 @@ class WikiDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
         "tgErrorHandlingService",
         "tgProjectService",
         "tgAttachmentsFullService",
+        "$tgEvents",
+        "tgEditingTracker",
+        "tgActivityService"
     ]
 
     constructor: (@scope, @rootscope, @repo, @model, @confirm, @rs, @params, @q, @location,
-                  @filter, @log, @appMetaService, @navUrls, @analytics, @translate, @errorHandlingService, @projectService, @attachmentsFullService) ->
+                  @filter, @log, @appMetaService, @navUrls, @analytics, @translate, @errorHandlingService, @projectService, @attachmentsFullService,
+                  @events, @editingTracker, @activityService) ->
         @scope.$on("wiki:links:move", @.moveLink)
         @scope.$on("wikipage:add", @.loadWiki)
         @scope.projectSlug = @params.pslug
@@ -125,10 +129,24 @@ class WikiDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
 
             selectedWikiLink = _.find(wikiLinks, {href: @scope.wikiSlug})
 
+    # A página aberta mudou no servidor: repõe a página e o histórico, como após salvar;
+    # exclusão não reconsulta. A navegação lateral lista links (outro modelo), não páginas.
+    initializeSubscription: ->
+        @.subscribeDetailEvents [
+            {
+                routingKey: "changes.project.#{@scope.projectId}.wiki"
+                matches: (message) => message.type != "delete" and @.eventTargets(message, @scope.wikiId)
+                reload: =>
+                    @.loadWiki().then =>
+                        @activityService.fetchEntries(true) if @scope.wikiId
+            }
+        ]
+
     loadInitialData: ->
         project = @.loadProject()
 
         @.fillUsersAndRoles(project.members, project.roles)
+        @.initializeSubscription()
         @q.all([@.loadWikiLinks(), @.loadWiki()]).then @.checkLinksPerms.bind(this)
 
     checkLinksPerms: ->

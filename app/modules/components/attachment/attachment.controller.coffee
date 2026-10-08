@@ -15,7 +15,7 @@ class AttachmentController
     constructor: (@attachmentsService, @translate) ->
         @.form = {}
         @.form.description = @.attachment.getIn(['file', 'description'])
-        @.form.is_deprecated = @.attachment.get(['file', 'is_deprecated'])
+        @.form.is_deprecated = @.attachment.getIn(['file', 'is_deprecated'])
 
         @.title = @translate.instant("ATTACHMENT.TITLE", {
             fileName: @.attachment.get('name'),

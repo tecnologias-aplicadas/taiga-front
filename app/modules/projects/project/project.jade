@@ -18,39 +18,91 @@ div.wrapper
                     tg-project-logo-big-src="vm.project"
                     alt="{{::vm.project.get('name')}}"
                 )
-            .single-project-title-wrapper
-                .intro-options
-                    .intro-title
-                        h1.project-name  {{::vm.project.get("name")}}
-                        tg-svg(
-                            ng-if="::vm.project.get('is_private')"
-                            svg-icon="icon-private"
-                            svgTitleTranslate: "PROJECT.PRIVATE"
-                        )
+            div.wrapper-project-intro
+                .single-project-title-wrapper
+                    .intro-options
+                        .intro-title
+                            h1.project-name  {{::vm.project.get("name")}}
+                            span.label-active-project(ng-if="vm.isActiveProject") &nbsp;{{ 'PROJECT.STATUS.ACTIVE' | translate }}&nbsp;
 
-                    div.track-buttons-container(ng-if="vm.user")
-                        tg-like-project-button(project="vm.project")
-                        tg-watch-project-button(project="vm.project")
-                        tg-contact-project-button(
-                            ng-if="vm.project.get('is_contact_activated')"
-                            project="vm.project"
-                        )
+                            span.label-end-project(ng-if="!vm.isActiveProject") &nbsp;{{ 'PROJECT.STATUS.FINISHED' | translate }}&nbsp;
 
-                    div.track-container(ng-if="!vm.user")
-                        .list-itemtype-track
-                            span.list-itemtype-track-likers(
-                                title="{{ 'PROJECT.LIKE_BUTTON.COUNTER_TITLE'|translate:{total:vm.project.get(\"total_fans\")||0}:'messageformat' }}"
+                            tg-svg(
+                                ng-if="::vm.project.get('is_private')"
+                                svg-icon="icon-private"
+                                svgTitleTranslate: "PROJECT.PRIVATE"
                             )
-                                tg-svg(svg-icon="icon-like")
-                                span {{ ::vm.project.get('total_fans') }}
 
-                            span.list-itemtype-track-watchers(
-                                title="{{ 'PROJECT.WATCH_BUTTON.COUNTER_TITLE'|translate:{total:vm.project.get(\"total_watchers\")||0}:'messageformat' }}"
+                        div.track-buttons-container(ng-if="vm.user")
+                            tg-like-project-button(project="vm.project")
+                            tg-watch-project-button(project="vm.project")
+                            tg-contact-project-button(
+                                ng-if="vm.project.get('is_contact_activated')"
+                                project="vm.project"
                             )
-                                tg-svg(svg-icon="icon-watch")
-                                span {{ ::vm.project.get('total_watchers') }}
 
-                p.description {{vm.project.get('description')}}
+                        div.track-container(ng-if="!vm.user")
+                            .list-itemtype-track
+                                span.list-itemtype-track-likers(
+                                    title="{{ 'PROJECT.LIKE_BUTTON.COUNTER_TITLE'|translate:{total:vm.project.get(\"total_fans\")||0}:'messageformat' }}"
+                                )
+                                    tg-svg(svg-icon="icon-like")
+                                    span {{ ::vm.project.get('total_fans') }}
+
+                                span.list-itemtype-track-watchers(
+                                    title="{{ 'PROJECT.WATCH_BUTTON.COUNTER_TITLE'|translate:{total:vm.project.get(\"total_watchers\")||0}:'messageformat' }}"
+                                )
+                                    tg-svg(svg-icon="icon-watch")
+                                    span {{ ::vm.project.get('total_watchers') }}
+
+                .project-dates
+                    span.project-date(
+                        ng-class="{'--empty': !vm.dates.start}")
+                        tg-svg(svg-icon="icon-calendar")
+                        | &nbsp;{{ 'PROJECT.DATES.START' | translate }}:&nbsp;
+                        | {{ vm.dates.start }}
+
+                    span.project-date(
+                        ng-class="{'--empty': !vm.dates.expectedEnd}")
+                        tg-svg(svg-icon="icon-calendar")
+                        | &nbsp;{{ 'PROJECT.DATES.EXPECTED' | translate }}:&nbsp;
+                        | {{ vm.dates.expectedEnd }}
+
+                    span.project-date(
+                        ng-if="vm.dates.end"
+                        ng-class="{'--empty': !vm.dates.end}")
+                        tg-svg(svg-icon="icon-calendar")
+                        | &nbsp;{{ 'PROJECT.DATES.END' | translate }}:&nbsp;
+                        | {{ vm.dates.end }}
+
+                div.progress-wrapper
+                    span.progress-label
+                        tg-svg(svg-icon="icon-hourglass")
+                        | &nbsp;{{ 'PROJECT.DATES.ELAPSED' | translate }}: &nbsp;
+                        | {{ vm.elapsedDays }} / {{ vm.totalDays }} &nbsp; • &nbsp;
+                        span(ng-class="{'--overdue': vm.isOverdue}")
+                            tg-svg(svg-icon="icon-chart-down")
+                            span(ng-if="vm.isActiveProject")
+                                | &nbsp;{{ 'PROJECT.DATES.REMAINING' | translate }} {{ vm.remainDays }} d
+                            span(ng-if="!vm.isActiveProject && !vm.isOverdue")
+                                | &nbsp;{{ 'PROJECT.DATES.FINISHED_EARLY' | translate:{days: vm.remainDays} }}
+                            span(ng-if="!vm.isActiveProject && vm.isOverdue")
+                                | &nbsp;{{ 'PROJECT.DATES.FINISHED_LATE' | translate:{days: (vm.remainDays * -1)} }}
+                        span(ng-repeat="bar in vm.schedulableBars")
+                            | &nbsp; • &nbsp;
+                            | {{bar.label}}&nbsp;
+                            span.schedulable-pill(ng-style="{'background-color': bar.color}") {{bar.value}}
+                    .progress-container
+                        .progress-bar(
+                            role="progressbar"
+                            ng-style="{width: vm.progressPercent + '%'}"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                            aria-valuenow="{{vm.progressPercent}}"
+                        )
+                            span.progress-percentage {{ vm.progressPercent }} &nbsp;%&nbsp;
+
+        p.description {{vm.project.get('description')}}
 
         div.single-project-tags.tags-container(ng-if="::vm.project.get('tags').size")
             span.tag(tg-repeat="tag in ::vm.project.get('tags')")

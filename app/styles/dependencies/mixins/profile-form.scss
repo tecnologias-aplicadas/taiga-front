@@ -52,6 +52,17 @@
         }
     }
 
+    .logo-hint {
+        @include font-size(x-small);
+        background-color: #e8f4fd;
+        border-left: 3px solid #4a90d9;
+        border-radius: 4px;
+        color: #2c6fad;
+        margin-top: .75rem;
+        padding: .4rem .6rem;
+        text-align: justify;
+    }
+
     .project-details-form-data {
         flex: 1;
         max-width: 500px;

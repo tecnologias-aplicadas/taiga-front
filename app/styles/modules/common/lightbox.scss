@@ -280,6 +280,29 @@
             }
         }
     }
+    .sprint-goal-field {
+        clear: both;
+        margin-bottom: 1rem;
+        textarea {
+            min-height: 8rem;
+            resize: vertical;
+        }
+    }
+    .sprint-goal-readonly {
+        .sprint-goal-label {
+            @include sprint-goal-label;
+        }
+        .wysiwyg {
+            @include sprint-goal-readonly;
+            max-height: 10rem;
+            overflow-y: auto;
+        }
+        .sprint-goal-readonly-empty {
+            @include sprint-goal-readonly;
+            color: $color-black600;
+            margin: 0;
+        }
+    }
     .delete-sprint {
         @include font-size(small);
         color: $color-link-primary;
@@ -1066,48 +1089,11 @@
         }
     }
     .creation-position {
-        $radio-size: 18px;
+        @include custom-radio;
 
         label {
             @include font-size(small);
             color: $color-gray800;
-        }
-        input[type='radio'] {
-            height: 0;
-            opacity: 0;
-            width: 0;
-
-            &:checked ~ .radio-label {
-                color: $color-link-primary;
-            }
-            &:checked + .radio-control::before {
-                transform: scale(1);
-            }
-        }
-        .custom-radio {
-            align-self: center;
-            display: flex;
-        }
-        .radio-control {
-            border: 2px solid $color-gray400;
-            border-radius: 50%;
-            display: grid;
-            height: $radio-size;
-            margin-inline-end: .25rem;
-            place-items: center;
-            transform: translateY(-.06rem);
-            width: $radio-size;
-
-            &::before {
-                background-color: $color-link-primary;
-                border-radius: 50%;
-                content: '';
-                display: block;
-                height: ($radio-size / 2) - 1px;
-                transform: scale(0);
-                transition: 180ms transform ease-in-out;
-                width: ($radio-size / 2) - 1px;
-            }
         }
     }
     .creation-position-fields {

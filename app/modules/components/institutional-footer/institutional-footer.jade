@@ -1,0 +1,33 @@
+//- This source code is licensed under the terms of the
+//- GNU Affero General Public License found in the LICENSE file in
+//- the root directory of this source tree.
+//-
+//- Copyright (c) 2021-present Kaleidos INC
+
+footer.hl-footer(ng-class="{'hl-footer--compact': compact}")
+    .hl-footer__inner
+        .hl-footer__logo
+            .hl-footer__logo-item
+                img.hl-footer__img.hl-footer__img--taiga-color(
+                    src="#{v}/images/logo-taiga-color.png"
+                    alt="Taiga"
+                )
+                img.hl-footer__img.hl-footer__img--taiga-text(
+                    src="#{v}/images/taiga-text.png"
+                    alt="taiga-text"
+                )
+
+            .hl-footer__divider
+            .hl-footer__logo-item.hl-footer__logo-item--brand
+                img.hl-footer__img.hl-footer__img--logo-ta(
+                    src="#{v}/images/logo_taiga_parquetec.png"
+                    alt="taiga-ta"
+                )
+                span.hl-footer__logo-name Taiga TA
+            .hl-footer__divider
+            .hl-footer__logo-item
+                img.hl-footer__img.hl-footer__img--parquetec(
+                    src="#{v}/images/white-itaipuparquetec.png"
+                    alt="Itaipu Parquetec"
+                )
+        p.hl-footer__copy(ng-if="!compact") {{ 'HOME_LANDING.FOOTER_COPY' | translate }}

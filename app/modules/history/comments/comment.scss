@@ -7,7 +7,7 @@
     .read-mode {
         border: 1px solid $gray-light;
         .wysiwyg {
-            padding: .5rem;
+            padding: 0.5rem;
         }
         .medium-editor-placeholder,
         .markdown-editor-placeholder {
@@ -32,7 +32,7 @@
     }
     .save-comment {
         margin-top: 1rem;
-        padding: .5rem 4rem;
+        padding: 0.5rem 4rem;
     }
 }
 .comment {
@@ -72,7 +72,7 @@
     }
     .comment-creator {
         color: $color-link-primary;
-        margin-right: .5rem;
+        margin-right: 0.5rem;
     }
     .comment-date {
         @include font-size(small);
@@ -81,18 +81,18 @@
     .comment-edited {
         @include font-size(small);
         background: $whitish;
-        margin: 0 .5rem;
-        padding: .25rem;
+        margin: 0 0.5rem;
+        padding: 0.25rem;
         .separator {
-            margin: 0 .25rem;
+            margin: 0 0.25rem;
         }
         a {
             color: $primary;
             fill: $primary;
         }
         svg {
-            @include svg-size(.75rem);
-            margin: 0 0 0 .25rem;
+            @include svg-size(0.75rem);
+            margin: 0 0 0 0.25rem;
         }
     }
     .comment-options {
@@ -108,14 +108,14 @@
         }
         .icon-edit {
             fill: $gray-light;
-            margin-right: .5rem;
+            margin-right: 0.5rem;
             &:hover {
                 fill: $gray;
             }
         }
         .icon-close {
             fill: $gray-light;
-            margin-right: .5rem;
+            margin-right: 0.5rem;
             &:hover {
                 fill: $red;
             }
@@ -145,20 +145,20 @@
         transition: none;
         .icon-arrow-down,
         .icon-arrow-up {
-            @include svg-size(.8rem);
-            margin-left: .25rem;
+            @include svg-size(0.8rem);
+            margin-left: 0.25rem;
         }
     }
     .restore-comment {
         margin-left: auto;
-        transition: all .2s;
+        transition: all 0.2s;
         &:hover {
             color: $primary;
             fill: $primary;
         }
         .icon-reload {
-            @include svg-size(.8rem);
-            margin-right: .25rem;
+            @include svg-size(0.8rem);
+            margin-right: 0.25rem;
         }
     }
     .deleted-comment-comment {
@@ -173,4 +173,93 @@
         margin-bottom: 0;
         padding: 0;
     }
+}
+.comment-reactions {
+    margin-top: 5px;
+
+    .reaction-emoji {
+        display: inline-block;
+        font-size: 16px;
+        margin-right: 5px;
+        cursor: default;
+    }
+}
+.emoji-picker-button {
+    display: inline-flex;
+    filter: grayscale(100%) brightness(1.2);
+
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    padding: 2px 6px;
+    margin-left: 4px;
+
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #f3f3f3;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: #e0e0e0;
+        color: #111;
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px #666;
+    }
+}
+.emoji-hover-box {
+    background: #e6e6e6;
+    padding: 4px 6px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.emoji-hover-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #ccc;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+
+    &:hover {
+        transform: scale(1.2);
+        color: #fff;
+    }
+}
+.reaction-emoji.user-reacted {
+    border: 2px solid #a259ff;
+    border-radius: 6px;
+    padding: 2px 4px;
+    background-color: #f9f0ff;
+}
+
+.reaction-emoji {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f3f3f3;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 2px 6px;
+    font-size: 14px;
+    margin-right: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.reaction-emoji:hover {
+    background-color: #e0e0e0;
+}
+
+.reaction-emoji .emoji {
+    margin-right: 4px;
+}
+
+.reaction-emoji .count {
+    font-weight: bold;
+    color: #333333a1;
 }

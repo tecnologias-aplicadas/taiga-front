@@ -1,4 +1,15 @@
+// Todas as medidas desta tabela são do container, nunca da janela: a tabela vive
+// dentro de `.main`, ao lado do menu lateral, então `vw` faria as colunas pedirem
+// uma fatia da janela inteira e transbordarem.
+//
+// A soma dos mínimos abaixo é o piso da linha. Cabeçalho, linha de épica e linha
+// de história incluem este mixin, então os três recebem o mesmo piso e rolam
+// juntos dentro de `.epics-table`, que é quem contém o transbordamento.
+$epics-table-min-width: 1180px;
+
 @mixin epics-table {
+    min-width: $epics-table-min-width;
+
     .vote,
     .status-holder,
     .sprint,
@@ -11,51 +22,77 @@
         flex-grow: 0;
         flex-shrink: 0;
         flex-wrap: wrap;
+        min-width: 0;
         text-align: center;
     }
     .assigned,
     .project {
-        flex-basis: 75px;
+        flex-basis: 100px;
         flex-grow: 0;
-        flex-shrink: 0;
+        flex-shrink: 1;
         flex-wrap: wrap;
+        min-width: 80px;
         padding: .5rem;
         text-align: center;
     }
     .status-holder {
         flex-basis: 110px;
         flex-grow: 0;
-        flex-shrink: 0;
+        flex-shrink: 1;
         flex-wrap: wrap;
         max-width: 150px;
+        min-width: 90px;
         text-align: center;
     }
     .sprint {
         flex-basis: 150px;
         flex-grow: 0;
-        flex-shrink: 0;
+        flex-shrink: 1;
         flex-wrap: wrap;
         max-width: 150px;
+        min-width: 110px;
         overflow: hidden;
         text-align: center;
         text-overflow: ellipsis;
         white-space: nowrap;
         width: 90%;
     }
-    .name,
-    .progress {
-        flex-basis: 20vw;
+    // .name e .progress são as primeiras a ceder: crescem com a sobra e encolhem
+    // antes das demais, com um piso que mantém o texto legível.
+    .name {
+        flex-basis: 220px;
         flex-grow: 1;
-        flex-shrink: 1;
-        max-width: 40vw;
-
+        flex-shrink: 3;
+        min-width: 160px;
     }
     .progress {
+        flex-basis: 160px;
+        flex-grow: 1;
         flex-shrink: 3;
-        margin-right: 1rem;
+        min-width: 120px;
         position: relative;
-        @media (max-width: 1110px) {
-            max-width: 234px;
-        }
+    }
+    .schedulable{
+        flex-basis: 135px;
+        flex-shrink: 1;
+        min-width: 110px;
+        text-align: left;
+    }
+    // Campos nativos de data: medido no Chrome, o controle pede 125,3px para não
+    // cortar dd/mm/aaaa e o ícone do calendário. 130px é esse piso com folga.
+    .start-date,
+    .expected-completion-date {
+        flex-basis: 150px;
+        flex-grow: 0;
+        flex-shrink: 1;
+        min-width: 130px;
+        text-align: left;
+    }
+    .completion-date {
+        flex-basis: 135px;
+        flex-grow: 0;
+        flex-shrink: 1;
+        min-width: 130px;
+        text-align: center;
     }
 }

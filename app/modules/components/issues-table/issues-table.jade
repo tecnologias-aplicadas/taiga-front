@@ -118,6 +118,16 @@ section.issues-table.basic-table(ng-class="{empty: !ctrl.issues.length}")
                 path(
                     class="arrow-down"
                     d="M11.6232 9.42892C12.5713 9.42892 12.9872 10.6252 12.2435 11.2133L8.62027 14.0784C8.25672 14.3659 7.74328 14.3659 7.37973 14.0784L3.75652 11.2133C3.01283 10.6252 3.42868 9.42892 4.37679 9.42892H11.6232Z")
+        div.sprint-field(ng-if="!ctrl.sprintIssues" data-fieldname="milestone")
+            span {{"ISSUES.TABLE.COLUMNS.SPRINT" | translate}}
+            svg(viewBox="0 0 16 16")
+                path(
+                    class="arrow-up"
+                    d="M11.6232 6.57199C12.5713 6.57199 12.9872 5.37569 12.2435 4.7876L8.62027 1.92248C8.25672 1.635 7.74328 1.635 7.37973 1.92248L3.75652 4.7876C3.01283 5.37569 3.42868 6.57199 4.37679 6.57199L11.6232 6.57199Z")
+                path(
+                    class="arrow-down"
+                    d="M11.6232 9.42892C12.5713 9.42892 12.9872 10.6252 12.2435 11.2133L8.62027 14.0784C8.25672 14.3659 7.74328 14.3659 7.37973 14.0784L3.75652 11.2133C3.01283 10.6252 3.42868 9.42892 4.37679 9.42892H11.6232Z")
+
         div.modified-field(data-fieldname="modified_date")
             span {{"ISSUES.TABLE.COLUMNS.MODIFIED" | translate}}
             svg(viewBox="0 0 16 16")
@@ -187,6 +197,34 @@ section.issues-table.basic-table(ng-class="{empty: !ctrl.issues.length}")
         div.attachments-field(ng-if="ctrl.sprintIssues" title="{{ 'ISSUES.TABLE.COLUMNS.ATTACHMENTS' | translate }}")
             span {{ issue.attachments.length }}
             tg-svg(svg-icon="icon-paperclip")
+
+        div.sprint-field(
+            ng-if="!ctrl.sprintIssues"
+            tg-issue-sprint-inline-edition="issue"
+        )
+            a.issue-sprint(
+                href=""
+                title="{{'ISSUES.TABLE.TITLE_ACTION_CHANGE_SPRINT' | translate}}"
+            )
+                span.issue-sprint-bind {{ issue.milestone_name || ('ISSUES.NO_SPRINT' | translate) }}
+                tg-svg(
+                    tg-check-permission="modify_issue"
+                    svg-icon="icon-arrow-down"
+                )
+            .pop-sprint.popover.pop
+                ul
+                    li
+                        a.sprint-option(
+                            href=""
+                            data-milestone-id=""
+                            data-milestone-name=""
+                        ) — {{'ISSUES.NO_SPRINT' | translate}}
+                    li(ng-repeat="sprint in availableSprints")
+                        a.sprint-option(
+                            href=""
+                            data-milestone-id="{{sprint.id}}"
+                            data-milestone-name="{{sprint.name}}"
+                        ) {{sprint.name}}
 
         div.modified-field(
             title="{{ issue.modified_date|momentFormat:'DD MMM YYYY HH:mm' }}"

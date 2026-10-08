@@ -85,6 +85,12 @@ div.wrapper(
                 required-edition-perm="modify_issue"
             )
 
+            tg-dependencies-list(
+                item="item"
+                project="project"
+                shared="shared"
+            )
+
             tg-attachments-full(
                 obj-id="issue.id"
                 type="issue",
@@ -140,6 +146,13 @@ div.wrapper(
             required-perm="modify_issue"
         )
 
+        section.ticket-section.ticket-dependencies
+            tg-ticket-dependencies(
+                item="item"
+                project="project"
+                shared="shared"
+            )
+            
         section.ticket-section.ticket-detail-settings
             tg-due-date(
                 due-date="issue.due_date"
@@ -161,6 +174,7 @@ div.wrapper(
             tg-block-button(
                 tg-check-permission="modify_issue",
                 ng-model="issue"
+                style="pointer-events: none; opacity: 0.4;"
             )
             tg-delete-button(
                 tg-check-permission="delete_issue",

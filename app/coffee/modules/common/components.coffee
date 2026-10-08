@@ -246,7 +246,7 @@ module.directive("tgBlockButton", ["$rootScope", "$tgLoading", "$tgTemplate", Bl
 ## Delete Button directive
 #############################################################################
 
-DeleteButtonDirective = ($log, $repo, $confirm, $location, $template) ->
+DeleteButtonDirective = ($log, $repo, $confirm, $location, $template, $translate) ->
     template = $template.get("common/components/delete-button.html")
 
     link = ($scope, $el, $attrs, $model) ->
@@ -265,9 +265,12 @@ DeleteButtonDirective = ($log, $repo, $confirm, $location, $template) ->
                     askResponse.finish()
                     url = $scope.$eval($attrs.onDeleteGoToUrl)
                     $location.path(url)
-                promise.then null, =>
+                promise.then null, (data) =>
                     askResponse.finish(false)
-                    $confirm.notify("error")
+                    if data?.code
+                        $confirm.notify("error", $translate.instant("ERRORS.#{data.code.toUpperCase()}"))
+                    else
+                        $confirm.notify("error")
 
         $scope.$on "$destroy", ->
             $el.off()
@@ -279,7 +282,7 @@ DeleteButtonDirective = ($log, $repo, $confirm, $location, $template) ->
         template: template
     }
 
-module.directive("tgDeleteButton", ["$log", "$tgRepo", "$tgConfirm", "$tgLocation", "$tgTemplate", DeleteButtonDirective])
+module.directive("tgDeleteButton", ["$log", "$tgRepo", "$tgConfirm", "$tgLocation", "$tgTemplate", "$translate", DeleteButtonDirective])
 
 #############################################################################
 ## Common list directives

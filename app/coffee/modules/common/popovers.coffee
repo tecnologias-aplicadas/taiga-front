@@ -16,7 +16,7 @@ module = angular.module("taigaCommon")
 ## UserStory status Directive (popover for change status)
 #############################################################################
 
-UsStatusDirective = ($repo, $template) ->
+UsStatusDirective = ($repo, $template, $confirm, $translate) ->
     ###
     Print the status of a US and a popover to change it.
     - tg-us-status: The user story
@@ -57,6 +57,7 @@ UsStatusDirective = ($repo, $template) ->
             target = angular.element(statusElement)
 
             us = $scope.$eval($attrs.tgUsStatus)
+            originalStatus = us.status
             us.status = target.data("status-id")
             render(us)
 
@@ -65,6 +66,15 @@ UsStatusDirective = ($repo, $template) ->
             $scope.$apply () ->
                 $repo.save(us).then ->
                     $scope.$eval($attrs.onUpdate)
+                .catch (response) ->
+                    us.status = originalStatus
+                    render(us)
+                    rawCode = response?.status?[0] or response?.code or null
+                    rawCode = rawCode[0] if Array.isArray(rawCode)
+                    if rawCode
+                        $confirm.notify("error", $translate.instant("ERRORS.#{rawCode.toUpperCase()}"))
+                    else
+                        $confirm.notify("error")
 
 
         $scope.$on("userstories:loaded", -> render($scope.$eval($attrs.tgUsStatus)))
@@ -89,13 +99,13 @@ UsStatusDirective = ($repo, $template) ->
 
     return {link: link}
 
-module.directive("tgUsStatus", ["$tgRepo", "$tgTemplate", UsStatusDirective])
+module.directive("tgUsStatus", ["$tgRepo", "$tgTemplate", "$tgConfirm", "$translate", UsStatusDirective])
 
 #############################################################################
 ## Related Task Status Directive
 #############################################################################
 
-RelatedTaskStatusDirective = ($repo, $template) ->
+RelatedTaskStatusDirective = ($repo, $template, $confirm, $translate) ->
     ###
     Print the status of a related task and a popover to change it.
     - tg-related-task-status: The related task
@@ -137,6 +147,7 @@ RelatedTaskStatusDirective = ($repo, $template) ->
             event.preventDefault()
             event.stopPropagation()
             target = angular.element(event.currentTarget)
+            originalStatus = task.status
             task.status = target.data("status-id")
             $el.find(".pop-status").popover().close()
             updateTaskStatus($el, task, $scope.taskStatusById)
@@ -146,6 +157,15 @@ RelatedTaskStatusDirective = ($repo, $template) ->
                     $repo.save(task).then ->
                         $scope.$eval($attrs.onUpdate)
                         $scope.$emit("related-tasks:status-changed")
+                    .catch (response) ->
+                        task.status = originalStatus
+                        updateTaskStatus($el, task, $scope.taskStatusById)
+                        rawCode = response?.status?[0] or response?.code or null
+                        rawCode = rawCode[0] if Array.isArray(rawCode)
+                        if rawCode
+                            $confirm.notify("error", $translate.instant("ERRORS.#{rawCode.toUpperCase()}"))
+                        else
+                            $confirm.notify("error")
 
         $scope.$watch $attrs.tgRelatedTaskStatus, () ->
             task = $scope.$eval($attrs.tgRelatedTaskStatus)
@@ -165,7 +185,7 @@ RelatedTaskStatusDirective = ($repo, $template) ->
 
     return {link: link}
 
-module.directive("tgRelatedTaskStatus", ["$tgRepo", "$tgTemplate", RelatedTaskStatusDirective])
+module.directive("tgRelatedTaskStatus", ["$tgRepo", "$tgTemplate", "$tgConfirm", "$translate", RelatedTaskStatusDirective])
 
 #############################################################################
 ## jQuery plugin for Popover

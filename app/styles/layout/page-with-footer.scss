@@ -1,0 +1,22 @@
+// Página com o rodapé institucional compacto na base (login, guia de story
+// points e gestão do carrossel): coluna flex, conteúdo crescendo e o rodapé
+// de largura total fluindo depois dele. Com pouco conteúdo o rodapé fica na
+// base da janela; com muito, desce junto com a rolagem, sem sobrepor nada.
+.page-with-footer {
+    display: flex;
+    flex-direction: column;
+
+    .page-with-footer-content {
+        flex: 1 0 auto;
+    }
+
+    > tg-institutional-footer {
+        display: block;
+        flex-shrink: 0;
+        width: 100%;
+    }
+
+    .hl-footer--compact {
+        margin-top: 0;
+    }
+}

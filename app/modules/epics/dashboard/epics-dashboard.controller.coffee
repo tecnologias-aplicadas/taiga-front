@@ -9,6 +9,8 @@
 taiga = @.taiga
 
 
+REFRESH_DEBOUNCE_MS = 700
+
 class EpicsDashboardController
     @.$inject = [
         "$routeParams",
@@ -19,13 +21,18 @@ class EpicsDashboardController
         "tgProjectService",
         "tgEpicsService",
         "tgAppMetaService",
-        "$translate"
+        "$translate",
+        "$scope",
+        "$tgEvents",
+        "$timeout"
     ]
 
     constructor: (@params, @errorHandlingService, @lightboxFactory, @lightboxService,
-                  @confirm, @projectService, @epicsService, @appMetaService, @translate) ->
+                  @confirm, @projectService, @epicsService, @appMetaService, @translate,
+                  @scope, @events, @timeout) ->
 
         @.sectionName = "EPICS.SECTION_NAME"
+        @.refreshTimeout = null
 
         taiga.defineImmutableProperty @, 'project', () => return @projectService.project
         taiga.defineImmutableProperty @, 'epics', () => return @epicsService.epics
@@ -54,7 +61,34 @@ class EpicsDashboardController
                 if not @projectService.hasPermission("view_epics")
                     return @errorHandlingService.permissionDenied()
 
+                @.initializeSubscription()
                 return @epicsService.fetchEpics()
+
+    # Eventos de épica (inclusive ligação de história) e de história recarregam a lista;
+    # rajadas (operações em lote) viram uma só consulta após o intervalo
+    initializeSubscription: () ->
+        projectId = @projectService.project.get("id")
+
+        @events.subscribe @scope, "changes.project.#{projectId}.epics", (message) =>
+            @.scheduleRefresh()
+
+        @events.subscribe @scope, "changes.project.#{projectId}.userstories", (message) =>
+            @.scheduleRefresh()
+
+        @scope.$on "$destroy", => @.cancelScheduledRefresh()
+
+    scheduleRefresh: () ->
+        @.cancelScheduledRefresh()
+        @.refreshTimeout = @timeout (=>
+            @.refreshTimeout = null
+            @epicsService.refetchEpics().then =>
+                @scope.$broadcast("epics:refreshed")
+        ), REFRESH_DEBOUNCE_MS
+
+    cancelScheduledRefresh: () ->
+        return if not @.refreshTimeout
+        @timeout.cancel(@.refreshTimeout)
+        @.refreshTimeout = null
 
     canCreateEpics: () ->
         return @projectService.hasPermission("add_epic")

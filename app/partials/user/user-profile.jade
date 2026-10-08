@@ -47,39 +47,32 @@ div.wrapper(
                 ) {{ 'USER_PROFILE.ACTION_USE_GRAVATAR' | translate }}
 
             .project-details-form-data
+                .user-fields-locked-info
+                    span.user-fields-locked-icon !
+                    span(translate="USER_PROFILE.LOCKED_FIELDS_INFO" translate-values="{adminTeam: adminTeam}")
+
                 fieldset
                     label(for="username", translate="USER_PROFILE.FIELD.USERNAME")
-                    input(
+                    input.locked-field(
                         type="text"
                         autocorrect="off"
                         autocapitalize="none"
                         name="username"
                         id="username"
                         ng-model="user.username"
-                        data-required="true"
-                        data-maxlength="255"
-                        data-regexp="^[\\w.-]+$"
-                        placeholder="{{'USER_PROFILE.FIELD.USERNAME' | translate}}",
+                        placeholder="{{'USER_PROFILE.FIELD.USERNAME' | translate}}"
+                        disabled
                     )
 
                 fieldset
                     label(for="email", translate="USER_PROFILE.FIELD.EMAIL")
-                    div(ng-if="user.verified_email === false")
-                        a.verify-email(
-                            href=""
-                            title="{{'USER_PROFILE.ACTION_VERIFY_EMAIL' | translate}}"
-                            ng-click="ctrl.verifyEmail()"
-                            translate="USER_PROFILE.ACTION_VERIFY_EMAIL"
-                        )
-                    input(
+                    input.locked-field(
                         type="email"
                         name="email"
                         id="email"
                         ng-model="user.email"
-                        data-type="email"
-                        data-required="true"
-                        data-maxlength="255"
                         placeholder="{{'USER_PROFILE.FIELD.EMAIL' | translate}}"
+                        disabled
                     )
 
                 fieldset

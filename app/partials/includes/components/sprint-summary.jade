@@ -8,7 +8,7 @@
 div.summary.large-summary
     div.large-summary-wrapper
         .summary-progress-wrapper
-            div.summary-progress-bar(tg-progress-bar="stats.completedPercentage")
+            div.summary-progress-bar(tg-progress-bar="stats.completedPercentage", title="{{'Esta porcentagem representa o progresso da sprint baseado nos pontos completados em relação ao total de pontos planejados para a sprint.\nCálculo: (Pontos Completados / Total de Pontos) * 100'}}")
             div.data
                  span.number(ng-bind="stats.completedPercentage + '%'")
 
@@ -29,17 +29,6 @@ div.summary.large-summary
                     span.number(ng-bind="stats.completed_tasks|default:'--'")
                     span.description(translate="BACKLOG.SPRINT_SUMMARY.CLOSED_TASKS")
 
-                div.summary-stats.summary-move-unfinished
-                    tg-move-to-sprint(
-                        sprint="sprint"
-                        uss="userstories"
-                        unnasigned-tasks="usTasks.get('null')"
-                        task-map="taskMap"
-                        issues="milestoneIssues"
-                        disabled="movingTask"
-                    )
-                    span.taskBoardLoading
-
                 div.summary-stats.summary-iocaine(title="{{'COMMON.IOCAINE_TEXT' | translate}}")
                     tg-svg(svg-icon="icon-iocaine")
                     span.number(ng-bind="stats.iocaine_doses|default:'--'")
@@ -57,5 +46,17 @@ div.summary.large-summary
                         span.number {{rolePoint.points}}
                         span.role {{rolePoint.name}}
 
-    div.stats.toggle-analytics-visibility(title="{{'BACKLOG.SPRINT_SUMMARY.SHOW_STATISTICS_TITLE' | translate}}")
-        tg-svg(svg-icon="icon-graph")
+    div.stats
+        div.summary-move-unfinished
+            tg-move-to-sprint(
+                sprint="sprint"
+                uss="userstories"
+                unnasigned-tasks="usTasks.get('null')"
+                task-map="taskMap"
+                issues="milestoneIssues"
+                disabled="movingTask"
+            )
+            span.description(translate="BACKLOG.SPRINT_SUMMARY.CLOSE_SPRINT")
+            span.taskBoardLoading
+        div.toggle-analytics-visibility(title="{{'BACKLOG.SPRINT_SUMMARY.SHOW_STATISTICS_TITLE' | translate}}")
+            tg-svg(svg-icon="icon-graph")

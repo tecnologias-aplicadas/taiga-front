@@ -142,3 +142,35 @@ describe "AttachmentController", ->
 
         expect(ctrl.onUpdate).to.be.calledWith(onUpdateLoading)
         expect(ctrl.onUpdate).to.be.calledWith(onUpdate)
+
+    it "save keeps deprecated flag when the form is not changed", () ->
+        attachment = Immutable.fromJS({
+            file: {
+                description: 'desc',
+                is_deprecated: true
+            },
+            loading: false,
+            editable: false
+        })
+
+        ctrl = $controller("Attachment", {
+            $scope: scope
+        }, {
+            attachment : attachment
+        })
+
+        ctrl.onUpdate = sinon.spy()
+
+        onUpdate = sinon.match (value) ->
+            value = value.attachment.toJS()
+
+            return (
+                !value.loading &&
+                value.file.is_deprecated == true
+            )
+        , "onUpdate"
+
+        ctrl.save()
+
+        expect(ctrl.form.is_deprecated).to.be.true
+        expect(ctrl.onUpdate).to.be.calledWith(onUpdate)

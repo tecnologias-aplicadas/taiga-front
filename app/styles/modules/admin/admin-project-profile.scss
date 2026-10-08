@@ -1,53 +1,66 @@
 @import '../dependencies/mixins/profile-form';
+
 .project-details {
     @include profile-form;
+
     .looking-for-people,
     .get-feedback {
         @include font-type(regular);
         border-bottom: 1px solid $whitish;
         padding: 1rem 0;
     }
+
     .looking-for-people {
         border-top: 1px solid $whitish;
         margin-bottom: 0;
     }
+
     .looking-for-people-selector,
     .get-feedback-inner {
         align-items: center;
         display: flex;
+
         svg {
             @include svg-size();
             fill: $gray-light;
             margin-left: .5rem;
         }
+
         .check {
             margin-left: auto;
         }
     }
+
     .looking-for-people-reason {
         display: block;
         margin-top: 1rem;
+
         &.ng-hide-remove-active {
             animation: dropdownFade .3s;
         }
+
         &.ng-hide-add-active {
             animation: dropdownFade .2s reverse;
             animation-delay: .1s;
         }
     }
+
     .delete-project {
         @include font-size(x-small);
         display: block;
         margin-top: 1rem;
         text-align: right;
+
         &:hover {
             color: $red;
         }
     }
+
     .private-or-public {
         @include font-size(x-small);
         color: $gray-light;
         display: flex;
+
         svg {
             @include svg-size(1.1rem);
             fill: $gray-light;
@@ -55,6 +68,7 @@
             vertical-align: middle;
         }
     }
+
     .tags-container {
         align-items: flex-end;
         column-gap: .5rem;
@@ -63,6 +77,7 @@
         margin-right: .25rem;
         row-gap: .5rem;
         width: 100%;
+
         .tag {
             @include font-size(small);
             align-items: center;
@@ -70,38 +85,68 @@
             min-height: 2rem;
         }
     }
+
     .button-full {
         width: 100%;
     }
+
+    .dates {
+        display: flex;
+        flex-direction: column;
+
+        div {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1rem;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            span {
+                margin-bottom: .4rem;
+            }
+        }
+
+    }
 }
+
 .project-privacy-settings {
     display: flex;
     margin-bottom: .5rem;
+
     .privacy-option {
         flex: 1;
         transition: .2 linear;
+
         &:first-child {
             margin-right: .5rem;
         }
     }
+
     input[type='radio'] {
         display: none;
     }
+
     input[type='text'] {
         display: none;
     }
+
     label {
         background: $mass-white;
         color: $grayer;
         text-align: center;
         transition: all .2s linear;
+
         &:hover {
             background: rgba($color-link-primary, .4);
             color: $grayer;
+
             svg {
                 fill: $grayer;
             }
         }
+
         svg {
             @include svg-size(1.1rem);
             fill: $grayer;
@@ -109,33 +154,39 @@
             vertical-align: middle;
         }
     }
-    .privacy-project + label {
+
+    .privacy-project+label {
         @include font-type(regular);
         display: inline-flex;
         width: 100%;
     }
+
     .privacy-project:checked {
-        + label {
+        +label {
             @include font-type(regular);
             background: $color-link-primary;
             color: $color-white;
+
             svg {
                 @include svg-size(1.1rem);
                 fill: $color-white;
             }
         }
+
         ~input[type='text'] {
             display: block;
         }
     }
+
     .privacy-project[disabled] {
-        + label {
+        +label {
             @include font-type(regular);
             background: $mass-white;
             box-shadow: none;
             color: $gray-light;
             cursor: not-allowed;
             opacity: .65;
+
             &:hover {
                 background: $mass-white;
                 color: $gray-light;
@@ -143,6 +194,7 @@
         }
     }
 }
+
 tg-admin-project-restrictions {
     .setting-project-warning {
         @include font-size(small);
@@ -152,6 +204,7 @@ tg-admin-project-restrictions {
         margin-bottom: 1rem;
         padding: 1rem;
     }
+
     .icon-alert {
         fill: $color-link-red;
         flex-grow: 1;
@@ -162,43 +215,54 @@ tg-admin-project-restrictions {
         vertical-align: middle;
         width: 1rem;
     }
+
     p {
         margin-bottom: 0;
+
         a {
             color: $color-link-primary;
             display: inline-block;
         }
     }
 }
+
 .admin-project-profile-owner-actions {
     align-items: center;
     border-top: 1px solid $whitish;
     display: flex;
     justify-content: space-between;
     padding-top: 1rem;
+
     a {
         color: $color-link-primary;
+
         &:hover {
             color: $color-link-primary;
             transition: color .2s;
         }
     }
+
     img {
         width: 100%;
     }
+
     .owner-info {
         flex: 1;
         padding-left: .5rem;
     }
+
     .owner-info-title {
         color: $gray-light;
     }
+
     .owner-name {
         @include font-type(medium);
     }
+
     .owner-avatar {
         width: 2.5rem;
     }
+
     .request {
         flex-shrink: 0;
         text-align: right;
@@ -210,6 +274,7 @@ tg-admin-project-restrictions {
             margin-bottom: 0;
         }
     }
+
     &.limit .request a {
         cursor: default;
         opacity: .5;

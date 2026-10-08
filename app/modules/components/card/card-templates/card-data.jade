@@ -26,10 +26,15 @@
             <% } %>
         <% } %>
 
+
+
+
         <% if (vm.item.getIn(['model', 'due_date'])) { %>
         .card-due-date(title!="<%- dueDateTitle() %>")
             <%= svg({svgIcon: "icon-clock", svgTitle: translate('COMMON.CARD.DUE_DATE', { date: dueDateTitle() }), svgFill: dueDateColor() }) %>
         <% } %>
+
+
 
         <% if (vm.item.getIn(['model', 'is_iocaine'])) { %>
         .card-iocaine(
@@ -44,6 +49,8 @@
         <% } %>
 
     .card-statistics
+
+
         <% if (totalAttachments()) { %>
         .statistic.card-attachments(
             title!="<%= translate('ATTACHMENT.SECTION_NAME') %>"
@@ -71,4 +78,5 @@
             class!="<%= vm.getClosedTasks().size == vm.item.getIn(['model', 'tasks']).size ? 'completed' : '' %>"
         ) <%= vm.getClosedTasks().size %> / <%= vm.item.getIn(['model', 'tasks']).size %>
         <% } %>
+
 <% } %>

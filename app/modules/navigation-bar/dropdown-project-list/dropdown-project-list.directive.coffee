@@ -11,6 +11,7 @@ DropdownProjectListDirective = (rootScope, currentUserService, projectsService, 
         scope.vm = {}
 
         taiga.defineImmutableProperty(scope.vm, "projects", () -> currentUserService.projects.get("recents"))
+        taiga.defineImmutableProperty(scope.vm, "isAdmin", () -> currentUserService.getUser()?.get("is_superuser") == true)
 
         taiga.defineImmutableProperty(scope.vm, "currentProject",
             () ->

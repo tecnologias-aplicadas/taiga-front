@@ -19,7 +19,7 @@ module = angular.module("taigaUserStories")
 ## User story Detail Controller
 #############################################################################
 
-class UserStoryDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
+class UserStoryDetailController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.DetailEventsMixin)
     @.$inject = [
         "$scope",
         "$rootScope",
@@ -41,13 +41,15 @@ class UserStoryDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
         "tgWysiwygService",
         "tgAttachmentsFullService",
         "$tgModel",
-        "$sce"
+        "$sce",
+        "$tgEvents",
+        "tgEditingTracker"
     ]
 
     constructor: (@scope, @rootscope, @repo, @confirm, @rs, @params, @q, @location,
                   @log, @appMetaService, @navUrls, @analytics, @translate, @modelTransform,
                   @errorHandlingService, @configService, @projectService, @wysiwigService,
-                  @attachmentsFullService, @tgmodel, @sce) ->
+                  @attachmentsFullService, @tgmodel, @sce, @events, @editingTracker) ->
         bindMethods(@)
 
         @scope.usRef = @params.usref
@@ -69,7 +71,12 @@ class UserStoryDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
         # On Error
         promise.then null, @.onInitialDataError.bind(@)
 
+    _updateProgress: ->
+        @completionPercentDone     = (@scope.us?.completion_percent_done     or 0) + "%"
+        @completionPercentProgress = (@scope.us?.completion_percent_progress or 0) + "%"
+
     _setMeta: ->
+        @._updateProgress()
         totalTasks = @scope.tasks.length
         closedTasks = _.filter(@scope.tasks, (t) => @scope.taskStatusById[t.status].is_closed).length
         progressPercentage = if totalTasks > 0 then Math.round(100 * closedTasks / totalTasks) else 0
@@ -100,13 +107,14 @@ class UserStoryDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
         @scope.relateToEpic = (us) =>
             @scope.$broadcast("relate-to-epic:add", us)
 
-        @scope.$on "related-tasks:update", =>
-            @.loadTasks()
-            @scope.tasks = _.clone(@scope.tasks, false)
-            allClosed = _.every @scope.tasks, (task) -> return task.is_closed
+        # Ouvinte no scope da tela (o raiz faz $broadcast): morre com a tela
+        @scope.$on "object:updated", =>
+            @.loadUs().then => @._updateProgress()
 
-            if @scope.us.is_closed != allClosed
-                @.loadUs()
+        @scope.$on "related-tasks:update", =>
+            @scope.tasks = _.clone(@scope.tasks, false)
+            @.loadTasks()
+            @.loadUs().then => @._updateProgress()
 
         @scope.$on "attachment:create", =>
             @analytics.trackEvent("attachment", "create", "create attachment on userstory", 1)
@@ -116,6 +124,24 @@ class UserStoryDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
 
         @scope.$on "comment:new", =>
             @.loadUs()
+
+    initializeSubscription: ->
+        @.subscribeDetailEvents [
+            {
+                # A própria história: recarrega card e atividade; exclusão não reconsulta
+                routingKey: "changes.project.#{@scope.projectId}.userstories"
+                matches: (message) => message.type != "delete" and @.eventTargets(message, @scope.usId)
+                reload: =>
+                    @rootscope.$broadcast("object:updated")
+                    @scope.$broadcast("custom-attributes-values:reload")
+            },
+            {
+                # Tarefas da história: só a lista; o percentual chega pelo evento da própria história
+                routingKey: "changes.project.#{@scope.projectId}.tasks"
+                matches: (message) => message.type == "create" or @.eventTargets(message, _.map(@scope.tasks, "id"))
+                reload: => @.loadTasks()
+            }
+        ]
 
     initializeOnDeleteGoToUrl: ->
         ctx = {project: @scope.project.slug}
@@ -219,6 +245,7 @@ class UserStoryDetailController extends mixOf(taiga.Controller, taiga.PageMixin)
     loadInitialData: ->
         project = @.loadProject()
         @.fillUsersAndRoles(project.members, project.roles)
+        @.initializeSubscription()
         @.loadUs().then(=> @q.all([@.loadSprint(), @.loadTasks()]))
 
     ###
@@ -369,7 +396,7 @@ module.directive("tgUsStatusDisplay", ["$tgTemplate", "$compile", UsStatusDispla
 ## User story status button directive
 #############################################################################
 
-UsStatusButtonDirective = ($rootScope, $repo, $confirm, $loading, $modelTransform, $template, $compile) ->
+UsStatusButtonDirective = ($rootScope, $repo, $confirm, $loading, $modelTransform, $template, $compile, $translate) ->
     # Display the status of a US and you can edit it.
     #
     # Example:
@@ -415,8 +442,13 @@ UsStatusButtonDirective = ($rootScope, $repo, $confirm, $loading, $modelTransfor
                 $rootScope.$broadcast("object:updated")
                 currentLoading.finish()
 
-            onError = ->
-                $confirm.notify("error")
+            onError = (response) ->
+                rawCode = response?.status?[0] or response?.code or null
+                rawCode = rawCode[0] if Array.isArray(rawCode)
+                if rawCode
+                    $confirm.notify("error", $translate.instant("ERRORS.#{rawCode.toUpperCase()}"))
+                else
+                    $confirm.notify("error")
                 currentLoading.finish()
 
             transform.then(onSuccess, onError)
@@ -454,7 +486,7 @@ UsStatusButtonDirective = ($rootScope, $repo, $confirm, $loading, $modelTransfor
         require: "ngModel"
     }
 
-module.directive("tgUsStatusButton", ["$rootScope", "$tgRepo", "$tgConfirm", "$tgLoading","$tgQueueModelTransformation", "$tgTemplate", "$compile",
+module.directive("tgUsStatusButton", ["$rootScope", "$tgRepo", "$tgConfirm", "$tgLoading","$tgQueueModelTransformation", "$tgTemplate", "$compile", "$translate",
                                       UsStatusButtonDirective])
 
 

@@ -1,5 +1,9 @@
 <svg height="0" style="position: absolute; width: 0; height: 0;" version="1.1" width="0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
     <defs>
+        <symbol id="icon-info" fill="white" viewBox="0 0 16 16">
+            <title>info</title>
+            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2"/>
+        </symbol>
         <symbol id="icon-private" viewBox="0 0 96 47">
             <title>private</title>
             <path d="M19 0A19 23 0 0 0 0 23a19 23 0 0 0 19 23 19 23 0 0 0 19-21h23v15h9V25h11v15h9V25h5v-9H37A19 23 0 0 0 19 0zm0 10a9 13 0 0 1 10 13 9 13 0 0 1-10 13 9 13 0 0 1-9-13 9 13 0 0 1 9-13z"/>
@@ -605,5 +609,90 @@
                 </clipPath>
             </defs>
         </symbol>
+        <symbol id="icon-calendar" viewBox="0 0 16 16">
+            <path d="M2 3H3V14H2V3ZM13 3H14V14H13V3ZM2 3H14V4H2V3ZM2 13H14V14H2V13ZM5 1H6V4H5V1ZM10 1H11V4H10V1ZM2 6H14V7H2V6Z"/>
+        </symbol>
+
+        <symbol id="icon-hourglass" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M3 0H13C13.5523 0 14 0.447715 14 1V3C11.5 4 9.5 5.5 10 8C9.5 10.5 11.5 12 14 13V15C14 15.5523 13.5523 16 13 16H3C2.44772 16 2 15.5523 2 15V13C4.5 12 6.5 10.5 6 8C6.5 5.5 4.5 4 2 3V1C2 0.447715 2.44772 0 3 0ZM4 3C6 4.5 7.5 6 7.5 8C7.5 10 6 11.5 4 13H12C10 11.5 8.5 10 8.5 8C8.5 6 10 4.5 12 3H4Z"/>
+        </symbol>
+
+        <symbol id="icon-trend-down" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M1 3C1 2.44772 1.44772 2 2 2H14C14.5523 2 15 2.44772 15 3C15 3.55228 14.5523 4 14 4H2C1.44772 4 1 3.55228 1 3ZM1 8C1 7.44772 1.44772 7 2 7H10C10.5523 7 11 7.44772 11 8C11 8.55228 10.5523 9 10 9H2C1.44772 9 1 8.55228 1 8ZM1 13C1 12.4477 1.44772 12 2 12H6C6.55228 12 7 12.4477 7 13C7 13.5523 6.55228 14 6 14H2C1.44772 14 1 13.5523 1 13Z"/>
+        </symbol>
+
+        <symbol id="icon-chart-down" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M2 3H5V13H2V3ZM6.5 6H9.5V13H6.5V6ZM11 9H14V13H11V9Z"/>
+        </symbol>
+
+        <symbol id="icon-carousel" viewBox="0 0 24 24">
+            <path d="M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM2 8v8M22 8v8" />
+        </symbol>
+        <symbol id="icon-fibonacci-spiral" viewBox="0 0 24 24">
+            <path d="M1.5 18.5A12.9 12.9 0 0 1 14.4 5.5A8.1 8.1 0 0 1 22.5 13.6A4.8 4.8 0 0 1 17.7 18.5A3.2 3.2 0 0 1 14.4 15.2A1.6 1.6 0 0 1 16.0 13.6" />
+        </symbol>
     </defs>
+        <symbol id="icon-sprint-closed" viewBox="0 0 48 48">
+
+  <title>Sprint fechado</title>
+  <desc>Boneco com braços levantados arrebentando a faixa de chegada com confetes nas laterais</desc>
+
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+    <!-- cabeça -->
+    <circle cx="24" cy="7.5" r="3"/>
+
+    <!-- tronco -->
+    <line x1="24" y1="11" x2="22" y2="22"/>
+
+    <!-- braços pra cima -->
+    <line x1="23" y1="14" x2="15" y2="7"/>
+    <line x1="23" y1="14" x2="32" y2="8"/>
+
+    <!-- pernas -->
+    <line x1="22" y1="22" x2="17" y2="32"/>
+    <line x1="22" y1="22" x2="28" y2="28"/>
+    <line x1="28" y1="28" x2="24" y2="35"/>
+
+    <!-- faixa esquerda -->
+    <path d="M4 20 L14 19.5 L16 21" stroke-width="2.2"/>
+    <path d="M4 22 L14 21.5 L16 23" stroke-width="2.2"/>
+    <path d="M4 20 Q2 21 4 22" stroke-width="1.4"/>
+
+    <!-- faixa direita -->
+    <path d="M44 20 L34 19.5 L32 21" stroke-width="2.2"/>
+    <path d="M44 22 L34 21.5 L32 23" stroke-width="2.2"/>
+    <path d="M44 20 Q46 21 44 22" stroke-width="1.4"/>
+
+    <!-- ponta rasgada -->
+    <path d="M16 21 Q18 23 16 23" stroke-width="1.4"/>
+    <path d="M32 21 Q30 23 32 23" stroke-width="1.4"/>
+  </g>
+
+  <!-- confetes bolinhas — só laterais -->
+  <g fill="currentColor" stroke="none">
+    <circle cx="5"  cy="10" r="1"/>
+    <circle cx="9"  cy="16" r="0.8"/>
+    <circle cx="4"  cy="22" r="0.9"/>
+    <circle cx="7"  cy="28" r="1"/>
+    <circle cx="5"  cy="34" r="0.8"/>
+    <circle cx="43" cy="10" r="1"/>
+    <circle cx="39" cy="16" r="0.8"/>
+    <circle cx="44" cy="22" r="0.9"/>
+    <circle cx="42" cy="28" r="1"/>
+    <circle cx="44" cy="34" r="0.8"/>
+  </g>
+
+  <!-- confetes tracinhos — só laterais -->
+  <g stroke="currentColor" stroke-linecap="round" stroke-width="1.2" fill="none">
+    <line x1="4"  y1="7"  x2="6"  y2="5"/>
+    <line x1="8"  y1="13" x2="10" y2="11"/>
+    <line x1="3"  y1="19" x2="5"  y2="17"/>
+    <line x1="6"  y1="31" x2="8"  y2="29"/>
+    <line x1="44" y1="7"  x2="42" y2="5"/>
+    <line x1="40" y1="13" x2="38" y2="11"/>
+    <line x1="45" y1="19" x2="43" y2="17"/>
+    <line x1="42" y1="31" x2="40" y2="29"/>
+  </g>
+
+        </symbol>
 </svg>

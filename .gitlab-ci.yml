@@ -1,0 +1,149 @@
+image: node:16.19.1
+
+stages:
+ - install-dependencies
+ - build
+ - create-image-develop
+ - create-image-staging
+ - create-image-main
+ - deploy-develop
+ - deploy-staging
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+# Instalar Dependências
+install-dependencies:
+  stage: install-dependencies
+  cache:
+    key: "${CI_COMMIT_REF_SLUG}"
+    paths:
+      - node_modules
+  script:
+    - npm install
+    - tar -czf node_modules.tar.gz node_modules/
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - node_modules.tar.gz
+
+# Build para develop e main
+build:
+  stage: build
+  dependencies:
+    - install-dependencies
+  script:
+    - tar -xzf node_modules.tar.gz
+    - npm run scss-lint
+    - npx gulp deploy
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - dist
+  only:
+    - develop
+    - staging
+    - main
+
+# Envia Imagem docker ao Harbor com Tag latest - Branch develop
+create-image-develop:
+  stage: create-image-develop
+  dependencies:
+   - build
+  image: docker:latest
+  services:
+   - docker:dind
+  script:
+   - docker build -f docker/Dockerfile -t $DOCKER_IMAGE_NAME_DEVELOP:$CI_COMMIT_SHA -t $DOCKER_IMAGE_NAME_DEVELOP:latest .
+   - docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_HOST
+   - docker push $DOCKER_IMAGE_NAME_DEVELOP:$CI_COMMIT_SHA
+   - docker push $DOCKER_IMAGE_NAME_DEVELOP:latest
+  only:
+   - develop
+
+# Envia Imagem docker ao Harbor com Tag latest - Branch staging
+create-image-staging:
+  stage: create-image-staging
+  dependencies:
+   - build
+  image: docker:latest
+  services:
+   - docker:dind
+  script:
+   - docker build -f docker/Dockerfile -t $DOCKER_IMAGE_NAME_STAGING:$CI_COMMIT_SHA -t $DOCKER_IMAGE_NAME_STAGING:latest .
+   - docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_HOST
+   - docker push $DOCKER_IMAGE_NAME_STAGING:$CI_COMMIT_SHA
+   - docker push $DOCKER_IMAGE_NAME_STAGING:latest
+  only:
+   - staging
+
+# Envia Imagem docker ao Harbor com Tag latest - Branch main
+create-image-main:
+  stage: create-image-main
+  dependencies:
+   - build
+  image: docker:latest
+  services:
+   - docker:dind
+  script:
+   - docker build -f docker/Dockerfile -t $DOCKER_IMAGE_NAME_PROD:$CI_COMMIT_SHA -t $DOCKER_IMAGE_NAME_PROD:latest .
+   - docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_HOST
+   - docker push $DOCKER_IMAGE_NAME_PROD:$CI_COMMIT_SHA
+   - docker push $DOCKER_IMAGE_NAME_PROD:latest
+  only:
+   - main
+
+# Acessa a VM que está executando o container e faz o deploy da aplicação (TAG latest)
+deploy-develop:
+  stage: deploy-develop
+  image: docker:latest
+  dependencies:
+   - create-image-develop
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+  script:
+   - eval $(ssh-agent -s)
+   - echo "$SSH_PRIVATE_KEY_DEVELOP" | tr -d '\r' | ssh-add -
+   - mkdir -p ~/.ssh
+   - chmod 700 ~/.ssh
+   - ssh-keyscan -p $SSH_PORT_DEVELOP $SSH_HOST_DEVELOP >> ~/.ssh/known_hosts
+   - chmod 644 ~/.ssh/known_hosts
+   - ssh $SSH_USER_DEVELOP@$SSH_HOST_DEVELOP "python3 $SCRIPT_PATH -d $REGISTRY_HOST -u $REGISTRY_USER -p $REGISTRY_PASS -c "$CONTAINER_NAME" -f $COMPOSE_PATH_DEVELOP -w $WAIT_TIME"
+  only:
+   - develop
+
+# Acessa a VM que está executando o container e faz o deploy da aplicação (TAG staging)
+deploy-staging:
+  stage: deploy-staging
+  image: docker:latest
+  dependencies:
+   - create-image-staging
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+  script:
+   - eval $(ssh-agent -s)
+   - echo "$SSH_PRIVATE_KEY_STAGING" | tr -d '\r' | ssh-add -
+   - mkdir -p ~/.ssh
+   - chmod 700 ~/.ssh
+   - ssh-keyscan -p $SSH_PORT_STAGING $SSH_HOST_STAGING >> ~/.ssh/known_hosts
+   - chmod 644 ~/.ssh/known_hosts
+   - ssh $SSH_USER_STAGING@$SSH_HOST_STAGING "python3 $SCRIPT_PATH -d $REGISTRY_HOST -u $REGISTRY_USER -p $REGISTRY_PASS -c "$CONTAINER_NAME" -f $COMPOSE_PATH_STAGING -w $WAIT_TIME"
+  only:
+   - staging
+
+### TESTES ONLY ###
+# Envia Imagem docker ao Harbor com Tag test
+#create-image-test:
+#  stage: create-image-test
+#  dependencies:
+#   - build
+#  image: docker:latest
+#  services:
+#   - docker:dind
+#  script:
+#   - docker build -f docker/Dockerfile -t $DOCKER_IMAGE_NAME_TEST:$CI_COMMIT_SHA -t $DOCKER_IMAGE_NAME_TEST:latest .
+#   - docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_HOST
+#   - docker push $DOCKER_IMAGE_NAME_TEST:$CI_COMMIT_SHA
+#   - docker push $DOCKER_IMAGE_NAME_TEST:latest
+#  only:
+#   - devops-testes-cicd

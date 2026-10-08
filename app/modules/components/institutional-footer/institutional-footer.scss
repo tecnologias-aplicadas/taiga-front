@@ -1,0 +1,125 @@
+// Rodapé institucional — compartilhado pela home pública e pelo login.
+// Veio do bloco .hl-footer da home; fora do escopo .home-landing para
+// que o login use o mesmo rodapé.
+
+.hl-footer {
+    background: #2e3440;
+    border-top: 1px solid rgba(255, 255, 255, .07);
+    padding: 2rem;
+
+    .hl-footer__inner {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        margin: 0 auto;
+        max-width: 1200px;
+    }
+
+    .hl-footer__logo {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: center;
+    }
+
+    .hl-footer__logo-item {
+        align-items: center;
+        display: flex;
+        gap: .5rem;
+
+        &--brand {
+            gap: .6rem;
+        }
+    }
+
+    .hl-footer__logo-name {
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: .01em;
+    }
+
+    .hl-footer__img {
+        height: 48px;
+        object-fit: contain;
+        width: auto;
+    }
+
+    .hl-footer__divider {
+        background: rgba(255, 255, 255, .15);
+        border-radius: 2px;
+        height: 40px;
+        width: 1px;
+    }
+
+    .hl-footer__copy {
+        color: rgba(255, 255, 255, .35);
+        font-size: .75rem;
+        margin: 0;
+    }
+
+    // Tamanhos individuais por logo — ajuste conforme necessário
+    .hl-footer__img--taiga-color {
+        height: 58px;
+    }
+
+    .hl-footer__img--taiga-text {
+        height: 20px;
+    }
+
+    .hl-footer__img--logo-ta {
+        height: 52px;
+    }
+
+    .hl-footer__img--parquetec {
+        height: 75px;
+    }
+
+    // Login: cabe em 72px, logos reduzidos, sem linha de texto
+    &--compact {
+        box-sizing: border-box;
+        margin-top: 1.5rem;
+        max-height: 72px;
+        overflow: hidden;
+        padding: .75rem 1rem;
+
+        .hl-footer__logo {
+            flex-wrap: nowrap;
+            gap: .75rem;
+        }
+
+        .hl-footer__logo-item {
+            gap: .3rem;
+
+            &--brand {
+                gap: .35rem;
+            }
+        }
+
+        .hl-footer__logo-name {
+            font-size: .8rem;
+        }
+
+        .hl-footer__divider {
+            height: 24px;
+        }
+
+        .hl-footer__img--taiga-color {
+            height: 30px;
+        }
+
+        .hl-footer__img--taiga-text {
+            height: 10px;
+        }
+
+        .hl-footer__img--logo-ta {
+            height: 28px;
+        }
+
+        .hl-footer__img--parquetec {
+            height: 40px;
+        }
+    }
+}

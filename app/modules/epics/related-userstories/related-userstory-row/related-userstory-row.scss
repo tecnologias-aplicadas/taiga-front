@@ -110,6 +110,9 @@ tg-related-userstory-row {
         figcaption {
             margin-left: .5rem;
         }
+        .avatar-overflow {
+            @include avatar-overflow(1.5rem);
+        }
     }
     .related-text {
         display: inline-flex;

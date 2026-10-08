@@ -86,9 +86,12 @@ RelatedTaskRowDirective = ($repo, $compile, $confirm, $rootscope, $loading, $tem
                         askResponse.finish()
                         $scope.$emit("related-tasks:delete")
 
-                    promise.then null, ->
+                    promise.then null, (data) ->
                         askResponse.finish(false)
-                        $confirm.notify("error")
+                        if data?.code
+                            $confirm.notify("error", $translate.instant("ERRORS.#{data.code.toUpperCase()}"))
+                        else
+                            $confirm.notify("error")
 
         $scope.$watch $attrs.ngModel, (val) ->
             return if not val

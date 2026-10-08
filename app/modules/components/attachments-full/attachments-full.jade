@@ -64,7 +64,7 @@ section.attachments.attachment-full(
           .single-attachment.uploading-attachment(ng-repeat="file in vm.uploadingAttachments()")
               .attachment-name
                   tg-svg(svg-icon="icon-attachment")
-                  span {{file.name}}
+                  span(title="{{file.name}}") {{file.name}}
               .attachment-size
                   span {{file.size | sizeFormat}}
               .attachment-comments

@@ -9,11 +9,47 @@
 module = angular.module("taigaHistory")
 
 class CommentsController
-    @.$inject = []
+  @.$inject = ["$tgHttp", "$scope", "$tgUrls"]
 
-    constructor: () ->
+  constructor: (@$tgHttp, @$scope, @$urls) ->
+    @canAddCommentPermission = null
+    @__reactionsLoaded = false
+    @loadingReactions = {}
 
-    initializePermissions: () ->
-        @.canAddCommentPermission = 'comment_' + @.name
+    @$scope.$watchCollection (=> @comments), (newVal) =>
+      return unless newVal?.length
+      return if @__reactionsLoaded
 
-module.controller("CommentsCtrl", CommentsController)
+      @__reactionsLoaded = true
+      for c in newVal
+        @loadReactionsForComment(c.id)
+
+  loadReactionsForComment: (commentId) ->
+      comment = _.find(@comments or [], (c) -> c.id == commentId)
+      unless comment
+          return
+
+      url = @$urls.resolve("comment-reactions-list", commentId)
+      @$tgHttp.get(url).then (res) =>
+          comment.reactions = res.data or {}
+
+  editCommentAndReloadReactions: (commentId, commentData, callback) ->
+      url = @$urls.resolve("comment-edit", commentId)
+      payload = { comment: commentData }
+
+      @$tgHttp.post(url, payload).then (res) =>
+          comment = _.find(@comments or [], (c) -> c.id == commentId)
+          if comment
+              comment.comment = res.data.comment
+              comment.edit_comment_date = res.data.edit_comment_date
+
+          @loadReactionsForComment(commentId)
+          callback?()
+
+  handleEditComment: (commentId, commentData, callback) ->
+      @editCommentAndReloadReactions(commentId, commentData, callback)
+
+  initializePermissions: ->
+      @canAddCommentPermission = "comment_" + @name
+
+module.controller "CommentsCtrl", CommentsController

@@ -3,34 +3,133 @@
     flex-direction: column;
     max-width: 550px;
     width: 100%;
+
+    .label {
+        @include sprint-goal-label;
+    }
+
     .move-to-sprint-header {
-        margin: 0 auto;
+        margin: 0 auto 1.5rem;
         max-width: 400px;
         text-align: center;
-        ul {
-            display: inline-block;
-            margin: .5em auto 2.5em;
-            width: auto;
-        }
-        li {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1em;
-        }
-        .check {
-            margin-left: 4em;
-        }
     }
-    .move-to-sprint-controls {
-        p {
-            margin-bottom: 2.5em;
-            text-align: center;
+
+    .move-to-sprint-unfinished {
+        margin-bottom: 1.25rem;
+
+        ul {
+            margin: .5em 0 1.25em;
         }
-        .sprint-select {
+
+        li {
             margin-top: .5em;
         }
-        .move-button {
-            width: 100%;
+
+        .sprint-select {
+            @include font-size(small);
+            color: $color-black900;
         }
+    }
+
+    .move-to-sprint-result {
+        margin-bottom: 1.5rem;
+
+        fieldset {
+            margin-bottom: 1.25rem;
+        }
+
+        .sprint-result-goal {
+            @include sprint-goal-readonly;
+            max-height: 10rem;
+            overflow-y: auto;
+        }
+
+        .sprint-result-goal-empty {
+            @include sprint-goal-readonly;
+            color: $color-black600;
+            margin: 0;
+        }
+
+        .sprint-result-text textarea {
+            min-height: 8rem;
+            resize: vertical;
+        }
+
+        .sprint-result-achievement-header {
+            align-items: center;
+            display: flex;
+            margin-bottom: .25rem;
+
+            .label {
+                margin-bottom: 0;
+            }
+        }
+
+        .sprint-result-achievement-dots {
+            display: inline-flex;
+            margin-left: .5rem;
+        }
+
+        .sprint-result-achievement-options {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+    }
+
+    .sprint-result-alert {
+        @include sprint-goal-callout($color-solid-red, $color-link-red);
+        margin: 0;
+    }
+
+    .no-closed-items {
+        margin-bottom: 1.25rem;
+    }
+
+    .sprint-result-achievement-dot {
+        border-radius: 50%;
+        display: inline-block;
+        height: 10px;
+        margin-right: .35rem;
+        transition: background .2s ease-in;
+        width: 10px;
+
+        &.achieved {
+            background: $color-link-green;
+        }
+
+        &.partially-achieved {
+            background: $sprint-goal-yellow;
+        }
+
+        &.not-achieved {
+            background: $color-link-orange;
+        }
+
+        &.dim {
+            background: $color-gray400;
+        }
+    }
+
+    @include custom-radio;
+
+    .sprint-result-achievement-option {
+        align-items: center;
+        cursor: pointer;
+        margin: .25rem 1.5rem 0 0;
+
+        &:hover .radio-control {
+            border-color: $color-link-primary;
+        }
+    }
+
+    .radio-label {
+        @include font-size(small);
+        color: $color-black900;
+        transition: color .2s ease-in;
+    }
+
+    .move-to-sprint-controls .move-button {
+        width: 100%;
     }
 }

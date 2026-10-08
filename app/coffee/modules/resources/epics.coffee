@@ -21,6 +21,9 @@ resourceProvider = ($repo, $http, $urls, $storage) ->
         params.ref = ref
         return $repo.queryOne("epics", "by_ref", params)
 
+    service.listInAllProjects = (filters) ->
+        return $repo.queryMany("epics", filters)
+
     service.listValues = (projectId, type) ->
         params = {"project": projectId}
         service.storeQueryParams(projectId, params)

@@ -68,12 +68,25 @@ configure = ($routeProvider, $locationProvider, $httpProvider, $provide, $tgEven
 
         return originalWhen.call($routeProvider, path, route)
 
-    # Home
+    # Home — landing page customizada para instância do Centro de Tecnologias Aplicadas
     $routeProvider.when("/",
+        {
+            templateUrl: "home/home-landing.html",
+            controller: "HomeLanding",
+            controllerAs: "vm",
+            disableHeader: true,
+            loader: true,
+            title: "HOME.PAGE_TITLE",
+            description: "HOME.PAGE_DESCRIPTION"
+        }
+    )
+
+    # Dashboard — home original (acessível em /dashboard para usuários autenticados)
+    $routeProvider.when("/dashboard",
         {
             templateUrl: "home/home.html",
             controller: "Home",
-            controllerAs: "vm"
+            controllerAs: "vm",
             loader: true,
             title: "HOME.PAGE_TITLE",
             loader: true,
@@ -397,6 +410,12 @@ configure = ($routeProvider, $locationProvider, $httpProvider, $provide, $tgEven
             section: "admin"
         }
     )
+    $routeProvider.when("/project/:pslug/admin/project-values/epic-schedules",
+        {
+            templateUrl: "admin/admin-epic-schedules.html",
+            section: "admin"
+        }
+    )
     $routeProvider.when("/project/:pslug/admin/memberships",
         {
             templateUrl: "admin/admin-memberships.html",
@@ -506,6 +525,30 @@ configure = ($routeProvider, $locationProvider, $httpProvider, $provide, $tgEven
         }
     )
 
+    $routeProvider.when("/story-points-guide",
+        {
+            templateUrl: "story-points-guide/story-points-guide.html",
+            loader: true,
+            access: {
+                requiresLogin: true
+            }
+        }
+    )
+
+    # Gestão do carrossel de novidades (só superusuário; o servidor recusa os demais)
+    $routeProvider.when("/news-admin",
+        {
+            templateUrl: "news-admin/news-admin.html",
+            controller: "NewsAdmin",
+            controllerAs: "vm",
+            loader: true,
+            access: {
+                requiresLogin: true
+            },
+            title: "NEWS_ADMIN.PAGE_TITLE"
+        }
+    )
+
     $routeProvider.when("/profile/:slug",
         {
             templateUrl: "profile/profile.html",
@@ -521,7 +564,7 @@ configure = ($routeProvider, $locationProvider, $httpProvider, $provide, $tgEven
             templateUrl: "auth/login.html",
             title: "LOGIN.PAGE_TITLE",
             description: "LOGIN.PAGE_DESCRIPTION",
-            disableHeader: true,
+            disableHeader: true, 
             controller: "LoginPage",
         }
     )
@@ -792,8 +835,10 @@ configure = ($routeProvider, $locationProvider, $httpProvider, $provide, $tgEven
     if localStorage.userInfo
         userInfo = JSON.parse(localStorage.userInfo)
 
-    # i18n
-    preferedLangCode = userInfo?.lang || window.taigaConfig.defaultLanguage || "en"
+    # i18n: usuário autenticado usa o próprio idioma; sem login, o do último usuário
+    # deste navegador (lastUserLang) ou o padrão da instância
+    preferedLangCode = window.taiga.resolveLanguage(userInfo, window.taiga.lastUserLangFromStorage(),
+                                                    window.taigaConfig.defaultLanguage)
 
     $translatePartialLoaderProvider.addPart('taiga')
     $translateProvider
@@ -896,8 +941,12 @@ i18nInit = (lang, $translate) ->
 
 init = ($log, $rootscope, $auth, $events, $analytics, $tagManager, $userPilot, $translate, $location, $navUrls, appMetaService,
         loaderService, navigationBarService, errorHandlingService, lightboxService, $tgConfig,
-        projectService) ->
+        projectService, $tgHttp, $tgUrls) ->
     $log.debug("Initialize application")
+
+    # Load server config (admin_team etc.) once and store globally
+    $tgHttp.get($tgUrls.resolve("auth-config")).then (response) ->
+        $rootscope.adminTeam = response.data.admin_team or "Server Admin"
 
     $rootscope.$on '$translatePartialLoaderStructureChanged', () ->
         $translate.refresh()
@@ -1085,6 +1134,8 @@ modules = [
     "taigaDiscover",
     "taigaHistory",
     "taigaNotifications",
+    "taigaStoryPointsGuide",
+    "taigaNewsAdmin",
     "taigaWikiHistory",
     "taigaEpics",
     "taigaUtils"
@@ -1137,5 +1188,7 @@ module.run([
     "lightboxService",
     "$tgConfig",
     "tgProjectService",
+    "$tgHttp",
+    "$tgUrls",
     init
 ])

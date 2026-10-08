@@ -73,6 +73,22 @@ describe "tgEpicsService", ->
         _setup()
         _inject()
 
+    it "refetch epics volta à primeira página e troca a lista inteira", () ->
+        epicsService._page = 3
+        epicsService._epics = Immutable.List([Immutable.Map({id: 30})])
+        mocks.tgResources.epics.list.withArgs(1, 1).returns($q.resolve({
+            list: Immutable.List([Immutable.Map({id: 1}), Immutable.Map({id: 2})])
+            headers: () -> null
+        }))
+
+        epicsService.refetchEpics()
+        $rootScope.$digest()
+
+        expect(mocks.tgResources.epics.list).to.have.been.calledWith(1, 1)
+        expect(epicsService._page).to.be.equal(1)
+        expect(epicsService._epics.size).to.be.equal(2)
+        expect(epicsService._epics.get(0).get("id")).to.be.equal(1)
+
     it "clear epics", () ->
         epicsService._epics = Immutable.List(Immutable.Map({
             'id': 1
@@ -284,3 +300,19 @@ describe "tgEpicsService", ->
       epicsService.listRelatedUserStories = sinon.stub()
       epicsService.reorderRelatedUserstory(epic, epicUserstories, epicUserstories.get(2), 1).then () ->
           expect(epicsService.listRelatedUserStories.withArgs(epic)).have.been.calledOnce
+
+    # it "update epic date", (dateTest) ->
+    #     epic = Immutable.fromJS({
+    #         id: 1
+    #         version: 1
+    #     })
+
+    #     mocks.tgResources.epics
+    #         .patch
+    #         .withArgs(1, {assigned_to: 33, version: 1})
+    #         .promise()
+    #         .resolve()
+
+    #     epicsService.replaceEpic = sinon.stub()
+    #     epicsService.updateEpicAssignedTo(epic, 33).then () ->
+    #         expect(epicsService.replaceEpic).have.been.calledOnce

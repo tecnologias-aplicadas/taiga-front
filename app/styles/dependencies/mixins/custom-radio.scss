@@ -1,0 +1,45 @@
+// Custom radio: hidden native input, round control with a primary dot when
+// checked, and a label that turns primary when checked.
+// Markup: label.custom-radio > input[type='radio'] + span.radio-control + span.radio-label
+// Include it in the container that holds the radios.
+
+@mixin custom-radio($radio-size: 18px) {
+    input[type='radio'] {
+        height: 0;
+        opacity: 0;
+        width: 0;
+
+        &:checked ~ .radio-label {
+            color: $color-link-primary;
+        }
+        &:checked + .radio-control::before {
+            transform: scale(1);
+        }
+    }
+    .custom-radio {
+        align-self: center;
+        display: flex;
+    }
+    .radio-control {
+        border: 2px solid $color-gray400;
+        border-radius: 50%;
+        display: grid;
+        flex-shrink: 0;
+        height: $radio-size;
+        margin-inline-end: .25rem;
+        place-items: center;
+        transform: translateY(-.06rem);
+        width: $radio-size;
+
+        &::before {
+            background-color: $color-link-primary;
+            border-radius: 50%;
+            content: '';
+            display: block;
+            height: ($radio-size / 2) - 1px;
+            transform: scale(0);
+            transition: 180ms transform ease-in-out;
+            width: ($radio-size / 2) - 1px;
+        }
+    }
+}

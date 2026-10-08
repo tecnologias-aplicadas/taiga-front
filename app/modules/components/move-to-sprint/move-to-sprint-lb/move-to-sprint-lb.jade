@@ -9,72 +9,93 @@ tg-lightbox-close
 
 .move-to-sprint-container
   .move-to-sprint-header
-    h2.title {{ 'TASKBOARD.MOVE_TO_SPRINT.TITLE_ACTION_MOVE_UNFINISHED'|translate }}
+    h2.title {{ (vm.registerOnly ? 'TASKBOARD.MOVE_TO_SPRINT.REGISTER_RESULT_TITLE' : 'TASKBOARD.MOVE_TO_SPRINT.CLOSE_SPRINT')|translate }}
 
+  .sprint-result-alert.no-closed-items(ng-if="!vm.hasClosedItems")
+    tg-svg(svg-icon="icon-alert")
+    span {{ 'TASKBOARD.MOVE_TO_SPRINT.NO_CLOSED_ITEMS'|translate }}
+
+  .move-to-sprint-unfinished(ng-if="vm.hasOpenItems")
+    h3.label {{ 'TASKBOARD.MOVE_TO_SPRINT.TITLE_MOVE_UNFINISHED'|translate }}
     ul
       li.choice(ng-if="vm.ussCount")
-        span(ng-bind-html="'TASKBOARD.MOVE_TO_SPRINT.UNFINISHED_USER_STORIES_COUNT'|translate:{ total: vm.ussCount || 0 }:'messageformat'")
-        .check.js-check(ng-if="vm.hasManyItemTypes")
-            input(
-              type="checkbox"
-              ng-checked="vm.typesSelected['uss']"
-              ng-model="vm.typesSelected['uss']"
-              ng-change="vm.updateSelected('uss', vm.typesSelected['uss'])"
-              ng-disabled="!vm.sprints.length"
-            )
-            div
-            span.check-text.check-yes(translate="COMMON.YES")
-            span.check-text.check-no(translate="COMMON.NO")
-
+        span(ng-bind-html="'TASKBOARD.MOVE_TO_SPRINT.UNFINISHED_USER_STORIES_COUNT'|translate:{ total: vm.ussCount }:'messageformat'")
       li.choice(ng-if="vm.tasksCount")
-        span(ng-bind-html="'TASKBOARD.MOVE_TO_SPRINT.UNFINISHED_STORYLESS_TASKS_COUNT'|translate:{ total: vm.tasksCount || 0 }:'messageformat'")
-        .check.js-check(ng-if="vm.hasManyItemTypes")
-            input(
-              type="checkbox"
-              ng-checked="vm.typesSelected['tasks']"
-              ng-model="vm.typesSelected['tasks']"
-              ng-change="vm.updateSelected('tasks', vm.typesSelected['tasks'])"
-              ng-disabled="!vm.sprints.length"
-            )
-            div
-            span.check-text.check-yes(translate="COMMON.YES")
-            span.check-text.check-no(translate="COMMON.NO")
-
+        span(ng-bind-html="'TASKBOARD.MOVE_TO_SPRINT.UNFINISHED_STORYLESS_TASKS_COUNT'|translate:{ total: vm.tasksCount }:'messageformat'")
       li.choice(ng-if="vm.issuesCount")
-        span(ng-bind-html="'TASKBOARD.MOVE_TO_SPRINT.UNFINISHED_ISSUES_COUNT'|translate:{ total: vm.issuesCount || 0 }:'messageformat'")
-        .check.js-check(ng-if="vm.hasManyItemTypes")
-            input(
-              type="checkbox"
-              ng-checked="vm.typesSelected['issues']"
-              ng-model="vm.typesSelected['issues']"
-              ng-change="vm.updateSelected('issues', vm.typesSelected['issues'])"
-              ng-disabled="!vm.sprints.length"
-            )
-            div
-            span.check-text.check-yes(translate="COMMON.YES")
-            span.check-text.check-no(translate="COMMON.NO")
+        span(ng-bind-html="'TASKBOARD.MOVE_TO_SPRINT.UNFINISHED_ISSUES_COUNT'|translate:{ total: vm.issuesCount }:'messageformat'")
+
+    .sprint-result-alert.no-open-sprints(ng-if="vm.hasNoDestination()")
+      tg-svg(svg-icon="icon-alert")
+      span {{ 'TASKBOARD.MOVE_TO_SPRINT.NO_OPEN_SPRINTS'|translate }}
+    fieldset(ng-if="vm.sprints.length > 0")
+      label.label(for="sprint-selector-dropdown") {{ 'TASKBOARD.MOVE_TO_SPRINT.MOVE_TO_OPEN_SPRINT'|translate }}
+      select.sprint-select(
+          ng-model="vm.selectedSprintId"
+          ng-options="s.id as s.name for s in vm.sprints"
+          id="sprint-selector-dropdown"
+      )
+          option(
+              value=""
+              disabled
+              selected
+              translate="TASKBOARD.MOVE_TO_SPRINT.SELECT_DESTINATION_PLACEHOLDER"
+          )
+
+  .move-to-sprint-result
+    fieldset.sprint-result-goal-field
+      h3.label {{ 'TASKBOARD.SPRINT_GOAL.TITLE'|translate }}
+      .sprint-result-goal.wysiwyg(
+          ng-if="vm.hasGoal()"
+          tg-bind-wysiwyg-html="vm.sprint.goal"
+      )
+      p.sprint-result-goal-empty(
+          ng-if="!vm.hasGoal()"
+          translate="TASKBOARD.SPRINT_GOAL.EMPTY"
+      )
+
+    fieldset.sprint-result-text
+      label.label(for="sprint-result-text") {{ 'TASKBOARD.SPRINT_GOAL.RESULT_TITLE'|translate }}
+      textarea#sprint-result-text(
+          rows=5
+          ng-model="vm.result.result"
+          placeholder="{{ 'TASKBOARD.MOVE_TO_SPRINT.RESULT_PLACEHOLDER'|translate }}"
+      )
+
+    fieldset.sprint-result-achievement
+      .sprint-result-achievement-header
+        h3.label {{ 'TASKBOARD.MOVE_TO_SPRINT.ACHIEVEMENT_QUESTION'|translate }}
+        .sprint-result-achievement-dots(aria-hidden="true")
+          span.sprint-result-achievement-dot.achieved(
+              ng-class="{'dim': vm.result.goal_achievement && vm.result.goal_achievement != 'achieved'}"
+          )
+          span.sprint-result-achievement-dot.partially-achieved(
+              ng-class="{'dim': vm.result.goal_achievement && vm.result.goal_achievement != 'partially_achieved'}"
+          )
+          span.sprint-result-achievement-dot.not-achieved(
+              ng-class="{'dim': vm.result.goal_achievement && vm.result.goal_achievement != 'not_achieved'}"
+          )
+      .sprint-result-achievement-options
+        label.custom-radio.sprint-result-achievement-option(ng-repeat="option in vm.achievementOptions")
+          input(
+              type="radio"
+              id="goal-achievement-{{option.value}}"
+              name="goal_achievement"
+              ng-model="vm.result.goal_achievement"
+              ng-value="option.value"
+          )
+          span.radio-control
+          span.radio-label {{ option.labelKey|translate }}
+
+    .sprint-result-alert.sprint-result-warning
+      tg-svg(svg-icon="icon-alert")
+      span {{ 'TASKBOARD.MOVE_TO_SPRINT.IMMUTABLE_WARNING'|translate }}
 
   .move-to-sprint-controls
-    p(ng-if="!vm.sprints.length") {{ 'TASKBOARD.MOVE_TO_SPRINT.NO_OPEN_SPRINTS'|translate }}
-    div(ng-if="vm.sprints.length > 0")
-      fieldset
-        label {{ 'TASKBOARD.MOVE_TO_SPRINT.MOVE_TO_OPEN_SPRINT'|translate }}
-        select.sprint-select(
-            ng-model="vm.selectedSprintId"
-            ng-options="s.id as s.name for s in vm.sprints"
-            id="sprint-selector-dropdown"
-            autofocus
-        )
-            option(
-                value=""
-                disabled
-                selected
-                translate="TASKBOARD.MOVE_TO_SPRINT.SELECT_DESTINATION_PLACEHOLDER"
-            )
-      button.btn-small.move-button(
-          variant="primary"
-          href=""
-          ng-click="vm.submit()"
-          translate="COMMON.SAVE"
-          ng-disabled="!(vm.selectedSprintId && vm.someSelected)"
-      )
+    button.btn-big.move-button(
+        variant="primary"
+        href=""
+        ng-click="vm.submit()"
+        translate="{{ vm.registerOnly ? 'TASKBOARD.MOVE_TO_SPRINT.REGISTER_RESULT' : 'TASKBOARD.MOVE_TO_SPRINT.CLOSE_SPRINT' }}"
+        ng-disabled="!vm.canSubmit()"
+    )

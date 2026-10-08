@@ -2,9 +2,15 @@
 
 .epics-table {
     margin-top: 2rem;
+    // Rede de segurança: o excesso rola dentro da tabela e nunca empurra o menu
+    // lateral nem o cabeçalho da página. Cabeçalho e linhas rolam juntos porque
+    // estão os dois aqui dentro e têm o mesmo piso de largura.
+    overflow-x: auto;
+
     .loading {
         margin: 2% auto;
         width: 3rem;
+
         img {
             @include loading-spinner;
             max-height: 3rem;
@@ -19,36 +25,58 @@
     display: flex;
     padding-left: 1rem;
     position: relative;
-    > div {
+
+    >div {
         @include font-type(regular);
         @include font-size(xsmall);
         @include font-type(medium);
-
         color: $color-link-tertiary;
         flex-wrap: nowrap;
         text-transform: uppercase;
     }
+
     .project,
+    .schedulable,
+    .start-date,
+    .expected-completion-date,
+    .completion-date,
+    .created_date,
     .assigned {
-        padding: 1rem .5rem;
+        padding: 1rem .1rem;
     }
+
+
+    .schedulable {
+        padding: 1rem 2.8rem;
+
+    }
+    .start-date,
+    .expected-completion-date,
+    .completion-date {
+        width: 115px;
+    }
+
     .status-holder {
         padding-right: 1.5rem;
     }
 }
 
 .epics-table-options-wrapper {
-    bottom: 3rem;
     position: absolute;
+    top: 10%;
     right: .5rem;
+    transform: translateY(-50%);
+    z-index: $first-layer;
 }
 
 .epics-table-option-button {
     @include font-type(regular);
     @include font-size(small);
+    margin-bottom: 1rem;
     align-items: center;
     background: none;
     display: flex;
+
     .icon {
         @include svg-size(.7rem);
     }
@@ -66,12 +94,15 @@
     top: 1rem;
     width: 250px;
     z-index: $first-layer;
+
     &.ng-hide-remove {
         animation: dropdownFade .2s;
     }
+
     &.ng-hide-add {
         animation: dropdownFade .2s reverse;
     }
+
     .fieldset {
         @include font-size(small);
         border-bottom: 1px solid $whitish;
@@ -79,6 +110,7 @@
         display: flex;
         justify-content: space-between;
         padding: .5rem 0;
+
         &:last-child {
             border: 0;
         }
